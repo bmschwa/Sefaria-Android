@@ -24,28 +24,18 @@
 
     <color name="menu_background">#F9F9F7</color>
     <color name="menu_foreground">#dddddd</color>
-    <color name="menu_divid_section_bar">#c1c1c1</color>
 
     <color name="subtitle">#9B9B9B</color>
-    <color name="tab_inactive">#9B9B9B</color>
-    <color name="tab_active">#000000</color>
-    <color name="transparent">#80000000</color>
 
 
-    <color name="toc_num_box_font">#666</color>
-    <color name="toc_words">#000</color>
     <color name="toc_curr_section_title">#AAA</color>
     <color name="toc_curr_chap">#666</color>
-    <color name="toc_num_box_background">#ffffff</color>
     <color name="toc_greyed_out_section_name">#999</color>
 
 
-    <color name="text_verse_num">#666666</color>
-    <color name="text_verse_mono">#000000</color>
-    <color name="text_verse_en">#999999</color> <!-- specifically when in bilingual -->
+    <!-- specifically when in bilingual -->
 
 
-    <color name="link_background">#F9F9F7</color>
     <color name="button_clicked">#BBB</color>
 
 

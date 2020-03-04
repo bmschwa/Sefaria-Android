@@ -55,7 +55,7 @@ public class CtsTextAdapter extends ArrayAdapter<Section> {
         if (currSection.getIsLoader()) {
             LayoutInflater inflater = (LayoutInflater)
                     activity.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.adapter_text_loader,null);
+            view = inflater.inflate(R.layout.adapter_text_loader, null);
             view.setClickable(false);
             return view;
         }
@@ -67,7 +67,7 @@ public class CtsTextAdapter extends ArrayAdapter<Section> {
             LayoutInflater inflater = (LayoutInflater)
                     activity.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 
-                view = inflater.inflate(R.layout.adapter_section_mono,null);
+            view = inflater.inflate(R.layout.adapter_section_mono, null);
         }
 
         TextChapterHeader headerTv = (TextChapterHeader) view.findViewById(R.id.chapHeader);
@@ -85,7 +85,7 @@ public class CtsTextAdapter extends ArrayAdapter<Section> {
         return view;
     }
 
-    private void setSectionText(Section currSection,SefariaTextView tv, Util.Lang lang) {
+    private void setSectionText(Section currSection, SefariaTextView tv, Util.Lang lang) {
         /*boolean isFirst = true;
         SpannableStringBuilder ssb = new SpannableStringBuilder();
         tv.setMovementMethod(LinkMovementMethod.getInstance());
@@ -132,11 +132,11 @@ public class CtsTextAdapter extends ArrayAdapter<Section> {
         for (int i = 0; i < currSection.getSegmentList().size(); i++) {
             Segment segment = currSection.getSegmentList().get(i);
             String s = segment.getText(lang);
-            SegmentSpannable segmentSpannable = new SegmentSpannable(s,segment,onSegmentSpanClickListener);
-            ss.setSpan(segmentSpannable,currPos,currPos+lens[i],0);
+            SegmentSpannable segmentSpannable = new SegmentSpannable(s, segment, onSegmentSpanClickListener);
+            ss.setSpan(segmentSpannable, currPos, currPos + lens[i], 0);
             currPos += lens[i];
         }
-        tv.setText(ss,TextView.BufferType.SPANNABLE);
+        tv.setText(ss, TextView.BufferType.SPANNABLE);
     }
 
     @Override

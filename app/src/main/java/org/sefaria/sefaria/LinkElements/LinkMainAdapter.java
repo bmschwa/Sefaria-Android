@@ -1,4 +1,5 @@
 package org.sefaria.sefaria.LinkElements;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
@@ -39,6 +40,7 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
         public View colorBar;
         public View catPadding;
         private Context context;
+
         public LinkHolder(View v, SuperTextActivity context) {
             super(v);
             v.setClickable(true);
@@ -55,14 +57,14 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
             LinkFragment.State tempState;
             if (linkFilter.getDepthType() == LinkFilter.DEPTH_TYPE.BOOK) {
                 tempState = LinkFragment.State.BOOK;
-            } else if(linkFilter.getDepthType() == LinkFilter.DEPTH_TYPE.ERR){
+            } else if (linkFilter.getDepthType() == LinkFilter.DEPTH_TYPE.ERR) {
                 return;
-            }else {
+            } else {
                 tempState = LinkFragment.State.CAT;
             }
 
 
-            fragment.gotoState(tempState,fragment.getView(),linkFilter);
+            fragment.gotoState(tempState, fragment.getView(), linkFilter);
         }
     }
 
@@ -77,7 +79,7 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
     @Override
     public LinkHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.link_category, null);
-        LinkHolder linkHolder = new LinkHolder(layoutView,context);
+        LinkHolder linkHolder = new LinkHolder(layoutView, context);
         return linkHolder;
     }
 
@@ -87,15 +89,15 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
 
         Util.Lang lang = Settings.getMenuLang();
         String bookTitle = linkCount.getGroupTitle(lang);
-        holder.tv.setFont(lang,true);
+        holder.tv.setFont(lang, true);
 
-        String fadedTextHexColor = String.format("#%06X", (0xFFFFFF & Util.getColor(context,R.attr.text_color_faded)));
-        if (linkCount.getDepthType() == LinkFilter.DEPTH_TYPE.BOOK)  {
+        String fadedTextHexColor = String.format("#%06X", (0xFFFFFF & Util.getColor(context, R.attr.text_color_faded)));
+        if (linkCount.getDepthType() == LinkFilter.DEPTH_TYPE.BOOK) {
             if (linkCount.getCount() == 0) {
                 holder.tv.setText(bookTitle);
-                holder.tv.setTextColor(Util.getColor(context,R.attr.text_color_faded));
+                holder.tv.setTextColor(Util.getColor(context, R.attr.text_color_faded));
             } else {
-                holder.tv.setText(Html.fromHtml(bookTitle + " <font color="+fadedTextHexColor+">(" + linkCount.getCount() + ")</font>"));
+                holder.tv.setText(Html.fromHtml(bookTitle + " <font color=" + fadedTextHexColor + ">(" + linkCount.getCount() + ")</font>"));
                 holder.tv.setTextColor(Util.getColor(context, R.attr.text_color_main));
             }
 
@@ -106,8 +108,8 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
             holder.catPadding.setVisibility(View.GONE);
 
 
-        } else if(linkCount.getDepthType() == LinkFilter.DEPTH_TYPE.CAT || linkCount.getDepthType() == LinkFilter.DEPTH_TYPE.ALL ){ //ALL and CAT
-            String text =  bookTitle.toUpperCase() + " " + Util.LINK_CAT_VERICAL_LINE + " <font color="+fadedTextHexColor+">" + linkCount.getCount() + "</font>";
+        } else if (linkCount.getDepthType() == LinkFilter.DEPTH_TYPE.CAT || linkCount.getDepthType() == LinkFilter.DEPTH_TYPE.ALL) { //ALL and CAT
+            String text = bookTitle.toUpperCase() + " " + Util.LINK_CAT_VERICAL_LINE + " <font color=" + fadedTextHexColor + ">" + linkCount.getCount() + "</font>";
             holder.tv.setText(Html.fromHtml(text));
             holder.tv.setTextColor(Util.getColor(context, R.attr.text_color_main));
             /*if (android.os.Build.VERSION.SDK_INT >= 14) {//for older things it just will by non-capped (even though we can make a function to fix it, it's not worth it).
@@ -119,9 +121,8 @@ public class LinkMainAdapter extends RecyclerView.Adapter<LinkMainAdapter.LinkHo
             if (color != -1) {
                 holder.colorBar.setBackgroundColor(context.getResources().getColor(color));
             }
-        }
-        else if(linkCount.getDepthType() == LinkFilter.DEPTH_TYPE.ERR ){ //ERR
-            String text =  bookTitle;
+        } else if (linkCount.getDepthType() == LinkFilter.DEPTH_TYPE.ERR) { //ERR
+            String text = bookTitle;
             holder.tv.setText(Html.fromHtml(text));
             holder.tv.setTextColor(Util.getColor(context, R.attr.text_color_main));
             /*if (android.os.Build.VERSION.SDK_INT >= 14) {//for older things it just will by non-capped (even though we can make a function to fix it, it's not worth it).

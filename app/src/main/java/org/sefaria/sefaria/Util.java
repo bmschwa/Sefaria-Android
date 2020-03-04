@@ -54,34 +54,33 @@ import java.util.regex.Pattern;
 public class Util {
 
     public enum Lang {
-        HE,BI,EN
+        HE, BI, EN
     }
-
 
 
     public static final String VERSE_BULLET = "\u25CF";
     public static final String LINK_CAT_VERICAL_LINE = "\u007C";
-    public static final float EN_HE_RATIO = 40f/35f; //universal constant
+    public static final float EN_HE_RATIO = 40f / 35f; //universal constant
 
 
     static final private char[] heChars = {
-            '\u05d0','\u05d1','\u05d2','\u05d3','\u05d4','\u05d5','\u05d6','\u05d7','\u05d8','\u05d9',
+            '\u05d0', '\u05d1', '\u05d2', '\u05d3', '\u05d4', '\u05d5', '\u05d6', '\u05d7', '\u05d8', '\u05d9',
             //'\u05da',
-            '\u05db','\u05dc',
+            '\u05db', '\u05dc',
             //'\u05dd',
             '\u05de',
             //'\u05df',
-            '\u05e0','\u05e1','\u05e2',
+            '\u05e0', '\u05e1', '\u05e2',
             //'\u05e3',
             '\u05e4',
             //'\u05e5',
-            '\u05e6','\u05e7','\u05e8','\u05e9',
+            '\u05e6', '\u05e7', '\u05e8', '\u05e9',
             '\u05ea'};
 
-    static final private String[] htmlTags = { "b","i","strong","em","small","big"}; //to be replaced with spans using the html2Span() fn
+    static final private String[] htmlTags = {"b", "i", "strong", "em", "small", "big"}; //to be replaced with spans using the html2Span() fn
 
 
-    public static boolean isSystemLangHe(){
+    public static boolean isSystemLangHe() {
         return Locale.getDefault().getLanguage().equals("iw");
     }
 
@@ -102,8 +101,7 @@ public class Util {
         return str;
     }
 
-    static String readFileFromAssets(Context context, String path) throws IOException
-    {
+    static String readFileFromAssets(Context context, String path) throws IOException {
         Resources resources = context.getResources();
         InputStream iS = resources.getAssets().open(path);
         //create a buffer that has the same size as the InputStream
@@ -122,26 +120,26 @@ public class Util {
         return oS.toString();
     }
 
-    static JSONObject getJSON(Context context, String path) throws JSONException,IOException {
-        String jsonText = readFileFromAssets(context,path);
+    static JSONObject getJSON(Context context, String path) throws JSONException, IOException {
+        String jsonText = readFileFromAssets(context, path);
         JSONObject object = (JSONObject) new JSONTokener(jsonText).nextValue();
         return object;
     }
 
     static String joinArrayList(ArrayList<?> r, String delimiter) {
-        if(r == null || r.size() == 0 ){
+        if (r == null || r.size() == 0) {
             return "";
         }
         StringBuffer sb = new StringBuffer();
         int i, len = r.size() - 1;
-        for (i = 0; i < len; i++){
+        for (i = 0; i < len; i++) {
             sb.append(r.get(i).toString() + delimiter);
         }
         return sb.toString() + r.get(i).toString();
     }
 
     //given two arrays, join them (need to be non-primitive)
-    static <T> T[] concatenateArrays (T[] a, T[] b) {
+    static <T> T[] concatenateArrays(T[] a, T[] b) {
         int aLen = a.length;
         int bLen = b.length;
 
@@ -154,8 +152,8 @@ public class Util {
     }
 
     public static String[] str2strArray(String str) {
-        if(str == null)
-            return new String [] {};
+        if (str == null)
+            return new String[]{};
         final Pattern r = Pattern.compile("(\\[|\\]|\")+"); //matches all [ , ] & "
         str = r.matcher(str).replaceAll("");
         String[] strArray = str.split(",");
@@ -163,13 +161,13 @@ public class Util {
     }
 
     public static int[] str2intArray(String str) {
-        if(str == null)
-            return new int [] {};
+        if (str == null)
+            return new int[]{};
         final Pattern r = Pattern.compile("(\\[|\\]|\")+"); //matches all [ , ] & "
         str = r.matcher(str).replaceAll("");
         String[] strArray = str.split(",");
-        int [] intArray = new int[strArray.length];
-        for(int i=0; i<strArray.length; i++){
+        int[] intArray = new int[strArray.length];
+        for (int i = 0; i < strArray.length; i++) {
             intArray[i] = Integer.parseInt(strArray[i]);
         }
         return intArray;
@@ -181,10 +179,11 @@ public class Util {
      */
     public static long getInternalAvailableSpace() {
         long availableSpace = -1L;
-        try {StatFs stat = new StatFs(Environment.getDataDirectory()
-                .getPath());
+        try {
+            StatFs stat = new StatFs(Environment.getDataDirectory()
+                    .getPath());
             stat.restat(Environment.getDataDirectory().getPath());
-            if(Build.VERSION.SDK_INT >= 18)
+            if (Build.VERSION.SDK_INT >= 18)
                 availableSpace = stat.getAvailableBlocksLong() * stat.getBlockSizeLong();
             else
                 availableSpace = (long) stat.getAvailableBlocks() * (long) stat.getBlockSize();
@@ -196,21 +195,19 @@ public class Util {
     }
 
 
-
     public static long getFolderSize(File dir) {
         long size = 0;
         for (File file : dir.listFiles()) {
             if (file.isFile()) {
                 System.out.println(file.getName() + " " + file.length());
                 size += file.length();
-            }
-            else
+            } else
                 size += getFolderSize(file);
         }
         return size;
     }
 
-    public static boolean deleteNonRecursiveDir(String dirname){
+    public static boolean deleteNonRecursiveDir(String dirname) {
         File dir = new File(dirname);
         if (dir.exists() && dir.isDirectory()) {
             String[] children = dir.list();
@@ -223,10 +220,10 @@ public class Util {
         return dir.delete();
     }
 
-    public static String array2str(String [] array){
+    public static String array2str(String[] array) {
         String str = "[";
-        for(int i=0; i<array.length;i++)
-            str += array[i] +",";
+        for (int i = 0; i < array.length; i++)
+            str += array[i] + ",";
         str += "]";
         return str;
     }
@@ -236,14 +233,14 @@ public class Util {
         //final Pattern r = Pattern.compile("[\u0591-\u05BD\u05BF\u05C7]");
         final Pattern r = Pattern.compile("[\u0591-\u05BD\u05BF\u05C1\u05C2\u05C4\u05C5\u05C7]");
         final Pattern r2 = Pattern.compile("\u05be");
-        return r.matcher( r2.matcher(nikStr).replaceAll(" ")).replaceAll("");
+        return r.matcher(r2.matcher(nikStr).replaceAll(" ")).replaceAll("");
         //return r.matcher(nikStr).replaceAll("");
     }
 
     static int[] concatIntArrays(int[] a, int[] b) {
         int aLen = a.length;
         int bLen = b.length;
-        int[] c= new int[aLen+bLen];
+        int[] c = new int[aLen + bLen];
         System.arraycopy(a, 0, c, 0, aLen);
         System.arraycopy(b, 0, c, aLen, bLen);
         return c;
@@ -254,7 +251,7 @@ public class Util {
         String heb = "";
         int place = 0;
         while (num >= 1) {
-            int digit = num%10;
+            int digit = num % 10;
             //Log.d("gem","DIGIT: " + digit);
             num /= 10;
             int baseHebChar = 0; //this is the position of a char in hebChars
@@ -262,28 +259,27 @@ public class Util {
             if (digit == 0) {
                 //Log.d("gem","zero");
                 hebChar = '\0'; //no char when exactly multiple of ten
-            }
-            else {
+            } else {
                 if (place == 0) {
                     baseHebChar = 0; //alef
-                    hebChar = heChars[(baseHebChar + digit-1)];
+                    hebChar = heChars[(baseHebChar + digit - 1)];
                     heb = hebChar + heb;
                 } else if (place == 1) {
                     baseHebChar = 9; //yud
-                    hebChar = heChars[(baseHebChar + digit-1)];
+                    hebChar = heChars[(baseHebChar + digit - 1)];
                     heb = hebChar + heb;
                 } else if (place >= 2) {
                     baseHebChar = 18; //kuf
                     if (digit == 9) { //can't be greater than tuf
-                        char hChar1 = heChars[(baseHebChar + digit-9)];
+                        char hChar1 = heChars[(baseHebChar + digit - 9)];
                         char hChar2 = heChars[(baseHebChar + 3)]; //tuf, need two of these
                         heb = "" + hChar2 + hChar2 + hChar1 + heb;
                     } else if (digit > 4) {
-                        char hChar1 = heChars[(baseHebChar + digit-5)];
+                        char hChar1 = heChars[(baseHebChar + digit - 5)];
                         char hChar2 = heChars[(baseHebChar + 3)]; //tuf
                         heb = "" + hChar2 + hChar1 + heb;
                     } else {
-                        char hChar1 = heChars[(baseHebChar + digit-1)];
+                        char hChar1 = heChars[(baseHebChar + digit - 1)];
                         heb = "" + hChar1 + heb;
                     }
                 }
@@ -305,14 +301,13 @@ public class Util {
     public static String html2Span(String html) {
         //first find all indices of interesting tags
         StringBuffer sb = new StringBuffer();
-        HashMap<Integer,Integer> htmlIndsMap = new HashMap<>(); //maps index in string to index in htmlTags array
+        HashMap<Integer, Integer> htmlIndsMap = new HashMap<>(); //maps index in string to index in htmlTags array
         for (String tag : htmlTags) {
             Pattern p = Pattern.compile("(<" + tag + ">)(.*)(</" + tag + ">)");
             Matcher m = p.matcher(html);
 
-            if (m.find())
-            {
-                m.appendReplacement(sb,m.group(2));
+            if (m.find()) {
+                m.appendReplacement(sb, m.group(2));
             }
         }
         return sb.toString();
@@ -331,9 +326,8 @@ public class Util {
         try {
 
             //create output directory if it doesn't exist
-            File dir = new File (outputPath);
-            if (!dir.exists())
-            {
+            File dir = new File(outputPath);
+            if (!dir.exists()) {
                 dir.mkdirs();
             }
 
@@ -364,26 +358,22 @@ public class Util {
     }
 
 
-
-
-
-    public static String convertDBnum(int DBnum){
-        if(DBnum == -1)
+    public static String convertDBnum(int DBnum) {
+        if (DBnum == -1)
             return MyApp.getRString(R.string.none);
-        if(DBnum <= 0)
+        if (DBnum <= 0)
             return String.valueOf(DBnum);
         String passDot;
-        if(DBnum%100 <10){
-            passDot = "0" + DBnum%100;
-        }
-        else
-            passDot = "" + DBnum%100;
-        return String.valueOf(DBnum/100) + "." + passDot;
+        if (DBnum % 100 < 10) {
+            passDot = "0" + DBnum % 100;
+        } else
+            passDot = "" + DBnum % 100;
+        return String.valueOf(DBnum / 100) + "." + passDot;
     }
 
     public static float pixelsToSp(float px) {
         float scaledDensity = MyApp.getContext().getResources().getDisplayMetrics().scaledDensity;
-        return px/scaledDensity;
+        return px / scaledDensity;
     }
 
     public static float dpToPixels(float px) {
@@ -394,11 +384,11 @@ public class Util {
     private float inchesToPixels(Activity activity, float inches) {
         DisplayMetrics metrics = new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        return inches*metrics.ydpi;
+        return inches * metrics.ydpi;
     }
 
     public static int getRelativeTop(View myView) {
-        if (myView.getParent()== null) return 0;
+        if (myView.getParent() == null) return 0;
         if (myView.getParent() == myView.getRootView())
             return myView.getTop();
         else
@@ -410,15 +400,14 @@ public class Util {
 
     /**
      * Raturns all available SD-Cards in the system (include emulated)
-     *
+     * <p>
      * Warning: Hack! Based on Android source code of version 4.3 (API 18)
      * Because there is no standart way to get it.
      * TODO: Test on future Android versions 4.4+
      *
      * @return paths to all available SD-Cards in the system (include emulated)
      */
-    public static String[] getStorageDirectories()
-    {
+    public static String[] getStorageDirectories() {
         // Final set of paths
         final Set<String> rv = new HashSet<String>();
         // Primary physical SD-CARD (not emulated)
@@ -427,57 +416,41 @@ public class Util {
         final String rawSecondaryStoragesStr = System.getenv("SECONDARY_STORAGE");
         // Primary emulated SD-CARD
         final String rawEmulatedStorageTarget = System.getenv("EMULATED_STORAGE_TARGET");
-        if(TextUtils.isEmpty(rawEmulatedStorageTarget))
-        {
+        if (TextUtils.isEmpty(rawEmulatedStorageTarget)) {
             // Device has physical external storage; use plain paths.
-            if(TextUtils.isEmpty(rawExternalStorage))
-            {
+            if (TextUtils.isEmpty(rawExternalStorage)) {
                 // EXTERNAL_STORAGE undefined; falling back to default.
                 rv.add("/storage/sdcard0");
-            }
-            else
-            {
+            } else {
                 rv.add(rawExternalStorage);
             }
-        }
-        else
-        {
+        } else {
             // Device has emulated storage; external storage paths should have
             // userId burned into them.
             final String rawUserId;
-            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1)
-            {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
                 rawUserId = "";
-            }
-            else
-            {
+            } else {
                 final String path = Environment.getExternalStorageDirectory().getAbsolutePath();
                 final String[] folders = DIR_SEPORATOR.split(path);
                 final String lastFolder = folders[folders.length - 1];
                 boolean isDigit = false;
-                try
-                {
+                try {
                     Integer.valueOf(lastFolder);
                     isDigit = true;
-                }
-                catch(NumberFormatException ignored)
-                {
+                } catch (NumberFormatException ignored) {
                 }
                 rawUserId = isDigit ? lastFolder : "";
             }
             // /storage/emulated/0[1,2,...]
-            if(TextUtils.isEmpty(rawUserId))
-            {
+            if (TextUtils.isEmpty(rawUserId)) {
                 rv.add(rawEmulatedStorageTarget);
-            }
-            else
-            {
+            } else {
                 rv.add(rawEmulatedStorageTarget + File.separator + rawUserId);
             }
         }
         // Add all secondary storages
-        if(!TextUtils.isEmpty(rawSecondaryStoragesStr))
-        {
+        if (!TextUtils.isEmpty(rawSecondaryStoragesStr)) {
             // All Secondary SD-CARDs splited into array
             final String[] rawSecondaryStorages = rawSecondaryStoragesStr.split(File.pathSeparator);
             Collections.addAll(rv, rawSecondaryStorages);
@@ -490,7 +463,7 @@ public class Util {
         return jsonObject;
     }
 
-    public static String getStringFromAssets(String file)throws IOException, JSONException {
+    public static String getStringFromAssets(String file) throws IOException, JSONException {
         InputStream is = MyApp.getContext().getAssets().open(file);
         int size = is.available();
         byte[] buffer = new byte[size];
@@ -517,13 +490,13 @@ public class Util {
         return drawableVal.data;
     }
 
-    public static int convertDafOrIntegerToNum(String spot){
+    public static int convertDafOrIntegerToNum(String spot) {
         int num = 0;
-        if(spot.replaceFirst("[0-9]+[ab]","").length() == 0){
-            if(spot.contains("b"))
-                num +=1;
-            num += Integer.valueOf(spot.replaceAll("[ab]",""))*2-1;
-        }else{
+        if (spot.replaceFirst("[0-9]+[ab]", "").length() == 0) {
+            if (spot.contains("b"))
+                num += 1;
+            num += Integer.valueOf(spot.replaceAll("[ab]", "")) * 2 - 1;
+        } else {
             num = Integer.valueOf(spot);
         }
         return num;
@@ -531,6 +504,7 @@ public class Util {
 
     /**
      * Unclear if this function works for HTML tags. So far in my tests it hasn't worked
+     *
      * @param input
      * @param mainLang - either Util.Lang.HE or Util.Lang.EN, depending on what you expect the language to be
      * @return
@@ -545,19 +519,18 @@ public class Util {
             rtlContext = false;
             bidiDirection = Bidi.DIRECTION_LEFT_TO_RIGHT;
             defaultBidiDirection = Bidi.DIRECTION_DEFAULT_LEFT_TO_RIGHT;
-        } else /* if (lang == Util.Lang.HE) */{
+        } else /* if (lang == Util.Lang.HE) */ {
             rtlContext = true;
             bidiDirection = Bidi.DIRECTION_RIGHT_TO_LEFT;
             defaultBidiDirection = Bidi.DIRECTION_DEFAULT_RIGHT_TO_LEFT;
         }
 
-        Bidi bidi = new Bidi(input,defaultBidiDirection);
+        Bidi bidi = new Bidi(input, defaultBidiDirection);
         if (!bidi.isMixed()) return input;
 
         BidiFormatter bidiFormatter = BidiFormatter.getInstance(rtlContext);
         StringBuilder bidiTestBuilder = new StringBuilder();
-        for (int i = 0; i < bidi.getRunCount(); i++)
-        {
+        for (int i = 0; i < bidi.getRunCount(); i++) {
             int start = bidi.getRunStart(i);
             int level = bidi.getRunLevel(i);
             int limit = bidi.getRunLimit(i);
@@ -570,7 +543,7 @@ public class Util {
             //apparently level is even when ltr and odd when rtl
             //bidiDirection == 0 when LTR and 1 when RTL
             if ((level % 2) != bidiDirection && !hasHtml) {
-                run = bidiFormatter.unicodeWrap(run ,!rtlContext) + " ";
+                run = bidiFormatter.unicodeWrap(run, !rtlContext) + " ";
             }
             bidiTestBuilder.append(run);
         }
@@ -668,19 +641,18 @@ public class Util {
     }
 
     /**
-     *
      * @param color 24-bit decimal color
-     * @param tint 0 - 1
+     * @param tint  0 - 1
      * @return
      */
     public static int tintColor(int color, float tint) {
         int r = Color.red(color);
         int g = Color.green(color);
         int b = Color.blue(color);
-        r -= r*tint;
-        g -= g*tint;
-        b -= b*tint;
-        return Color.rgb(r,g,b);
+        r -= r * tint;
+        g -= g * tint;
+        b -= b * tint;
+        return Color.rgb(r, g, b);
     }
 
 
@@ -692,15 +664,13 @@ public class Util {
      * @param length
      * @return
      */
-    public static String ellipsis(final String text, int length, int dontTouchLength)
-    {
+    public static String ellipsis(final String text, int length, int dontTouchLength) {
         // The letters [iIl1] are slim enough to only count as half a character.
         length += Math.ceil(text.replaceAll("[^iIl]", "").length() / 2.0d);
 
         dontTouchLength = Math.max(length, dontTouchLength);
-        if (text.length() > dontTouchLength)
-        {
-            return text.substring(0, length/2) + "\u2026" + text.substring(text.length() - length/2 -1, text.length());
+        if (text.length() > dontTouchLength) {
+            return text.substring(0, length / 2) + "\u2026" + text.substring(text.length() - length / 2 - 1, text.length());
         }
 
         return text;

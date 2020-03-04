@@ -19,7 +19,7 @@ public class BilingualNode implements Parcelable {
     protected int depth;
 
     public BilingualNode() {
-        this("","",null);
+        this("", "", null);
         this.depth = 0;
     }
 
@@ -45,7 +45,8 @@ public class BilingualNode implements Parcelable {
     public boolean equals(Object o) {
         if (o instanceof BilingualNode) {
             BilingualNode bilingualNode = (BilingualNode) o;
-            if (bilingualNode.enTitle.equals(this.enTitle) && bilingualNode.heTitle.equals(this.heTitle)) return true;
+            if (bilingualNode.enTitle.equals(this.enTitle) && bilingualNode.heTitle.equals(this.heTitle))
+                return true;
         }
         return false;
     }
@@ -62,7 +63,9 @@ public class BilingualNode implements Parcelable {
         return parent;
     }
 
-    public void setParent(BilingualNode parent) { this.parent = parent; }
+    public void setParent(BilingualNode parent) {
+        this.parent = parent;
+    }
 
     public int getNumChildren() {
         return children.size();
@@ -81,7 +84,7 @@ public class BilingualNode implements Parcelable {
         child.setParent(this);
     }
 
-    public void replaceChild(BilingualNode oldChild,BilingualNode newChild) {
+    public void replaceChild(BilingualNode oldChild, BilingualNode newChild) {
         int index = children.indexOf(oldChild);
         if (index != -1) {
             children.remove(index);

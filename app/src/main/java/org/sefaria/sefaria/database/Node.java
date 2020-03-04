@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Node{// implements  Parcelable{
+public class Node {// implements  Parcelable{
 
 
     public final static int NODE_TYPE_BRANCH = 1;
@@ -30,7 +30,7 @@ public class Node{// implements  Parcelable{
 
 
     public final static int NID_NON_COMPLEX = -3;
-    public  final static int NID_NO_INFO = -1;
+    public final static int NID_NO_INFO = -1;
     public final static int NID_CHAP_NO_NID = -4;
     public final static int NID_DUMMY = -5;
 
@@ -41,8 +41,8 @@ public class Node{// implements  Parcelable{
     //private int siblingNum; //grid
     private String enTitle;
     private String heTitle;
-    private String [] sectionNames;
-    private String [] heSectionNames;
+    private String[] sectionNames;
+    private String[] heSectionNames;
     private int structNum;
     private int textDepth;
     private int startTid;
@@ -70,24 +70,29 @@ public class Node{// implements  Parcelable{
 
     private Boolean gotTextListInAPI;
 
-    private static Map<Integer,Node> allSavedNodes = new HashMap<>();
+    private static Map<Integer, Node> allSavedNodes = new HashMap<>();
 
-    public static Node getSavedNode(int hash){
+    public static Node getSavedNode(int hash) {
         return allSavedNodes.get(hash);
     }
-    public static void saveNode(Node node){
-        allSavedNodes.put(node.hashCode(),node);
+
+    public static void saveNode(Node node) {
+        allSavedNodes.put(node.hashCode(), node);
     }
 
 
-    public static Map<String,List<Node>> allSavedBookTOCroots = new HashMap<>();
-    private static List<Node> getSavedBookTOCroots(Book book){ return allSavedBookTOCroots.get(book);}
+    public static Map<String, List<Node>> allSavedBookTOCroots = new HashMap<>();
+
+    private static List<Node> getSavedBookTOCroots(Book book) {
+        return allSavedBookTOCroots.get(book);
+    }
+
     private static String NODE_TABLE = "Nodes";
 
     public static Node dummyNode = new Node(true);
 
 
-    public Node(boolean dummy){
+    public Node(boolean dummy) {
         children = new ArrayList<>();
         nid = NID_DUMMY;
         segmentList = new ArrayList<>();
@@ -95,13 +100,13 @@ public class Node{// implements  Parcelable{
         parentNodeID = NID_NO_INFO;
     }
 
-    public Node(){
+    public Node() {
         children = new ArrayList<>();
         nid = NID_NO_INFO;
         parentNodeID = NID_NO_INFO;
     }
 
-    public Node(Book book){
+    public Node(Book book) {
         children = new ArrayList<>();
         nid = NID_NO_INFO;
         parentNodeID = NID_NO_INFO;
@@ -115,16 +120,16 @@ public class Node{// implements  Parcelable{
     }
 
 
-    public  Node (Cursor cursor){
+    public Node(Cursor cursor) {
         children = new ArrayList<>();
         nid = NID_NO_INFO;
         parentNodeID = NID_NO_INFO;
         getFromCursor(cursor);
     }
 
-    public String getMenuBarTitle(Book book, Util.Lang menuLang){
+    public String getMenuBarTitle(Book book, Util.Lang menuLang) {
         String str = book.getTitle(menuLang);
-        if(isComplex)
+        if (isComplex)
             str += ", ";
         else
             str += " ";
@@ -132,26 +137,31 @@ public class Node{// implements  Parcelable{
         return str;
     }
 
-    public Node getParent(){return parent;}
-    public String getExtraTidsRef() {return extraTidsRef;}
+    public Node getParent() {
+        return parent;
+    }
+
+    public String getExtraTidsRef() {
+        return extraTidsRef;
+    }
 
     /**
      * @param lang
      * @return full description of current segment. For example, Chelek 3 Siman 23
      */
-    public String getWholeTitle(Util.Lang lang, boolean doSectionName, boolean showTextVersion){
+    public String getWholeTitle(Util.Lang lang, boolean doSectionName, boolean showTextVersion) {
         String str = "";
         Node node = this;
         boolean usedSpaceAlready = true;
-        while(node.parent != null) {
-            if (str.length() == 0){
-                str = node.getWholeTitleForOnly1Node(lang,doSectionName);
-            }else {
+        while (node.parent != null) {
+            if (str.length() == 0) {
+                str = node.getWholeTitleForOnly1Node(lang, doSectionName);
+            } else {
                 if (node.isComplex && !node.isGridItem)
-                    str = node.getWholeTitleForOnly1Node(lang,doSectionName) + ", " + str;
+                    str = node.getWholeTitleForOnly1Node(lang, doSectionName) + ", " + str;
                 else {
                     String separator;
-                    if(usedSpaceAlready && !node.isDaf() && !doSectionName)
+                    if (usedSpaceAlready && !node.isDaf() && !doSectionName)
                         separator = ":";
                     else
                         separator = " ";
@@ -162,40 +172,39 @@ public class Node{// implements  Parcelable{
             node = node.parent;
         }
         TOCVersion tocVersion = getTextVersion();
-        if(showTextVersion && tocVersion != null && !tocVersion.isDefaultVersion())
+        if (showTextVersion && tocVersion != null && !tocVersion.isDefaultVersion())
             str += " - " + tocVersion.getPrettyString();
         return str;
     }
 
-    private String getWholeTitleForOnly1Node(Util.Lang lang, boolean doSectionName){
+    private String getWholeTitleForOnly1Node(Util.Lang lang, boolean doSectionName) {
         String str = "";
-        if(isGridItem || nid == NID_CHAP_NO_NID) {
-            if(doSectionName) {
+        if (isGridItem || nid == NID_CHAP_NO_NID) {
+            if (doSectionName) {
                 String sectionName = getSectionName(lang);
-                if(sectionName.length()>0)
+                if (sectionName.length() > 0)
                     str = sectionName + " ";
             }
             str += getNiceGridNum(lang);
-        }
-        else
+        } else
             str = getTitle(lang);
         return str;
     }
 
-    private String getSectionName(Util.Lang lang){
+    private String getSectionName(Util.Lang lang) {
         String name = "";
-        if(lang == Util.Lang.BI)
+        if (lang == Util.Lang.BI)
             lang = Settings.getMenuLang();
 
-        String [] names;
-        if(lang == Util.Lang.EN){
+        String[] names;
+        if (lang == Util.Lang.EN) {
             names = sectionNames;
-        }else{// if(lang == Util.Lang.HE){
+        } else {// if(lang == Util.Lang.HE){
             names = heSectionNames;
         }
-        if(names.length > 0)
-            name = names[names.length-1];
-        if(name == null)
+        if (names.length > 0)
+            name = names[names.length - 1];
+        if (name == null)
             name = "";
         return name;
     }
@@ -203,43 +212,44 @@ public class Node{// implements  Parcelable{
 
     /**
      * will get the grid number in the right language and all converted if it's a daf
+     *
      * @param lang
      * @return
      */
-    public String getNiceGridNum(Util.Lang lang){
-        if(gridNum == 0)
+    public String getNiceGridNum(Util.Lang lang) {
+        if (gridNum == 0)
             return "";
-        return Header.getNiceGridNum(lang,gridNum,isDaf());
+        return Header.getNiceGridNum(lang, gridNum, isDaf());
     }
 
 
     /**
      * use lang from Util.HE or EN (maybe or BI)
+     *
      * @param lang
      */
-    public String getTitle(Util.Lang lang){
-        if(Util.Lang.EN == lang)
+    public String getTitle(Util.Lang lang) {
+        if (Util.Lang.EN == lang)
             return enTitle;
-        else if(Util.Lang.HE == lang)
+        else if (Util.Lang.HE == lang)
             return heTitle;
-        else if(Util.Lang.BI == lang) {
+        else if (Util.Lang.BI == lang) {
             return enTitle + " - " + heTitle;
-        }
-        else{
+        } else {
             Log.e("Node", "wrong lang num");
             return "";
         }
     }
 
-    public int getTocRootNum(){
+    public int getTocRootNum() {
         Node root = getAncestorRoot();
         return root.tocRootsNum;
     }
 
-    public int getDepth(){
+    public int getDepth() {
         int depth = 0;
         Node parent = this.parent;
-        while(parent != null){
+        while (parent != null) {
             depth++;
             parent = parent.parent;
         }
@@ -253,16 +263,16 @@ public class Node{// implements  Parcelable{
         final int MAX_TEXTS = 5;
         Node node = getFirstDescendant();
         int failedTexts = 0;
-        if(checkForTexts){
-            while(node.getTexts().size() <1) {
-                if(failedTexts++ > MAX_TEXTS){
-                    Log.e("Node","getFirstDescendant: Couldn't find texts after looking at " + MAX_TEXTS);
+        if (checkForTexts) {
+            while (node.getTexts().size() < 1) {
+                if (failedTexts++ > MAX_TEXTS) {
+                    Log.e("Node", "getFirstDescendant: Couldn't find texts after looking at " + MAX_TEXTS);
                     break;
                 }
 
                 try {
                     node = node.getNextTextNode();
-                }catch (Node.LastNodeException e){
+                } catch (Node.LastNodeException e) {
                     break;
                 }
             }
@@ -270,18 +280,18 @@ public class Node{// implements  Parcelable{
         return node;
     }
 
-    public Node getFirstDescendant(){
+    public Node getFirstDescendant() {
         Node node = this;
-        while(node.getChildren().size() > 0){
+        while (node.getChildren().size() > 0) {
             node = node.getChildren().get(0);
         }
         return node;
     }
 
-    public Node getLastDescendant(){
+    public Node getLastDescendant() {
         Node node = this;
-        while(node.getChildren().size() > 0){
-            node = node.getChildren().get(node.getChildren().size()-1);
+        while (node.getChildren().size() > 0) {
+            node = node.getChildren().get(node.getChildren().size() - 1);
         }
         return node;
     }
@@ -289,22 +299,24 @@ public class Node{// implements  Parcelable{
     /**
      * Return the List<Node> of all the children (in order) of this node.
      * If this node is a leaf, it will return a list of 0 elements.
+     *
      * @return children
      */
-    public List<Node> getChildren(){
-        if(children == null)
+    public List<Node> getChildren() {
+        if (children == null)
             children = new ArrayList<>();
         return children;
     }
 
     /**
-     *
      * @return bid
      */
-    public int getBid(){ return bid; }
+    public int getBid() {
+        return bid;
+    }
 
     public Book getBook() throws Book.BookNotFoundException {
-        if(book != null)
+        if (book != null)
             return book;
         book = Book.getByBid(bid);
         return book;
@@ -328,32 +340,42 @@ public class Node{// implements  Parcelable{
     }
     */
 
-    private void setFlagsFromNodeType(int nodeType, int siblingNum){
+    private void setFlagsFromNodeType(int nodeType, int siblingNum) {
         final int IS_COMPLEX = 2;
         final int IS_TEXT_SECTION = 4;
         final int IS_GRID_ITEM = 8;
         final int IS_REF = 16;
-        if(nodeType == 0)
+        if (nodeType == 0)
             Log.e("Node", "Node.setFlagsFromNodeType: nodeType == 0. I don't know anything");
         isComplex = (nodeType & IS_COMPLEX) != 0;
         isTextSection = (nodeType & IS_TEXT_SECTION) != 0;
         isGridItem = (nodeType & IS_GRID_ITEM) != 0;
         isRef = (nodeType & IS_REF) != 0;
-        if(isComplex){
+        if (isComplex) {
             gridNum = siblingNum + 1;
             //TODO this needs to be more complex for when there's: Intro,1,2,3,conclusion
         }
     }
 
-    public boolean isComplex(){ return isComplex;}
-    public boolean isTextSection(){ return isTextSection; }
-    public boolean isGridItem() { return isGridItem; }
-    public boolean isRef(){ return isRef;}
+    public boolean isComplex() {
+        return isComplex;
+    }
+
+    public boolean isTextSection() {
+        return isTextSection;
+    }
+
+    public boolean isGridItem() {
+        return isGridItem;
+    }
+
+    public boolean isRef() {
+        return isRef;
+    }
 
 
-
-    private void getFromCursor(Cursor cursor){
-        try{
+    private void getFromCursor(Cursor cursor) {
+        try {
             nid = cursor.getInt(0);
             bid = cursor.getInt(1);
             parentNodeID = cursor.getInt(2);
@@ -368,26 +390,26 @@ public class Node{// implements  Parcelable{
             startTid = cursor.getInt(11);
             endTid = cursor.getInt(12);
             extraTidsRef = cursor.getString(13);
-            try{ //this is to make it work with databases older than version 150
+            try { //this is to make it work with databases older than version 150
                 startLevels = cursor.getString(14);//This might crash on old DBs
                 titleKey = cursor.getString(15); // This will only work on DBs newer than 223
-            }catch (Exception e2){}
-            if(titleKey == null || titleKey.length() == 0){
+            } catch (Exception e2) {
+            }
+            if (titleKey == null || titleKey.length() == 0) {
                 titleKey = enTitle;
             }
 
             setFlagsFromNodeType(nodeType, siblingNum);
 
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             GoogleTracker.sendException(e);
-            Log.e("Node", "failure to pull from DB" +  e.toString());
+            Log.e("Node", "failure to pull from DB" + e.toString());
             nid = 0;
             return;
         }
     }
 
-    private void addChapChild(int chapNum){
+    private void addChapChild(int chapNum) {
         Node node = new Node();
         node.bid = bid;
         node.isGridItem = true;
@@ -396,10 +418,10 @@ public class Node{// implements  Parcelable{
         node.isComplex = isComplex;
         node.gridNum = chapNum;
         //node.siblingNum = -1;
-        node.enTitle = node.heTitle =  "";
+        node.enTitle = node.heTitle = "";
         node.textDepth = 2;
-        node.sectionNames = Arrays.copyOfRange(this.sectionNames,0,node.textDepth);
-        node.heSectionNames = Arrays.copyOfRange(this.heSectionNames,0,node.textDepth);
+        node.sectionNames = Arrays.copyOfRange(this.sectionNames, 0, node.textDepth);
+        node.heSectionNames = Arrays.copyOfRange(this.heSectionNames, 0, node.textDepth);
         node.parentNodeID = nid;
 
         node.structNum = structNum;
@@ -408,10 +430,10 @@ public class Node{// implements  Parcelable{
         addChild(node);
     }
 
-    private void addChild(Node node){
+    private void addChild(Node node) {
         this.children.add(node);
         node.parent = this;
-        if(node.parentNodeID == NID_NO_INFO)
+        if (node.parentNodeID == NID_NO_INFO)
             node.parentNodeID = this.nid;
         /*
         if(node.siblingNum == -1){
@@ -425,55 +447,58 @@ public class Node{// implements  Parcelable{
 
     /**
      * this is only meant to be called on a node that node.isTextSection()
+     *
      * @return the next node in the tree that contains segment
      */
     public Node getNextTextNode() throws LastNodeException {
-        Log.d("Node","getNextTextNode started: " + this);
-        if(parent == null){
+        Log.d("Node", "getNextTextNode started: " + this);
+        if (parent == null) {
             throw new LastNodeException();
         }
         int index = parent.getChildren().indexOf(this);
         Node nextNode;
-        if(index == -1){
-            Log.e("Node.getNextTextNode","Couldn't find index in parent's children: " + this);
+        if (index == -1) {
+            Log.e("Node.getNextTextNode", "Couldn't find index in parent's children: " + this);
             //Log.d("Node", "getNextTextNode returning: " + getFirstDescendant());
             nextNode = getFirstDescendant();
-        } else if(index < parent.getChildren().size()-1){
-            Node node = parent.getChildren().get(index +1);
-            if(node.isTextSection){
+        } else if (index < parent.getChildren().size() - 1) {
+            Node node = parent.getChildren().get(index + 1);
+            if (node.isTextSection) {
                 //Log.d("Node", "getNextTextNode returning: " + node);
                 nextNode = node;
-            }else {
+            } else {
                 //Log.d("Node", "getNextTextNode returning: " + node.getFirstDescendant());
                 nextNode = node.getFirstDescendant();
             }
-        }else {// if(index >=parent.getChildren().size()){
+        } else {// if(index >=parent.getChildren().size()){
             nextNode = parent.getNextTextNode();
         }
         nextNode.setTextVersion(this.getTextVersion());
         return nextNode;
     }
+
     /**
      * this is only meant to be called on a node that node.isTextSection()
+     *
      * @return the prev node in the tree that contains segment
      */
     public Node getPrevTextNode() throws LastNodeException {
-        if(parent == null){
+        if (parent == null) {
             throw new LastNodeException();
         }
         int index = parent.getChildren().indexOf(this);
         Node prevNode;
-        if(index == -1){
+        if (index == -1) {
             Log.e("Node.getNextTextNode", "Couldn't find index in parent's children: " + this);
             prevNode = getLastDescendant();
-        }else if(index > 0){
+        } else if (index > 0) {
             Node node = parent.getChildren().get(index - 1);
-            if(node.isTextSection){
+            if (node.isTextSection) {
                 prevNode = node;
-            }else {
+            } else {
                 prevNode = node.getLastDescendant();
             }
-        }else {// if(index == 0){
+        } else {// if(index == 0){
             prevNode = parent.getPrevTextNode();
         }
         prevNode.setTextVersion(this.getTextVersion());
@@ -482,11 +507,12 @@ public class Node{// implements  Parcelable{
 
     /**
      * //TODO work for complex segment
+     *
      * @param spot is a number as the level number or the title of the Complex segment node
      * @return correct child for spot name (or null if can't find it)
      */
     public Node getChild(String spot) {
-        Log.d("Node","spot:" + spot);
+        Log.d("Node", "spot:" + spot);
         try {
             if (spot.matches("[0-9]+[ab]?")) {
                 int num = Util.convertDafOrIntegerToNum(spot);
@@ -508,16 +534,16 @@ public class Node{// implements  Parcelable{
                     }
                 }
             }
-        }catch (Exception e){
-            Log.d("Node",e.getMessage() + "...Complex string spot:" + spot);
+        } catch (Exception e) {
+            Log.d("Node", e.getMessage() + "...Complex string spot:" + spot);
 
         }
 
         return null;
     }
 
-    public class LastNodeException extends Exception{
-        public LastNodeException(){
+    public class LastNodeException extends Exception {
+        public LastNodeException() {
             super();
         }
 
@@ -526,28 +552,27 @@ public class Node{// implements  Parcelable{
     }
 
 
-
     public List<Segment> findWords(String searchingTerm) throws API.APIException {
-        Log.d("Node","findwords1:" + searchingTerm + " lastWord:" + lastSearchedTerm + "  ---" + this);
-        if(lastSearchedTerm != null && !lastSearchedTerm.equals(searchingTerm)){
+        Log.d("Node", "findwords1:" + searchingTerm + " lastWord:" + lastSearchedTerm + "  ---" + this);
+        if (lastSearchedTerm != null && !lastSearchedTerm.equals(searchingTerm)) {
             SearchingDB.removeRed(segmentList);
         }
 
-        if(searchingTerm == null)
+        if (searchingTerm == null)
             return null;
-        if(searchingTerm.equals(lastSearchedTerm)){
+        if (searchingTerm.equals(lastSearchedTerm)) {
             return foundFindOnPageList;
         }
         lastSearchedTerm = searchingTerm;
 
-        Log.d("Node","Findwords:" + searchingTerm + "... " + getTexts().size());
-        foundFindOnPageList = SearchingDB.findWordsInList(getTexts(),searchingTerm,false,false);
+        Log.d("Node", "Findwords:" + searchingTerm + "... " + getTexts().size());
+        foundFindOnPageList = SearchingDB.findWordsInList(getTexts(), searchingTerm, false, false);
         return foundFindOnPageList;
     }
 
-    public String getPath(Util.Lang lang, boolean forURL, boolean includeBook, boolean replaceSpaces){
+    public String getPath(Util.Lang lang, boolean forURL, boolean includeBook, boolean replaceSpaces) {
         String path = "";
-        Log.d("Node","getPath"+ this);
+        Log.d("Node", "getPath" + this);
 
         Node node = this;
         String separator;
@@ -558,8 +583,8 @@ public class Node{// implements  Parcelable{
             return
         }
         */
-        if(node.isRef()&& forURL){
-            return  node.getExtraTidsRef() + path;
+        if (node.isRef() && forURL) {
+            return node.getExtraTidsRef() + path;
         }
 
         while (node.getParent() != null) {//checking parent node so that don't get root (or book name) in there
@@ -585,21 +610,21 @@ public class Node{// implements  Parcelable{
             node = node.getParent();
         }
 
-        if(includeBook) {
+        if (includeBook) {
             try {
                 path = (Book.getByBid(this.bid)).getTitle(lang) + path;
             } catch (Book.BookNotFoundException e) {
                 e.printStackTrace();
             }
         }
-        if(replaceSpaces)
+        if (replaceSpaces)
             path = path.replace(" ", "_");
         return path;
     }
 
-    public Node getAncestorRoot(){
+    public Node getAncestorRoot() {
         Node node = this;
-        while(node.parent != null){
+        while (node.parent != null) {
             node = node.parent;
         }
         //Log.d("Node.getAncestorRoot", "root:" + node);
@@ -608,23 +633,24 @@ public class Node{// implements  Parcelable{
 
     /**
      * Shows the TOC Node tree. This is only used for debugging.
+     *
      * @param node
      */
-    private static void showTree(Node node){
+    private static void showTree(Node node) {
         showTree(node, "");
     }
 
     /**
      * Shows the TOC Node tree. This is only used for debugging.
+     *
      * @param node
      */
-    private static void showTree(Node node, String tabs){
+    private static void showTree(Node node, String tabs) {
         Log.d("Node", tabs + node);
-        if(node.getChildren().size() == 0) {
+        if (node.getChildren().size() == 0) {
             return;
-        }
-        else{
-            for(int i=0;i<node.getChildren().size();i++){
+        } else {
+            for (int i = 0; i < node.getChildren().size(); i++) {
                 showTree(node.getChildren().get(i), tabs + "\t");
             }
         }
@@ -632,34 +658,35 @@ public class Node{// implements  Parcelable{
 
     /**
      * converts complex nodes list into a complete tree
+     *
      * @param nodes
      * @return root
      * @throws API.APIException
      */
-    private static Node convertToTree(List<Node> nodes) throws API.APIException{
+    private static Node convertToTree(List<Node> nodes) throws API.APIException {
         Node root = null;
         //TODO for each struct
         int startID = -1;
-        for(int i =0;i<nodes.size();i++){
+        for (int i = 0; i < nodes.size(); i++) {
             Node node = nodes.get(i);
 
-            if(startID < 0)
+            if (startID < 0)
                 startID = node.nid;
 
-            if(node.parentNodeID == 0){
-                if(root == null)
+            if (node.parentNodeID == 0) {
+                if (root == null)
                     root = node;
                 else
                     Log.e("Node", "Root already taken!!");
-            }else{
+            } else {
                 Node node2 = nodes.get(node.parentNodeID - startID);
-                if(node2.nid == node.parentNodeID)
+                if (node2.nid == node.parentNodeID)
                     node2.addChild(node);
-                else{
-                    Log.e("Node","Parent in wrong spot");
-                    for(int j=0;j<nodes.size();j++){
+                else {
+                    Log.e("Node", "Parent in wrong spot");
+                    for (int j = 0; j < nodes.size(); j++) {
                         node2 = nodes.get(j);
-                        if(node2.nid == node.parentNodeID) {
+                        if (node2.nid == node.parentNodeID) {
                             node2.addChild(node);
                             break;
                         }
@@ -667,7 +694,7 @@ public class Node{// implements  Parcelable{
                 }
 
                 // add chap count (if it's a leaf with 2 or more levels):
-                if(node.textDepth >= 2 && !node.isTextSection) {
+                if (node.textDepth >= 2 && !node.isTextSection) {
                     node.setAllChapsDB(true);
                 }
             }
@@ -679,24 +706,23 @@ public class Node{// implements  Parcelable{
     }
 
 
-
-    private Node createTempNode(int sectionNum){
+    private Node createTempNode(int sectionNum) {
         this.isTextSection = false;
         this.isGridItem = false;
         this.isRef = false;
         Node tempNode = new Node();
-        try{
-            tempNode.enTitle = this.sectionNames[textDepth -1] + " " + sectionNum; //using textDepth value to get the last section name (3-1 = 2)
-            tempNode.heTitle = this.heSectionNames[textDepth -1] + " " + Util.int2heb(sectionNum);
+        try {
+            tempNode.enTitle = this.sectionNames[textDepth - 1] + " " + sectionNum; //using textDepth value to get the last section name (3-1 = 2)
+            tempNode.heTitle = this.heSectionNames[textDepth - 1] + " " + Util.int2heb(sectionNum);
             tempNode.sectionNames = Arrays.copyOfRange(this.sectionNames, 0, textDepth);//using textDepth value to get the last 2 section names (3-2=1,3)
             tempNode.heSectionNames = Arrays.copyOfRange(this.heSectionNames, 0, textDepth);
-        }catch (Exception e){//This seems to happen with Complex texts with 3 levels (see Footnotes on Orot)
+        } catch (Exception e) {//This seems to happen with Complex texts with 3 levels (see Footnotes on Orot)
             e.printStackTrace();
-            tempNode.sectionNames = tempNode.heSectionNames = new String []{"",""};//{"Section","Segment"};
+            tempNode.sectionNames = tempNode.heSectionNames = new String[]{"", ""};//{"Section","Segment"};
             tempNode.enTitle = "" + sectionNum;
             tempNode.heTitle = Util.int2heb(sectionNum);
         }
-        tempNode.textDepth = this.textDepth -1;
+        tempNode.textDepth = this.textDepth - 1;
         tempNode.isComplex = isComplex;
         tempNode.isRef = false;
         tempNode.isGridItem = false;
@@ -718,7 +744,7 @@ public class Node{// implements  Parcelable{
             JSONObject all;
             try {
                 all = jsonObject.getJSONObject("_all");
-            }catch (JSONException e1){
+            } catch (JSONException e1) {
                 all = jsonObject.getJSONObject("default").getJSONObject("_all");//TODO this doesn't actually fix anything
                 // https://trello.com/c/1trTrZ1S/108-zohar-text-toc-in-parasha-view-doesn-t-show-dappim
                 // Sefer HaChinkh bug
@@ -727,18 +753,18 @@ public class Node{// implements  Parcelable{
         } catch (JSONException e) {
             counts = null;
         }
-        if(counts != null)
+        if (counts != null)
             addSubChaps(upperNode, currDepth, counts);
     }
 
-    private static int getDepth(JSONArray jsonArray, int depth){
-        if(jsonArray.length() == 0)
+    private static int getDepth(JSONArray jsonArray, int depth) {
+        if (jsonArray.length() == 0)
             return depth;
-        try{
+        try {
             JSONArray newJsonArray = jsonArray.getJSONArray(0);
             return getDepth(newJsonArray, depth + 1);
-        }catch (JSONException e){
-            return depth +1;
+        } catch (JSONException e) {
+            return depth + 1;
         }
     }
 
@@ -746,8 +772,8 @@ public class Node{// implements  Parcelable{
         //currDepth = getDepth(counts,0);
 
 
-        if(currDepth <= 1) {
-            if(!upperNode.isComplex)
+        if (currDepth <= 1) {
+            if (!upperNode.isComplex)
                 upperNode.addChapChild(0);
 
             //else upperNode.isTextSection = true;
@@ -756,35 +782,35 @@ public class Node{// implements  Parcelable{
         for (int i = 0; i < counts.length(); i++) {
             JSONArray subCounts = counts.getJSONArray(i);
             if (subCounts.length() > 0) {
-                if(currDepth == 2)
+                if (currDepth == 2)
                     upperNode.addChapChild(i + 1);
-                else{
+                else {
                     Node tempNode = upperNode.createTempNode(i + 1);
-                    addSubChaps(tempNode,currDepth-1,subCounts);
+                    addSubChaps(tempNode, currDepth - 1, subCounts);
                 }
             }
         }
     }
 
 
-
     private TOCVersion textVersion;
-    public void setTextVersion(TOCVersion textVersion){
-        if(textVersion != null && textVersion.isDefaultVersion()) //default version
+
+    public void setTextVersion(TOCVersion textVersion) {
+        if (textVersion != null && textVersion.isDefaultVersion()) //default version
             textVersion = null;
 
-        if((textVersion != null && !textVersion.equals(this.textVersion)) || (textVersion == null && this.textVersion != null))  //it's changed in some way
+        if ((textVersion != null && !textVersion.equals(this.textVersion)) || (textVersion == null && this.textVersion != null))  //it's changed in some way
             segmentList = null; //so that it will get this specific version next time
 
         this.textVersion = textVersion;
         try {
-            Settings.BookSettings.setTextVersion(getBook(),textVersion);
+            Settings.BookSettings.setTextVersion(getBook(), textVersion);
         } catch (Book.BookNotFoundException e) {
             //e.printStackTrace();
         }
     }
 
-    public TOCVersion getTextVersion(){
+    public TOCVersion getTextVersion() {
         /*
         // not using this way, b/c then as you scroll and it changes (if you lose wifi for ex.),
         // it will change the name but for whatever reason the content is still old version (which is even more confusing).
@@ -799,11 +825,11 @@ public class Node{// implements  Parcelable{
 
     private static void setChaps_API(Node node, JSONObject jsonData) {
         //Log.d("Node", "setChaps_API" + node);
-        for(Node child:node.getChildren()){
-            try{
+        for (Node child : node.getChildren()) {
+            try {
                 JSONObject subObject = jsonData.getJSONObject(child.titleKey);
-                setChaps_API(child,subObject);
-            }catch (JSONException e){
+                setChaps_API(child, subObject);
+            } catch (JSONException e) {
                 Log.e("Node", child.titleKey + " __didn't get subJSON_" + child);
             }
         }
@@ -815,11 +841,10 @@ public class Node{// implements  Parcelable{
     }
 
     /**
-     *
      * @throws API.APIException
      */
     private void setAllChaps_API() throws API.APIException {
-        if(!Settings.getUseAPI())
+        if (!Settings.getUseAPI())
             return;
 
         //Log.i("Node", "settAllChaps_API: " + this);
@@ -830,8 +855,8 @@ public class Node{// implements  Parcelable{
         String data = API.getDataFromURL(url);
         try {
             JSONObject jsonData = new JSONObject(data);
-            if(jsonData.has("error")){
-                Log.e("API","Book doesn't exist in Sefaria");
+            if (jsonData.has("error")) {
+                Log.e("API", "Book doesn't exist in Sefaria");
                 API api = new API();
                 //throw api.new APIException();
                 //addChapChild(-1);
@@ -839,7 +864,7 @@ public class Node{// implements  Parcelable{
             }
             setChaps_API(this, jsonData);
             //addSubChaps(this, textDepth, jsonData);
-        } catch(Exception e){
+        } catch (Exception e) {
             Log.e("api", "Error: " + e.toString());
         }
         return;
@@ -848,13 +873,13 @@ public class Node{// implements  Parcelable{
 
 
     private void setAllChapsDB(boolean useNID) throws API.APIException {
-        if(Settings.getUseAPI())
+        if (Settings.getUseAPI())
             return;
 
-        if(textDepth == 1){
+        if (textDepth == 1) {
             addChapChild(0);
             return;
-        }else if(textDepth < 2){
+        } else if (textDepth < 2) {
             Log.e("Node", "called setAllChaps with too low texdepth" + this.toString());
             return;
         }
@@ -862,17 +887,17 @@ public class Node{// implements  Parcelable{
         SQLiteDatabase db = Database.getDB();
 
         String levels = "";
-        for(int i=textDepth;i>1;i--){
+        for (int i = textDepth; i > 1; i--) {
             levels += "level" + i;
-            if(i > 2)
+            if (i > 2)
                 levels += ",";
         }
         //Log.d("Node", "node:" + this.toString());
 
-        String sql = "SELECT DISTINCT " + levels + " FROM "+ Segment.TABLE_TEXTS;
+        String sql = "SELECT DISTINCT " + levels + " FROM " + Segment.TABLE_TEXTS;
 
-        if(useNID)  sql += " WHERE bid = " + this.bid + " AND  parentNode = " + this.nid;
-        else        sql += " WHERE bid = " + this.bid;
+        if (useNID) sql += " WHERE bid = " + this.bid + " AND  parentNode = " + this.nid;
+        else sql += " WHERE bid = " + this.bid;
 
         sql += " ORDER BY  " + levels;
 
@@ -882,33 +907,32 @@ public class Node{// implements  Parcelable{
         int lastLevel3 = 0, lastLevel4 = 0;
 
 
-
-        try{
+        try {
             Cursor cursor = db.rawQuery(sql, null);
             if (cursor.moveToFirst()) {
                 do {
-                    if(textDepth == 2) {
+                    if (textDepth == 2) {
                         addChapChild(cursor.getInt(0));
-                    }else if(textDepth >=3){//textDepth == 3 || textDepth == 4
+                    } else if (textDepth >= 3) {//textDepth == 3 || textDepth == 4
                         int level3 = cursor.getInt(textDepth - 3);
-                        if(textDepth == 4){
+                        if (textDepth == 4) {
                             int level4 = cursor.getInt(0);
-                            if(level4 != lastLevel4 || tempNodeLevel4 == this){
+                            if (level4 != lastLevel4 || tempNodeLevel4 == this) {
                                 lastLevel4 = level4;
                                 lastLevel3 = 0;
                                 tempNodeLevel4 = this.createTempNode(level4);
                             }
                         }
-                        if(level3 != lastLevel3 || tempNode == null){
+                        if (level3 != lastLevel3 || tempNode == null) {
                             lastLevel3 = level3;
                             tempNode = tempNodeLevel4.createTempNode(level3);
                         }
-                        tempNode.addChapChild(cursor.getInt(textDepth-2));
+                        tempNode.addChapChild(cursor.getInt(textDepth - 2));
                     }
                 } while (cursor.moveToNext());
             }
             cursor.close();
-        }catch(Exception e){
+        } catch (Exception e) {
             Log.e("Node", e.toString());
             e.printStackTrace();
         }
@@ -916,24 +940,24 @@ public class Node{// implements  Parcelable{
         return;
     }
 
-    public String getTextFromAPIData() throws API.APIException{
+    public String getTextFromAPIData() throws API.APIException {
         return getTextFromAPIData(API.TimeoutType.REG);
     }
 
-    public String getTextFromAPIData(API.TimeoutType timeoutType) throws API.APIException{
+    public String getTextFromAPIData(API.TimeoutType timeoutType) throws API.APIException {
         String completeUrl = API.TEXT_URL + getPath(Util.Lang.EN, true, true, true);
 
         TOCVersion tocVersion = getTextVersion();
-        if(tocVersion != null) {
+        if (tocVersion != null) {
             String textVersion = tocVersion.getAPIString();
             completeUrl += "/" + textVersion.replace(" ", "_");
         }
         completeUrl += "?" + API.ZERO_CONTEXT + API.ZERO_COMMENTARY;
-        Log.d("Node",completeUrl);
-        return API.getDataFromURL(completeUrl,timeoutType);
+        Log.d("Node", completeUrl);
+        return API.getDataFromURL(completeUrl, timeoutType);
     }
 
-    private static String replaceAllGroup(String input, Pattern p, String bfString, String afterString){
+    private static String replaceAllGroup(String input, Pattern p, String bfString, String afterString) {
         Matcher m = p.matcher(input);
         StringBuffer sb = new StringBuffer();
         while (m.find()) {
@@ -944,7 +968,7 @@ public class Node{// implements  Parcelable{
         return sb.toString();
     }
 
-    private static String talmudFormatConverter(String input){
+    private static String talmudFormatConverter(String input) {
         final Pattern gReg = Pattern.compile("<span\\s+class=\"gemarra-regular\">(.+?)</span>");
         input = replaceAllGroup(input, gReg, "<b>", "</b>");
         final Pattern gIt = Pattern.compile("<span\\s+class=\"gemarra-italic\">(.+?)</span>");
@@ -955,29 +979,29 @@ public class Node{// implements  Parcelable{
         return input;
     }
 
-    private List<Segment> getTextsFromAPI() throws API.APIException{ //(String booktitle, int []levels)
+    private List<Segment> getTextsFromAPI() throws API.APIException { //(String booktitle, int []levels)
         String data = getTextFromAPIData();
         boolean isTalmudBavli;
         try {
-             isTalmudBavli = this.getBook().isTalmudBavli();
+            isTalmudBavli = this.getBook().isTalmudBavli();
         } catch (Book.BookNotFoundException e) {
             isTalmudBavli = false;
             e.printStackTrace();
         }
         List<Segment> segmentList = new ArrayList<>();
-        if(data.length()==0)
+        if (data.length() == 0)
             return segmentList;
 
-        int [] levels = new int[0];
+        int[] levels = new int[0];
         try {
             levels = getLevels();
         } catch (LevelsException e) {
             e.printStackTrace();
             try {
-                GoogleTracker.sendException(e,"675:Node.getlevels" + getMenuBarTitle(getBook(), Util.Lang.EN));
+                GoogleTracker.sendException(e, "675:Node.getlevels" + getMenuBarTitle(getBook(), Util.Lang.EN));
             } catch (Book.BookNotFoundException e1) {
                 e1.printStackTrace();
-                GoogleTracker.sendException(e,"676:Node.getlevels" + "bid:" + bid);
+                GoogleTracker.sendException(e, "676:Node.getlevels" + "bid:" + bid);
             }
             return segmentList;
         }
@@ -992,7 +1016,7 @@ public class Node{// implements  Parcelable{
             int stop = Math.max(textArrayBig.length(), heArrayBig.length());
 
             int startLevel1 = levels[0];
-            if(startLevel1 == 0)
+            if (startLevel1 == 0)
                 startLevel1 = 1;
 
             for (int k = 0; k < stop; k++) {
@@ -1015,7 +1039,7 @@ public class Node{// implements  Parcelable{
                     String enText = "";
                     try {
                         enText = textArray.getString(i);
-                        if(isTalmudBavli){
+                        if (isTalmudBavli) {
                             enText = talmudFormatConverter(enText);
                         }
                     } catch (JSONException e) {
@@ -1028,7 +1052,7 @@ public class Node{// implements  Parcelable{
                     } catch (JSONException e) {
                         Log.d("api", e.toString());
                     }
-                    Segment segment = new Segment(enText,heText,bid,null);
+                    Segment segment = new Segment(enText, heText, bid, null);
                     segment.parentNode = this;
                     for (int j = 0; j < levels.length; j++) {
                         segment.levels[j] = levels[j]; //TODO get full level info in there
@@ -1041,7 +1065,7 @@ public class Node{// implements  Parcelable{
                 }
                 startLevel1 = 1;
             }
-        }catch(JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
             Log.e("api", "error processing json data");
             GoogleTracker.sendException(e, "getTextsFromAPI: proc data");
@@ -1053,18 +1077,19 @@ public class Node{// implements  Parcelable{
 
     /**
      * Get texts for all types of texts
+     *
      * @return segmentList
      * @throws API.APIException
      */
-    public List<Segment> getTexts() throws API.APIException{
+    public List<Segment> getTexts() throws API.APIException {
         return getTexts(false);
     }
 
 
-    private List<Segment> getTextsFromDB(int parentNID){
-        int [] levels;
+    private List<Segment> getTextsFromDB(int parentNID) {
+        int[] levels;
         try {
-             levels = getLevels();
+            levels = getLevels();
         } catch (LevelsException e) {
             e.printStackTrace();
             try {
@@ -1074,96 +1099,96 @@ public class Node{// implements  Parcelable{
                 levels = new int[2];
             }
         }
-        return Segment.getFromDB(bid,levels,parentNID);
+        return Segment.getFromDB(bid, levels, parentNID);
     }
+
     /**
-     *
      * @param ignoreUsingAPI used for example when getting list number but wants to force to not use API
      * @return
      * @throws API.APIException
      */
-    public List<Segment> getTexts(boolean ignoreUsingAPI) throws API.APIException{
+    public List<Segment> getTexts(boolean ignoreUsingAPI) throws API.APIException {
         //Log.d("Node","getTexts called");
-        if(segmentList != null && (nid == NID_DUMMY || gotTextListInAPI == Settings.getUseAPI()|| ignoreUsingAPI)){
-            Log.d("Node","segment list not null: " + ignoreUsingAPI + "...." + (nid == NID_DUMMY || gotTextListInAPI == Settings.getUseAPI()));
+        if (segmentList != null && (nid == NID_DUMMY || gotTextListInAPI == Settings.getUseAPI() || ignoreUsingAPI)) {
+            Log.d("Node", "segment list not null: " + ignoreUsingAPI + "...." + (nid == NID_DUMMY || gotTextListInAPI == Settings.getUseAPI()));
             return segmentList;
         }
-        Log.d("Node","found no segmentList");
-        if(Downloader.getNetworkStatus() == Downloader.ConnectionType.NONE){
+        Log.d("Node", "found no segmentList");
+        if (Downloader.getNetworkStatus() == Downloader.ConnectionType.NONE) {
             //if( getTextVersion() != null) Toast.makeText(context,"No internet. Using Default Segment Version",Toast.LENGTH_SHORT).show();
             setTextVersion(null); //don't use alt segment version if there's no internet
             //TODO set the SuperTextAct.lastLoadedNode = null if possible
         }
 
-        if(!isTextSection){
+        if (!isTextSection) {
             Log.e("Node", "getTexts() was called when it's not a textSection!" + this);
             segmentList = new ArrayList<>();
-        }else if(Settings.getUseAPI() || (getTextVersion() != null && !getTextVersion().isDefaultVersion())) {
+        } else if (Settings.getUseAPI() || (getTextVersion() != null && !getTextVersion().isDefaultVersion())) {
             segmentList = getTextsFromAPI();
-        }else if(!isComplex && !isGridItem){
+        } else if (!isComplex && !isGridItem) {
             Log.e("Node", "It thinks (!isComplex() && !isGridItem())... I don't know how.");
             segmentList = new ArrayList<>();
-        }else if(!isComplex && isGridItem && !isRef){
-            segmentList =  getTextsFromDB(0);
-        }else if(isRef()){
-            if(!isComplex){
+        } else if (!isComplex && isGridItem && !isRef) {
+            segmentList = getTextsFromDB(0);
+        } else if (isRef()) {
+            if (!isComplex) {
                 Log.e("Node", "It thinks (!isComplex && isRef)... I don't know how.");
                 segmentList = new ArrayList<>();
-            }
-            else if(startTid>0 && endTid >0) {
+            } else if (startTid > 0 && endTid > 0) {
                 segmentList = Segment.getWithTids(startTid, endTid);
-            }
-            else{
+            } else {
                 Log.e("Node.getTexts", "My start and end TIDs are no good for trying to get ref. TID:" + startTid + "-" + endTid + " ref:" + extraTidsRef);
                 segmentList = new ArrayList<>();
             }
-        }else if(isComplex){
+        } else if (isComplex) {
             //levels will be diff based on if it's a gridItem
-            if(isGridItem)
+            if (isGridItem)
                 segmentList = getTextsFromDB(getNodeInDBParentNID());
             else
                 segmentList = getTextsFromDB(nid);
-        }
-        else{
+        } else {
             segmentList = new ArrayList<>();
             Log.e("Node", "In Node.getText() and I'm confused. NodeTypeFlags: " + getNodeTypeFlagsStr());
         }
         //Log.d("Node", "finishing getTexts algo. segmentList.size():" + segmentList.size());
-        for(Segment segment : segmentList){
+        for (Segment segment : segmentList) {
             segment.parentNode = this;
         }
         gotTextListInAPI = Settings.getUseAPI();
         return segmentList;
     }
 
-    public boolean isDaf(){
+    public boolean isDaf() {
         try {
             return (sectionNames[sectionNames.length - 1].equals("Daf"));
-        }catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
     }
 
-     /**
+    /**
      * gets the NID of a parent that is actually in the database. So if it's 3 levels of segment, it will be using a real nid
+     *
      * @return ancestorNID
      */
-    private int getNodeInDBParentNID(){
+    private int getNodeInDBParentNID() {
         Node parent = this.parent;
-        while(parent.nid < 0) {
+        while (parent.nid < 0) {
             parent = parent.parent;
         }
         return parent.nid;
     }
 
 
-    public class LevelsException extends Exception{
+    public class LevelsException extends Exception {
         public LevelsException() {
             super("API exception");
         }
-        public LevelsException(String message){
+
+        public LevelsException(String message) {
             super(message);
         }
+
         private static final long serialVersionUID = 1L;
     }
 
@@ -1172,22 +1197,22 @@ public class Node{// implements  Parcelable{
      * ex. chap 4 and verse 7 would be {7,3}
      * return levels
      */
-    public int [] getLevels() throws LevelsException {
+    public int[] getLevels() throws LevelsException {
         //TODO make work for more than 2 levels
 
         List<Integer> levels = new ArrayList<>();
 
-        if(isRef){
-            String [] strArray = Util.str2strArray(startLevels.replace(" ",""));
-            for(String level: strArray){
+        if (isRef) {
+            String[] strArray = Util.str2strArray(startLevels.replace(" ", ""));
+            for (String level : strArray) {
                 try {
                     levels.add(Integer.valueOf(level));
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                     throw new LevelsException();
                 }
             }
-        }else {
+        } else {
             levels.add(0);
             if (isGridItem) {
                 levels.add(gridNum);
@@ -1198,8 +1223,8 @@ public class Node{// implements  Parcelable{
                 parent = parent.parent;
             }
         }
-        int [] levels2 = new int [levels.size()];
-        for(int i=0;i<levels.size();i++){
+        int[] levels2 = new int[levels.size()];
+        for (int i = 0; i < levels.size(); i++) {
             levels2[i] = levels.get(i);
         }
         return levels2;
@@ -1209,22 +1234,23 @@ public class Node{// implements  Parcelable{
      * This is the version number, so that we can change the schema, and it won't break the app, but it will just know it's a diff version.
      */
     final static private String PATH_DEFINING_NODE_VERSION = "a";
-    public String makePathDefiningNode(){
+
+    public String makePathDefiningNode() {
         String str = "";
-        if(nid == NID_DUMMY)
+        if (nid == NID_DUMMY)
             return str;
         Node node = this;
-        while(node.parent != null){
-            int index =  node.parent.getChildren().indexOf(node);
-            if(index < 0) {
+        while (node.parent != null) {
+            int index = node.parent.getChildren().indexOf(node);
+            if (index < 0) {
                 Log.e("Node", "makeStringDefiningTreeAndNode: index is -1. node:" + node);
                 return "";
             }
             str = index + "." + str;
             node = node.parent;
         }
-        int index =  node.tocRootsNum;
-        if(index < 0) {
+        int index = node.tocRootsNum;
+        if (index < 0) {
             Log.e("Node", "makeStringDefiningTreeAndNode: tocRootsNum is <0 node:" + node);
             return "";
         }
@@ -1235,52 +1261,51 @@ public class Node{// implements  Parcelable{
 
 
     /**
-     *
      * @param book
      * @param path
      * @return
      * @throws InvalidPathException
      */
     static public Node getNodeFromPathStr(Book book, String path) throws InvalidPathException, API.APIException {
-        return getNodeFromPathStr(getRoots(book),path);
+        return getNodeFromPathStr(getRoots(book), path);
     }
-
 
 
     static public Node getNodeFromPathStr(List<Node> tocRoots, String path) throws InvalidPathException {
         Node node;
         try {
-            if(path.length() == 0 || path.indexOf(PATH_DEFINING_NODE_VERSION) != 0){
+            if (path.length() == 0 || path.indexOf(PATH_DEFINING_NODE_VERSION) != 0) {
                 throw (new Node()).new InvalidPathException();
             }
-            path = path.replaceFirst(PATH_DEFINING_NODE_VERSION,"");
-            String [] nums = path.split("\\.");
-            if(nums.length == 0) {
+            path = path.replaceFirst(PATH_DEFINING_NODE_VERSION, "");
+            String[] nums = path.split("\\.");
+            if (nums.length == 0) {
                 throw (new Node()).new InvalidPathException();
             }
 
             node = tocRoots.get(Integer.valueOf(nums[0]));
-            for(int i=1;i<nums.length;i++) { //starts at 1 b/c it already used 0 for root
+            for (int i = 1; i < nums.length; i++) { //starts at 1 b/c it already used 0 for root
                 String num = nums[i];
-                if(num.length() > 0)
+                if (num.length() > 0)
                     node = node.getChildren().get(Integer.valueOf(num));
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             throw (new Node()).new InvalidPathException();
         }
         return node;
     }
 
-    public class InvalidPathException extends Exception{
-        public InvalidPathException(){
+    public class InvalidPathException extends Exception {
+        public InvalidPathException() {
             super();
         }
+
         private static final long serialVersionUID = 1L;
     }
 
     public static List<Node> getRoots(Book book) throws API.APIException {
         List<Node> allRoots = allSavedBookTOCroots.get(book.title);
-        if(allRoots != null){
+        if (allRoots != null) {
             return allRoots;
         }
 
@@ -1292,8 +1317,8 @@ public class Node{// implements  Parcelable{
 
         int lastStructNum = -1;
         List<List<Node>> allNodeStructs = new ArrayList<>();
-        if (cursor != null){
-            if(cursor.moveToFirst()) {
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
                 do {
                     Node node = new Node(cursor);
                     //node.log();
@@ -1315,16 +1340,16 @@ public class Node{// implements  Parcelable{
         root = new Node(book);
         root.nid = NID_NON_COMPLEX;
         root.setAllChapsDB(false);
-        if(!root.isComplex && Settings.getUseAPI())
+        if (!root.isComplex && Settings.getUseAPI())
             root.setAllChaps_API();
 
-        if(root.getChildren().size()>0) {
+        if (root.getChildren().size() > 0) {
             root.tocRootsNum = allRoots.size();
             allRoots.add(root);
             //showTree(root);
         }
 
-        for(int i=0;i<allNodeStructs.size();i++) {
+        for (int i = 0; i < allNodeStructs.size(); i++) {
             List<Node> nodes = allNodeStructs.get(i);
             if (nodes.size() > 0) {
                 //Complex segment combining nodes into root
@@ -1340,7 +1365,7 @@ public class Node{// implements  Parcelable{
         return allRoots;
     }
 
-    public String getTabName(Util.Lang lang){
+    public String getTabName(Util.Lang lang) {
         String name = "";
         Node root = getAncestorRoot();
         if (!isComplex || isRef) {
@@ -1350,7 +1375,7 @@ public class Node{// implements  Parcelable{
                 } else { //use EN for BI and EN
                     name = root.sectionNames[root.sectionNames.length - 1];
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -1358,24 +1383,23 @@ public class Node{// implements  Parcelable{
         else return getTitle(lang);
     }
 
-    private String getNodeTypeFlagsStr(){
+    private String getNodeTypeFlagsStr() {
         String str = "";
-        if(isComplex)
+        if (isComplex)
             str += " IS_COMPLX";
-        if(isGridItem)
+        if (isGridItem)
             str += " IS_GRID";
-        if(isTextSection)
+        if (isTextSection)
             str += " IS_TEXT";
-        if(isRef)
+        if (isRef)
             str += " IS_REF";
         return str;
     }
 
-    public boolean pseudoEquals(Node node){
-        if(nid > 0 || node.nid > 0){
+    public boolean pseudoEquals(Node node) {
+        if (nid > 0 || node.nid > 0) {
             return (node.nid == nid);
-        }
-        else{
+        } else {
             return equals(node);
         }
     }
@@ -1384,19 +1408,19 @@ public class Node{// implements  Parcelable{
     public String toString() {
         String str;
         try {
-            str = "{" + nid + ",bid:" + bid + ",titles:" + enTitle + " " + heTitle + ",sections:" + Util.array2str(sectionNames) + "," + Util.array2str(heSectionNames) + ",structN:" + structNum + ",textD:" + textDepth + ",tids:" + startTid + "-" + endTid + ",ref:" + extraTidsRef + ", titleKey:"  + titleKey;
+            str = "{" + nid + ",bid:" + bid + ",titles:" + enTitle + " " + heTitle + ",sections:" + Util.array2str(sectionNames) + "," + Util.array2str(heSectionNames) + ",structN:" + structNum + ",textD:" + textDepth + ",tids:" + startTid + "-" + endTid + ",ref:" + extraTidsRef + ", titleKey:" + titleKey;
             str += ", child.len:" + getChildren().size();
             str += ",gridN:" + getNiceGridNum(Util.Lang.EN);
             //str +=  ",siblingN:" + siblingNum;
             str += getNodeTypeFlagsStr();
             str += "}";
-        }catch (Exception e){
-            str = "{node (problem getting string): " + nid +  ",bid:" + bid + ",titles:" + enTitle + " " + heTitle  + "}";
+        } catch (Exception e) {
+            str = "{node (problem getting string): " + nid + ",bid:" + bid + ",titles:" + enTitle + " " + heTitle + "}";
         }
         return str;
     }
 
-    public void log(){
+    public void log() {
         Log.d("Node", this.toString());
     }
 

@@ -23,7 +23,7 @@ import java.util.Set;
 
 public class Settings {
 
-    static public SharedPreferences getGeneralSettings(){
+    static public SharedPreferences getGeneralSettings() {
         return MyApp.getContext().getSharedPreferences("org.sefaria.sefaria.general_settings", Context.MODE_PRIVATE);
     }
 
@@ -34,48 +34,48 @@ public class Settings {
     private static Util.Lang menuLang = null;
     private static Util.Lang defaultTextLang = null;
 
-    static public void setMenuLang(Util.Lang lang){
+    static public void setMenuLang(Util.Lang lang) {
         menuLang = lang;
         SharedPreferences generalSettings = getGeneralSettings();
         SharedPreferences.Editor editor = generalSettings.edit();
         String langStr = lang2Str(lang);
-        editor.putString("menuLang",langStr);
+        editor.putString("menuLang", langStr);
         editor.apply();
     }
 
 
-    static public Util.Lang getMenuLang(){
-        if(menuLang != null) return menuLang;
+    static public Util.Lang getMenuLang() {
+        if (menuLang != null) return menuLang;
         SharedPreferences generalSettings = getGeneralSettings();
         String langStr = generalSettings.getString("menuLang", "");
         menuLang = str2Lang(langStr);
         return menuLang;
     }
 
-    public static String lang2Str(Util.Lang lang){
-        if(lang == Util.Lang.HE)
+    public static String lang2Str(Util.Lang lang) {
+        if (lang == Util.Lang.HE)
             return "he";
-        else if(lang == Util.Lang.EN)
+        else if (lang == Util.Lang.EN)
             return "en";
         else //bi
-            return  "bi";
+            return "bi";
     }
 
-    public static int lang2Int(Util.Lang lang){
-        if(lang == Util.Lang.HE)
+    public static int lang2Int(Util.Lang lang) {
+        if (lang == Util.Lang.HE)
             return 1;
-        else if(lang == Util.Lang.EN)
+        else if (lang == Util.Lang.EN)
             return 2;
         else //bi
             return 3;
     }
 
-    private static Util.Lang str2Lang(String langStr){
-        if(langStr.equals("he"))
+    private static Util.Lang str2Lang(String langStr) {
+        if (langStr.equals("he"))
             return Util.Lang.HE;
-        else if(langStr.equals("en"))
+        else if (langStr.equals("en"))
             return Util.Lang.EN;
-        else if(langStr.equals("bi"))
+        else if (langStr.equals("bi"))
             return Util.Lang.BI;
         else //if(langStr.equals("") || anything else)
             return getSystemLang();
@@ -83,56 +83,56 @@ public class Settings {
 
     /**
      * change the menuLang from hebrew to english or visa versa
-     *  it returns the new menuLang;
+     * it returns the new menuLang;
      */
-    public static Util.Lang switchMenuLang(){
-        if(menuLang == Util.Lang.EN)
+    public static Util.Lang switchMenuLang() {
+        if (menuLang == Util.Lang.EN)
             menuLang = Util.Lang.HE;
         else menuLang = Util.Lang.EN;
         Settings.setMenuLang(menuLang);
         return menuLang;
     }
 
-    public static Util.Lang getSystemLang(){
-        if(Util.isSystemLangHe())
+    public static Util.Lang getSystemLang() {
+        if (Util.isSystemLangHe())
             return Util.Lang.HE;
         else
             return Util.Lang.EN;
     }
 
-    public static Util.Lang getDefaultTextLang(){
-        if(defaultTextLang != null) return defaultTextLang;
+    public static Util.Lang getDefaultTextLang() {
+        if (defaultTextLang != null) return defaultTextLang;
         SharedPreferences generalSettings = getGeneralSettings();
         String langStr = generalSettings.getString("defaultTextLang", "bi");
         defaultTextLang = str2Lang(langStr);
         return defaultTextLang;
     }
 
-    static public void setDefaultTextLang(Util.Lang lang){
+    static public void setDefaultTextLang(Util.Lang lang) {
         defaultTextLang = lang;
         SharedPreferences generalSettings = getGeneralSettings();
         SharedPreferences.Editor editor = generalSettings.edit();
         String langStr = lang2Str(lang);
-        editor.putString("defaultTextLang",langStr);
+        editor.putString("defaultTextLang", langStr);
         editor.apply();
 
         BookSettings.setAllBookSettingsTextLang(lang);
     }
 
 
-    public static void addSearchTerm(String string){
+    public static void addSearchTerm(String string) {
         Set set = getSearchTerms();
-        if(!set.contains(string))
+        if (!set.contains(string))
             set.add(string);
         SharedPreferences.Editor editor = getGeneralSettings().edit();
         editor.putStringSet("searchTerms", set);
         editor.apply();
     }
 
-    public static Set<String> getSearchTerms(){
+    public static Set<String> getSearchTerms() {
         SharedPreferences generalSettings = getGeneralSettings();
         Set<String> set = generalSettings.getStringSet("searchTerms", null);
-        if(set == null)
+        if (set == null)
             set = new HashSet<>();
         return set;
     }
@@ -140,13 +140,13 @@ public class Settings {
 
     private static final boolean defaultSideBySide = MyApp.getScreenSize().x > 400;
 
-    public static boolean getIsSideBySide(){
+    public static boolean getIsSideBySide() {
         SharedPreferences generalSettings = getGeneralSettings();
-        boolean isSideBySide =  generalSettings.getBoolean("sideBySide", defaultSideBySide);
+        boolean isSideBySide = generalSettings.getBoolean("sideBySide", defaultSideBySide);
         return isSideBySide;
     }
 
-    public static void setIsSideBySide(boolean isSideBySide){
+    public static void setIsSideBySide(boolean isSideBySide) {
         SharedPreferences generalSettings = getGeneralSettings();
         SharedPreferences.Editor editor = generalSettings.edit();
         editor.putBoolean("sideBySide", isSideBySide);
@@ -159,6 +159,7 @@ public class Settings {
 
     /**
      * default value is dependent on whether or not the segment can be cts
+     *
      * @param book
      * @return
      */
@@ -175,12 +176,12 @@ public class Settings {
         editor.apply();
     }
 
-    public static boolean getIsFirstTimeOpened(){
+    public static boolean getIsFirstTimeOpened() {
         SharedPreferences generalSettings = getGeneralSettings();
         return generalSettings.getBoolean("isFirstTimeOpened", true);
     }
 
-    public static void setIsFirstTimeOpened(boolean isFirstTimeOpened){
+    public static void setIsFirstTimeOpened(boolean isFirstTimeOpened) {
         SharedPreferences generalSettings = getGeneralSettings();
         SharedPreferences.Editor editor = generalSettings.edit();
         editor.putBoolean("isFirstTimeOpened", isFirstTimeOpened);
@@ -188,12 +189,13 @@ public class Settings {
     }
 
     private static final int DEFAULT_THEME = R.style.SefariaTheme_White;
-    public static int getTheme(){
+
+    public static int getTheme() {
         SharedPreferences generalSettings = getGeneralSettings();
         return generalSettings.getInt("theme", DEFAULT_THEME);
     }
 
-    public static void setTheme(int theme){
+    public static void setTheme(int theme) {
         SharedPreferences generalSettings = getGeneralSettings();
         SharedPreferences.Editor editor = generalSettings.edit();
         editor.putInt("theme", theme);
@@ -206,14 +208,14 @@ public class Settings {
         public Util.Lang lang;
         public TOCVersion textVersion;
 
-        BookSettings(Node node, Util.Lang lang, int textNum, TOCVersion textVersion){
+        BookSettings(Node node, Util.Lang lang, int textNum, TOCVersion textVersion) {
             this.node = node;
             this.textNum = textNum;
             this.lang = lang;
             this.textVersion = textVersion;
 
 
-            if(lang == null)
+            if (lang == null)
                 this.lang = getDefaultTextLang();
         }
 
@@ -229,53 +231,53 @@ public class Settings {
             return MyApp.getContext().getSharedPreferences("org.sefaria.sefaria.book_save_text_version_settings", Context.MODE_PRIVATE);
         }
 
-        static public void setTextVersion(Book book, TOCVersion textVersion){
+        static public void setTextVersion(Book book, TOCVersion textVersion) {
             SharedPreferences.Editor editor = getBookSavedTextVersion().edit();
             String textVersionString = null;
-            if(textVersion != null){
+            if (textVersion != null) {
                 textVersionString = textVersion.getAPIString();
-                if(textVersionString.equals(""))
+                if (textVersionString.equals(""))
                     textVersionString = null;
             }
-            editor.putString(book.getTitle(Util.Lang.EN),textVersionString);
+            editor.putString(book.getTitle(Util.Lang.EN), textVersionString);
             editor.apply();
         }
 
-        static public TOCVersion getTextVersion(Book book){
+        static public TOCVersion getTextVersion(Book book) {
             SharedPreferences sharedPreferences = getBookSavedTextVersion();
-            String versionString = sharedPreferences.getString(book.getTitle(Util.Lang.EN),null);
-            if(versionString == null)
+            String versionString = sharedPreferences.getString(book.getTitle(Util.Lang.EN), null);
+            if (versionString == null)
                 return null;
-            else if(versionString.equals(TOCVersion.DEFAULT_TEXT_VERSION))
+            else if (versionString.equals(TOCVersion.DEFAULT_TEXT_VERSION))
                 return null;
             else
                 return new TOCVersion(versionString);
         }
 
-        static private void setAllBookSettingsTextLang(Util.Lang lang){
+        static private void setAllBookSettingsTextLang(Util.Lang lang) {
             String langStr = lang2Str(lang);
             SharedPreferences bookSettings = getBookSavedSettings();
             SharedPreferences.Editor editor = bookSettings.edit();
-            Map<String,?> map =  bookSettings.getAll();
+            Map<String, ?> map = bookSettings.getAll();
             for (String title : map.keySet()) {
                 String stringThatRepsSavedSettings = (String) map.get(title);
-                String[] settings = stringThatRepsSavedSettings.split(SETTINGS_SPLITTER,4);
+                String[] settings = stringThatRepsSavedSettings.split(SETTINGS_SPLITTER, 4);
                 String newSettings = "";
                 try {
                     newSettings = settings[0] + SETTINGS_SPLITTER + settings[1] + SETTINGS_SPLITTER + langStr + SETTINGS_SPLITTER + settings[3];
-                }catch (Exception e) {
+                } catch (Exception e) {
                     try {
                         newSettings = settings[0] + SETTINGS_SPLITTER + settings[1] + SETTINGS_SPLITTER + langStr;
                     } catch (Exception e1) {
                         e1.printStackTrace();
                     }
                 }
-                editor.putString(title,newSettings);
+                editor.putString(title, newSettings);
             }
             editor.apply();
         }
 
-        static public void clearAllBookSettings(){
+        static public void clearAllBookSettings() {
             SharedPreferences.Editor editor = getBookSavedSettings().edit();
             editor.clear();
             editor.apply();
@@ -285,7 +287,7 @@ public class Settings {
         }
 
 
-        static public BookSettings getSavedBook(Book book){
+        static public BookSettings getSavedBook(Book book) {
             SharedPreferences bookSavedSettings = getBookSavedSettings();
             String stringThatRepsSavedSettings = bookSavedSettings.getString(book.title, "");
             //Log.d("SuperTextAct", "bookSavedSettings:" + stringThatRepsSavedSettings);
@@ -297,7 +299,7 @@ public class Settings {
             try {
                 textNum = Integer.valueOf(settings[1]);
                 lang = str2Lang(settings[2]);
-            }catch (Exception e){
+            } catch (Exception e) {
             }
             TOCVersion textVersion = getTextVersion(book);
 
@@ -323,8 +325,8 @@ public class Settings {
             return textNum;
         }
 
-        static public boolean setSavedBook(Book book, Node node, Segment segment, Util.Lang lang){
-            if(book == null) return false;
+        static public boolean setSavedBook(Book book, Node node, Segment segment, Util.Lang lang) {
+            if (book == null) return false;
             SharedPreferences bookSavedSettings = getBookSavedSettings();
             SharedPreferences.Editor editor = bookSavedSettings.edit();
             //"<en|he|bi>.<cts|sep>.<white|grey|black>.10px:"+ <rootNum>.<Childnum>.<until>.<leaf>.<verseNum>"
@@ -332,7 +334,7 @@ public class Settings {
                 int textNum = getTextNum(node, segment);
                 String settingStr = node.makePathDefiningNode() + SETTINGS_SPLITTER + textNum + SETTINGS_SPLITTER + lang2Str(lang);
                 editor.putString(book.title, settingStr);
-            }catch (Exception e){
+            } catch (Exception e) {
                 editor.remove(book.title);
                 return false;
             }
@@ -346,10 +348,9 @@ public class Settings {
             editor.apply();
 
 
-            setTextVersion(book,node.getTextVersion());
+            setTextVersion(book, node.getTextVersion());
             return true;
         }
-
 
 
         final static private String EN_TITLE = "EN___";
@@ -358,8 +359,8 @@ public class Settings {
         static public Pair<String, String> getSavedBookTitle(String title) {
             SharedPreferences bookSavedTitleSettings = getBookSavedTitleSettings();
             Pair<String, String> pair = new Pair<>(
-                bookSavedTitleSettings.getString(EN_TITLE + title, ""),
-                bookSavedTitleSettings.getString(HE_TITLE + title, "")
+                    bookSavedTitleSettings.getString(EN_TITLE + title, ""),
+                    bookSavedTitleSettings.getString(HE_TITLE + title, "")
             );
             return pair;
         }
@@ -369,39 +370,40 @@ public class Settings {
     //on new apps it will always check for updates
     final private static String LAST_UPDATE_CHECK_VAR = "lastUpdateCheck" + MyApp.getVersionCode();
     final private static long TIME_TO_RECHECK = 604800000;//7*24*60*60*1000
-    public static boolean getIfShouldDoUpdateCheck(){
+
+    public static boolean getIfShouldDoUpdateCheck() {
         SharedPreferences settings = getGeneralSettings();
         long now = System.currentTimeMillis();
         return (now - settings.getLong(LAST_UPDATE_CHECK_VAR, 0) > TIME_TO_RECHECK);
     }
 
-    public static void setLastUpdateCheckToNow(){
+    public static void setLastUpdateCheckToNow() {
         SharedPreferences.Editor editor = getGeneralSettings().edit();
         long time = System.currentTimeMillis();
         editor.putLong(LAST_UPDATE_CHECK_VAR, time);
         editor.apply();
     }
 
-    public static boolean getIsDebug(){
+    public static boolean getIsDebug() {
         SharedPreferences settings = getGeneralSettings();
         return settings.getBoolean("isDebug", false);
     }
 
-    public static void setIsDebug(boolean isDebug){
+    public static void setIsDebug(boolean isDebug) {
         SharedPreferences.Editor editor = getGeneralSettings().edit();
         editor.putBoolean("isDebug", isDebug);
         editor.apply();
     }
 
-    public static float getDefaultFontSize(){
+    public static float getDefaultFontSize() {
         SharedPreferences settings = getGeneralSettings();
         return settings.getFloat("defaultFontSize", MyApp.getContext().getResources().getDimension(R.dimen.default_text_font_size));
     }
 
-    public static void setDefaultFontSize(float size){
-        if(size > MyApp.getContext().getResources().getDimension(R.dimen.max_text_font_size)){
+    public static void setDefaultFontSize(float size) {
+        if (size > MyApp.getContext().getResources().getDimension(R.dimen.max_text_font_size)) {
             size = MyApp.getContext().getResources().getDimension(R.dimen.max_text_font_size);
-        }else if(size < MyApp.getContext().getResources().getDimension(R.dimen.min_text_font_size)){
+        } else if (size < MyApp.getContext().getResources().getDimension(R.dimen.min_text_font_size)) {
             size = MyApp.getContext().getResources().getDimension(R.dimen.min_text_font_size);
         }
         SharedPreferences.Editor editor = getGeneralSettings().edit();
@@ -410,15 +412,15 @@ public class Settings {
     }
 
 
-    public static long getDownloadSuccess(boolean clearValue){
+    public static long getDownloadSuccess(boolean clearValue) {
         SharedPreferences settings = getGeneralSettings();
         long time = settings.getLong("DownloadSuccess", 0);
-        if(clearValue)
+        if (clearValue)
             setDownloadSuccess(0);
         return time;
     }
 
-    public static void setDownloadSuccess(long time){
+    public static void setDownloadSuccess(long time) {
         SharedPreferences.Editor editor = getGeneralSettings().edit();
         editor.putLong("DownloadSuccess", time);
         editor.apply();
@@ -426,28 +428,29 @@ public class Settings {
 
 
     private static Boolean useAPI = null;
-    public static boolean getUseAPI(){
-        if(useAPI != null)
+
+    public static boolean getUseAPI() {
+        if (useAPI != null)
             return useAPI;
         SharedPreferences settings = getGeneralSettings();
-        useAPI = settings.getBoolean("useAPI",false);
+        useAPI = settings.getBoolean("useAPI", false);
         return useAPI;
     }
 
-    public static void setUseAPI(boolean useAPI){
+    public static void setUseAPI(boolean useAPI) {
         SharedPreferences.Editor editor = getGeneralSettings().edit();
-        editor.putBoolean("useAPI",useAPI);
+        editor.putBoolean("useAPI", useAPI);
         editor.apply();
         Settings.useAPI = useAPI;
     }
 
-    public static void setLastBook(String title){
+    public static void setLastBook(String title) {
         SharedPreferences.Editor editor = getGeneralSettings().edit();
-        editor.putString("lastBook",title);
+        editor.putString("lastBook", title);
         editor.apply();
     }
 
-    public static String getLastBook(){
+    public static String getLastBook() {
         SharedPreferences settings = getGeneralSettings();
         return settings.getString("lastBook", "Genesis");
     }
@@ -457,38 +460,37 @@ public class Settings {
             return MyApp.getContext().getSharedPreferences("org.sefaria.sefaria.link_settings", Context.MODE_PRIVATE);
         }
 
-        public static void setLinks(String enBookTitle, List<LinkFilter> linkFilters){
+        public static void setLinks(String enBookTitle, List<LinkFilter> linkFilters) {
             Set<String> set = new HashSet<>();
-            for(LinkFilter linkFilter:linkFilters){
+            for (LinkFilter linkFilter : linkFilters) {
                 set.add(linkFilter.getRealTitle(Util.Lang.EN));
             }
             SharedPreferences.Editor editor = getLinkSettings().edit();
-            editor.putStringSet(enBookTitle,set);
+            editor.putStringSet(enBookTitle, set);
             editor.apply();
         }
 
 
-        private static void parseLinkFilterTree(LinkFilter linkFilter, LinkedList<LinkFilter> list, Set<String> set){
-            if(set.contains(linkFilter.getRealTitle(Util.Lang.EN))){
+        private static void parseLinkFilterTree(LinkFilter linkFilter, LinkedList<LinkFilter> list, Set<String> set) {
+            if (set.contains(linkFilter.getRealTitle(Util.Lang.EN))) {
                 list.add(linkFilter);
             }
-            for(LinkFilter child:linkFilter.getChildren()){
-                parseLinkFilterTree(child,list,set);
+            for (LinkFilter child : linkFilter.getChildren()) {
+                parseLinkFilterTree(child, list, set);
             }
         }
 
         /**
-         *
          * @param enBookTitle
          * @return Set of the strings that are the EN names for the linkFilters
          */
-        public static LinkedList<LinkFilter> getLinks(String enBookTitle, LinkFilter linkFilterAll){
+        public static LinkedList<LinkFilter> getLinks(String enBookTitle, LinkFilter linkFilterAll) {
             SharedPreferences settings = getLinkSettings();
             Set<String> set = settings.getStringSet(enBookTitle, null);
             LinkedList<LinkFilter> list = new LinkedList<>();
-            if(set == null)
+            if (set == null)
                 return list;
-            parseLinkFilterTree(linkFilterAll,list,set);
+            parseLinkFilterTree(linkFilterAll, list, set);
             return list;
         }
 
@@ -502,7 +504,6 @@ public class Settings {
         }
 
         /**
-         *
          * @param recentTextCount 0 means unlimited
          * @return
          */
@@ -510,23 +511,23 @@ public class Settings {
             List<String> books = new ArrayList<>();
             SharedPreferences recentSettings = getRecentSettings();
             Set<String> pinnedBooks = getPinnedBook();
-            for(String bookTitle: pinnedBooks){
+            for (String bookTitle : pinnedBooks) {
                 books.add(bookTitle);
             }
 
-            if(recentTextCount == 0) {//0 means unlimited
+            if (recentTextCount == 0) {//0 means unlimited
                 recentTextCount = MAX_RECENT_TEXTS;
             }
             while (pinnedBooks.size() / (recentTextCount * 1.0) > .6) {
                 recentTextCount += 1;
             }
-            for (int i = 0; i < recentTextCount - pinnedBooks.size() && i<MAX_RECENT_TEXTS; i++) {
+            for (int i = 0; i < recentTextCount - pinnedBooks.size() && i < MAX_RECENT_TEXTS; i++) {
                 String bookTitle = recentSettings.getString("" + i, "");
                 if (bookTitle.length() == 0)
                     return books;
-                if(pinnedBooks.contains(bookTitle)) {
+                if (pinnedBooks.contains(bookTitle)) {
                     recentTextCount++;
-                }else {
+                } else {
                     books.add(bookTitle);
                 }
             }
@@ -536,10 +537,10 @@ public class Settings {
         private final static int MAX_RECENT_TEXTS = 900;
 
         public static void addRecentText(String bookTitle) {
-            Log.d("Recents","starting addRecentText");
+            Log.d("Recents", "starting addRecentText");
             List<String> books = getRecentTexts(0);
-            for (int i = 0; i < books.size() && i < MAX_RECENT_TEXTS ; i++) {
-                if(books.get(i).equals(bookTitle))
+            for (int i = 0; i < books.size() && i < MAX_RECENT_TEXTS; i++) {
+                if (books.get(i).equals(bookTitle))
                     books.remove(i);
             }
             books.add(0, bookTitle);
@@ -548,13 +549,14 @@ public class Settings {
                 editor.putString("" + i, books.get(i));
             }
             editor.apply();
-            Log.d("Recents","finishing addRecentText");
+            Log.d("Recents", "finishing addRecentText");
         }
 
         private static String PINNED_RECENT_TEXTS = "pinned_recent_texts";
         private static String PINNED_RECENT_BOOKS = "pinned_recent_books";
         private static final String SPLITTER = "@@@";
-        public static boolean addBookmark(Segment segment){
+
+        public static boolean addBookmark(Segment segment) {
             Set<String> pinnedTextStringSet = getBookmarks();
             try {
 
@@ -562,14 +564,14 @@ public class Settings {
                 Node node = segment.getNodeFromText(book);
                 int textNum = BookSettings.getTextNum(node, segment);
                 String settingStr = node.getMenuBarTitle(book, Util.Lang.EN) + SPLITTER
-                                    + node.getMenuBarTitle(book, Util.Lang.HE) + SPLITTER
-                                    + node.getBid() + SPLITTER
-                                    + node.makePathDefiningNode() + SPLITTER
-                                    + textNum + SPLITTER;
+                        + node.getMenuBarTitle(book, Util.Lang.HE) + SPLITTER
+                        + node.getBid() + SPLITTER
+                        + node.makePathDefiningNode() + SPLITTER
+                        + textNum + SPLITTER;
 
                 boolean added;
 
-                if(pinnedTextStringSet.contains(settingStr)){
+                if (pinnedTextStringSet.contains(settingStr)) {
                     pinnedTextStringSet.remove(settingStr);
                     added = false;
                 } else {
@@ -586,20 +588,21 @@ public class Settings {
                 return false;
             }
         }
-        public static Set<String> getBookmarks(){
+
+        public static Set<String> getBookmarks() {
             SharedPreferences pinned = getRecentSettings();
             Set<String> pinnedStringSet = pinned.getStringSet(PINNED_RECENT_TEXTS, null);
-            if(pinnedStringSet == null){
+            if (pinnedStringSet == null) {
                 pinnedStringSet = new HashSet<>();
             }
             return pinnedStringSet;
         }
 
-        public static boolean addPinnedBook(String bookTitle){
+        public static boolean addPinnedBook(String bookTitle) {
             Set<String> pinnedStringSet = getPinnedBook();
 
             boolean added;
-            if(pinnedStringSet.contains(bookTitle)){
+            if (pinnedStringSet.contains(bookTitle)) {
                 pinnedStringSet.remove(bookTitle);
                 added = false;
             } else {
@@ -610,20 +613,20 @@ public class Settings {
             SharedPreferences.Editor editor = getRecentSettings().edit();
             editor.putStringSet(PINNED_RECENT_BOOKS, pinnedStringSet);
             editor.apply();
-            return  added;
+            return added;
 
         }
-        public static Set<String> getPinnedBook(){
+
+        public static Set<String> getPinnedBook() {
             SharedPreferences pinned = getRecentSettings();
             Set<String> pinnedStringSet = pinned.getStringSet(PINNED_RECENT_BOOKS, null);
-            if(pinnedStringSet == null){
+            if (pinnedStringSet == null) {
                 pinnedStringSet = new HashSet<>();
             }
             return pinnedStringSet;
         }
 
     }
-
 
 
 }

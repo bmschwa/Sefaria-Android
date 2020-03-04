@@ -33,7 +33,7 @@ public class MenuNode extends BilingualNode {
     }
 
     public MenuNode(String enTitle, String heTitle, MenuNode parent) {
-        super(enTitle,heTitle,parent);
+        super(enTitle, heTitle, parent);
         // true if you want the full title to be shown, even though a previous category is in it. e.g. Abarbanel on Torah
         this.enPrettyTitle = makePrettyTitle(Util.Lang.EN);
         this.hePrettyTitle = makePrettyTitle(Util.Lang.HE);
@@ -48,6 +48,7 @@ public class MenuNode extends BilingualNode {
         public MenuNode createFromParcel(Parcel in) {
             return new MenuNode(in);
         }
+
         public MenuNode[] newArray(int size) {
             return new MenuNode[size];
         }
@@ -76,19 +77,20 @@ public class MenuNode extends BilingualNode {
         else currTitle = heTitle;
 
         if (enTitle.equals("Midrash Rabbah")) return currTitle;
-        if (enTitle.contains("Haggadah")) return currTitle; // all titles with haggadah should not be replaced
+        if (enTitle.contains("Haggadah"))
+            return currTitle; // all titles with haggadah should not be replaced
         while (tempNode.parent != null && !foundTitleMatch) {
             String tempTitle;
-            if (lang == Util.Lang.EN) tempTitle = ((MenuNode)tempNode.parent).enTitle;
-            else tempTitle = ((MenuNode)tempNode.parent).heTitle;
+            if (lang == Util.Lang.EN) tempTitle = ((MenuNode) tempNode.parent).enTitle;
+            else tempTitle = ((MenuNode) tempNode.parent).heTitle;
 
             Pattern titlePattern = Pattern.compile("\\b" + tempTitle + "( on | על | |, )");
             Matcher titleMatcher = titlePattern.matcher(currTitle);
             if (tempTitle.length() > 0 && titleMatcher.find()) {
                 foundTitleMatch = true;
-                currTitle = currTitle.replaceAll(titleMatcher.group(),"");
+                currTitle = currTitle.replaceAll(titleMatcher.group(), "");
             } else {
-                tempNode = (MenuNode)tempNode.parent;
+                tempNode = (MenuNode) tempNode.parent;
             }
 
         }
@@ -102,13 +104,17 @@ public class MenuNode extends BilingualNode {
     }
 
     //I'm assuming here the enTitle is always the same as the book title...
-    public String getBookTitle() { return enTitle; }
+    public String getBookTitle() {
+        return enTitle;
+    }
 
     public boolean isHomeButton() {
         return isHomeButton;
     }
 
-    public int getColor() { return color; }
+    public int getColor() {
+        return color;
+    }
 
     public int getTopLevelColor() {
         MenuNode topNode = getTopLevelNode();
@@ -120,7 +126,7 @@ public class MenuNode extends BilingualNode {
     //return top level node for this node
     public MenuNode getTopLevelNode() {
         MenuNode tempNode = this;
-        while(tempNode.getParent() != null) {
+        while (tempNode.getParent() != null) {
             MenuNode tempParent = (MenuNode) tempNode.getParent();
             if (tempParent.getParent() == null)
                 return tempNode;
@@ -146,7 +152,7 @@ public class MenuNode extends BilingualNode {
                 currSize = currNodes.size();
             }
 
-            MenuNode currNode = (MenuNode)currNodes.remove();
+            MenuNode currNode = (MenuNode) currNodes.remove();
             if (currNode.getNumChildren() != 0)
                 currNodes.addAll(currNode.children);
             else

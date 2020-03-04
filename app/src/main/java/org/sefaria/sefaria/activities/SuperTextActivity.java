@@ -147,9 +147,9 @@ public abstract class SuperTextActivity extends FragmentActivity {
             Settings.setIsFirstTimeOpened(false);
         }
 
-        if(firstTimeOpeningAppThisSession){
+        if (firstTimeOpeningAppThisSession) {
             firstTimeOpeningAppThisSession = false;
-            if(!MyApp.isFirstTimeOpened)
+            if (!MyApp.isFirstTimeOpened)
                 Database.dealWithStartupDatabaseStuff(this);
             Database.checkAndSwitchToNeededDB(this);
         }
@@ -157,17 +157,17 @@ public abstract class SuperTextActivity extends FragmentActivity {
         int nodeHash = getValuesFromIntent(savedInstanceState);
         getAllNeededLocationVariables(nodeHash);
 
-        if(linkFragment == null){//LINK FRAGMENT
+        if (linkFragment == null) {//LINK FRAGMENT
             linkFragment = new LinkFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.add(R.id.linkRoot, linkFragment,LINK_FRAG_TAG);
+            fragmentTransaction.add(R.id.linkRoot, linkFragment, LINK_FRAG_TAG);
             fragmentTransaction.commit();
         }
 
         if (homeFragment == null) {
             homeFragment = new HomeFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.add(R.id.homeFragmentRoot, homeFragment,HOME_FRAG_TAG);
+            fragmentTransaction.add(R.id.homeFragmentRoot, homeFragment, HOME_FRAG_TAG);
             fragmentTransaction.commit();
         }
 
@@ -180,12 +180,11 @@ public abstract class SuperTextActivity extends FragmentActivity {
         setTheme(colorTheme);
 
 
-
         textSize = Settings.getDefaultFontSize();
         //end defaults
         isLoadingInit = false;
         menuLang = Settings.getMenuLang();
-        if(customActionbar != null)//it's already been set
+        if (customActionbar != null)//it's already been set
             customActionbar.setLang(menuLang);
 
         if (book != null || book.equals(Book.dummyBook))
@@ -196,127 +195,127 @@ public abstract class SuperTextActivity extends FragmentActivity {
         goodOnCreate = true;
     }
 
-    private int getValuesFromIntent(Bundle savedInstanceState){
+    private int getValuesFromIntent(Bundle savedInstanceState) {
         Intent intent = getIntent();
         int nodeHash;
         if (savedInstanceState != null) {//it's coming back after it cleared the activity from ram
-            linkFragment = (LinkFragment) getSupportFragmentManager().getFragment(savedInstanceState,LINK_FRAG_TAG);
-            homeFragment = (HomeFragment) getSupportFragmentManager().getFragment(savedInstanceState,HOME_FRAG_TAG);
+            linkFragment = (LinkFragment) getSupportFragmentManager().getFragment(savedInstanceState, LINK_FRAG_TAG);
+            homeFragment = (HomeFragment) getSupportFragmentManager().getFragment(savedInstanceState, HOME_FRAG_TAG);
             nodeHash = savedInstanceState.getInt("nodeHash", NO_HASH_NODE);
             book = savedInstanceState.getParcelable("currBook");
             openToSegment = savedInstanceState.getParcelable("incomingLinkText");
             searchingTerm = savedInstanceState.getString("searchingTerm");
-            textNum = savedInstanceState.getInt("textNum",-1);
-        }else{
+            textNum = savedInstanceState.getInt("textNum", -1);
+        } else {
             nodeHash = intent.getIntExtra("nodeHash", NO_HASH_NODE);
             book = intent.getParcelableExtra("currBook");
             openToSegment = intent.getParcelableExtra("incomingLinkText");
             searchingTerm = intent.getStringExtra("searchingTerm");
-            textNum = intent.getIntExtra("textNum",-1);
+            textNum = intent.getIntExtra("textNum", -1);
         }
         return nodeHash;
     }
 
 
-    private boolean getAllNeededLocationVariables(int nodeHash){
-            if (nodeHash != NO_HASH_NODE) {
-                firstLoadedNode = Node.getSavedNode(nodeHash);
-            }
+    private boolean getAllNeededLocationVariables(int nodeHash) {
+        if (nodeHash != NO_HASH_NODE) {
+            firstLoadedNode = Node.getSavedNode(nodeHash);
+        }
 
-            if(firstLoadedNode != null && book != null && firstLoadedNode.getBid() != book.bid) {
-                if(MyApp.DEBUGGING)
-                    Toast.makeText(this,"Wrong book with node:" + book.bid + " --" + firstLoadedNode.getBid(),Toast.LENGTH_SHORT);
-                GoogleTracker.sendEvent(GoogleTracker.CATEGORY_RANDOM_ERROR,"Wrong book with node:" + book.bid + " --" + firstLoadedNode.getBid());
-                book = null;
-            }
+        if (firstLoadedNode != null && book != null && firstLoadedNode.getBid() != book.bid) {
+            if (MyApp.DEBUGGING)
+                Toast.makeText(this, "Wrong book with node:" + book.bid + " --" + firstLoadedNode.getBid(), Toast.LENGTH_SHORT);
+            GoogleTracker.sendEvent(GoogleTracker.CATEGORY_RANDOM_ERROR, "Wrong book with node:" + book.bid + " --" + firstLoadedNode.getBid());
+            book = null;
+        }
 
-            if (book == null) {
-                try {
-                    if (firstLoadedNode != null) {
-                        book = Book.getByBid(firstLoadedNode.getBid());
-                    } else if (openToSegment != null) {
-                        book = Book.getByBid(openToSegment.bid);
-                    } else {
-                        book = new Book(Settings.getLastBook());
-                    }
-                } catch (Book.BookNotFoundException e) {
-                    Toast.makeText(this,MyApp.getRString(R.string.error_getting_book),Toast.LENGTH_SHORT).show();
-                    GoogleTracker.sendException(e,"SuperText Book Prob");
-                    e.printStackTrace();
-                    book = book.dummyBook;
-                    return false;
+        if (book == null) {
+            try {
+                if (firstLoadedNode != null) {
+                    book = Book.getByBid(firstLoadedNode.getBid());
+                } else if (openToSegment != null) {
+                    book = Book.getByBid(openToSegment.bid);
+                } else {
+                    book = new Book(Settings.getLastBook());
                 }
+            } catch (Book.BookNotFoundException e) {
+                Toast.makeText(this, MyApp.getRString(R.string.error_getting_book), Toast.LENGTH_SHORT).show();
+                GoogleTracker.sendException(e, "SuperText Book Prob");
+                e.printStackTrace();
+                book = book.dummyBook;
+                return false;
             }
-            Settings.RecentTexts.addRecentText(book.title);
+        }
+        Settings.RecentTexts.addRecentText(book.title);
 
-            if (firstLoadedNode == null && openToSegment != null) {
-                try {
-                    firstLoadedNode = openToSegment.getNodeFromText(book);
-                } catch (Book.BookNotFoundException e) {
-                    e.printStackTrace();
-                    Toast.makeText(this,MyApp.getRString(R.string.error_getting_book),Toast.LENGTH_SHORT).show();
-                    GoogleTracker.sendException(e,"SuperText Book Prob");
-                    firstLoadedNode = Node.dummyNode;
-                    return false;
-                } catch (API.APIException e) {
-                    e.printStackTrace();
-                    API.makeAPIErrorToast(this);
-                    firstLoadedNode = Node.dummyNode;
-                    return false;
-                }
+        if (firstLoadedNode == null && openToSegment != null) {
+            try {
+                firstLoadedNode = openToSegment.getNodeFromText(book);
+            } catch (Book.BookNotFoundException e) {
+                e.printStackTrace();
+                Toast.makeText(this, MyApp.getRString(R.string.error_getting_book), Toast.LENGTH_SHORT).show();
+                GoogleTracker.sendException(e, "SuperText Book Prob");
+                firstLoadedNode = Node.dummyNode;
+                return false;
+            } catch (API.APIException e) {
+                e.printStackTrace();
+                API.makeAPIErrorToast(this);
+                firstLoadedNode = Node.dummyNode;
+                return false;
             }
+        }
 
-            Settings.BookSettings bookSettings = Settings.BookSettings.getSavedBook(book);
-            textLang = bookSettings.lang;
-            if (firstLoadedNode == null && bookSettings.node != null) { //opening previously opened book
-                firstLoadedNode = bookSettings.node;
-                textNum = bookSettings.textNum;
-            }
+        Settings.BookSettings bookSettings = Settings.BookSettings.getSavedBook(book);
+        textLang = bookSettings.lang;
+        if (firstLoadedNode == null && bookSettings.node != null) { //opening previously opened book
+            firstLoadedNode = bookSettings.node;
+            textNum = bookSettings.textNum;
+        }
 
-            if (firstLoadedNode == null) {
-                List<Node> TOCroots = null;
-                try {
-                    TOCroots = book.getTOCroots();
-                } catch (API.APIException e) {
-                    API.makeAPIErrorToast(this);
-                    firstLoadedNode = Node.dummyNode;
-                    return false;
-                }
-                if (TOCroots.size() == 0) {
-                    Toast.makeText(this, MyApp.getRString(R.string.unable_to_load_toc_for_book), Toast.LENGTH_SHORT).show();
-                    return false;
-                }
-                Node root = TOCroots.get(0);
-                firstLoadedNode = root.getFirstDescendant();//was getting first segment true);
-                GoogleTracker.sendEvent(GoogleTracker.CATEGORY_OPEN_NEW_BOOK_ACTION, "Opened New Book");
-                openedNewBookTime = System.currentTimeMillis();
+        if (firstLoadedNode == null) {
+            List<Node> TOCroots = null;
+            try {
+                TOCroots = book.getTOCroots();
+            } catch (API.APIException e) {
+                API.makeAPIErrorToast(this);
+                firstLoadedNode = Node.dummyNode;
+                return false;
             }
-            if(firstLoadedNode != null) //put in saved textVersion
-                firstLoadedNode.setTextVersion(bookSettings.textVersion);
+            if (TOCroots.size() == 0) {
+                Toast.makeText(this, MyApp.getRString(R.string.unable_to_load_toc_for_book), Toast.LENGTH_SHORT).show();
+                return false;
+            }
+            Node root = TOCroots.get(0);
+            firstLoadedNode = root.getFirstDescendant();//was getting first segment true);
+            GoogleTracker.sendEvent(GoogleTracker.CATEGORY_OPEN_NEW_BOOK_ACTION, "Opened New Book");
+            openedNewBookTime = System.currentTimeMillis();
+        }
+        if (firstLoadedNode != null) //put in saved textVersion
+            firstLoadedNode.setTextVersion(bookSettings.textVersion);
 
-            if (openToSegment == null && textNum > -1) {
-                try {
-                    openToSegment = firstLoadedNode.getTexts().get(textNum);
-                }catch (IndexOutOfBoundsException e1) {
-                    Log.e("SuperTextAct", e1.getMessage());
-                } catch (API.APIException e) {
-                    e.printStackTrace();
-                }
+        if (openToSegment == null && textNum > -1) {
+            try {
+                openToSegment = firstLoadedNode.getTexts().get(textNum);
+            } catch (IndexOutOfBoundsException e1) {
+                Log.e("SuperTextAct", e1.getMessage());
+            } catch (API.APIException e) {
+                e.printStackTrace();
             }
+        }
         return true;
     }
 
 
-
     protected boolean veryFirstTime = true;
+
     @Override
     protected void onResume() {
         super.onResume();
         GoogleTracker.sendScreen("SuperTextActivity");
-        if(!goodOnCreate)
+        if (!goodOnCreate)
             return;
 
-        if(Settings.getTheme() != colorTheme){
+        if (Settings.getTheme() != colorTheme) {
             restartActivity();
             return;
         }
@@ -324,15 +323,15 @@ public abstract class SuperTextActivity extends FragmentActivity {
         textLang = Settings.BookSettings.getSavedBook(book).lang;
 
         GoogleTracker.sendEvent(GoogleTracker.CATEGORY_NEW_TEXT, book.title, Settings.lang2Int(textLang));
-        if(!veryFirstTime) {
+        if (!veryFirstTime) {
             setMenuLang(Settings.getMenuLang());
             homeFragment.setLang(Settings.getMenuLang());
-        }else
+        } else
             veryFirstTime = false;
 
-        if(loadedTextUsingAPI == null)
+        if (loadedTextUsingAPI == null)
             loadedTextUsingAPI = Settings.getUseAPI();
-        else if(loadedTextUsingAPI != Settings.getUseAPI()) {
+        else if (loadedTextUsingAPI != Settings.getUseAPI()) {
             restartActivity();
         }
 
@@ -356,24 +355,26 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
     /**
      * used for pressing on link
+     *
      * @param context
      * @param segment
      */
-    public static void startNewTextActivityIntent(Context context, Segment segment, boolean openNewTask){
+    public static void startNewTextActivityIntent(Context context, Segment segment, boolean openNewTask) {
         startNewTextActivityIntent(context, null, segment, null, openNewTask, null, -1);
     }
 
 
     /**
      * used for coming in from Menu
+     *
      * @param context
      * @param book
      */
-    public static void startNewTextActivityIntent(Context context, Book book, boolean openNewTask){
+    public static void startNewTextActivityIntent(Context context, Book book, boolean openNewTask) {
         startNewTextActivityIntent(context, book, null, null, openNewTask, null, -1);
     }
 
-    protected void createShortcut(Segment segment){
+    protected void createShortcut(Segment segment) {
         //Adding shortcut for MainActivity
         //on Home screen
         Intent shortcutIntent = new Intent(this, SplashScreenActivity.class);// makeNewTextActivityIntent(this, null, segment, null, false, null, -1);
@@ -415,23 +416,23 @@ public abstract class SuperTextActivity extends FragmentActivity {
             intent = new Intent(context, SepTextActivity.class);
         }
 
-        if(book != null)
+        if (book != null)
             intent.putExtra("currBook", book);
-        if(segment != null)
+        if (segment != null)
             intent.putExtra("incomingLinkText", segment);
-        if(node != null){
+        if (node != null) {
             node.log();
             Node.saveNode(node);
-            intent.putExtra("nodeHash",node.hashCode());
+            intent.putExtra("nodeHash", node.hashCode());
         }
-        if(searchingTerm != null){
-            intent.putExtra("searchingTerm",searchingTerm);
+        if (searchingTerm != null) {
+            intent.putExtra("searchingTerm", searchingTerm);
         }
-        if(textNum>-1){
-            intent.putExtra("textNum",textNum);
+        if (textNum > -1) {
+            intent.putExtra("textNum", textNum);
         }
 
-        if(openNewTask){
+        if (openNewTask) {
             intent = MyApp.startNewTab(intent);
         }
         return intent;
@@ -448,8 +449,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
         comingFromTOC(intent);
     }
 
-    protected void init(){
-
+    protected void init() {
 
 
         isLoadingInit = true;
@@ -457,13 +457,13 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
         isTextMenuVisible = false;
         textMenuRoot = (LinearLayout) findViewById(R.id.textMenuRoot);
-        textMenuBar = new TextMenuBar(SuperTextActivity.this,textMenuBtnClick, canBeCts(book));
+        textMenuBar = new TextMenuBar(SuperTextActivity.this, textMenuBtnClick, canBeCts(book));
         textMenuBar.setState(textLang, isCts, isSideBySide, colorTheme);
         textMenuRoot.addView(textMenuBar);
         textMenuRoot.setVisibility(View.GONE);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this,drawerLayout,R.string.OK,R.string.CANCEL) {
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.OK, R.string.CANCEL) {
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
@@ -504,14 +504,14 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
         //this specifically comes before menugrid, b/c in tabs it menugrid does funny stuff to currnode
         if (customActionbar == null) {
-            MenuNode menuNode = new MenuNode("Error (if you see this)","Error (if you see this)",null); //TODO possibly replace this object with a more general bilinual node
+            MenuNode menuNode = new MenuNode("Error (if you see this)", "Error (if you see this)", null); //TODO possibly replace this object with a more general bilinual node
             int catColor = book.getCatColor();
-            if(Settings.getUseAPI()|| true) //findOnPae temp removed for all versions
+            if (Settings.getUseAPI() || true) //findOnPae temp removed for all versions
                 searchClick = null;
             backClick = null;
             homeLongClick = null;
 
-            customActionbar = new CustomActionbar(this, menuNode, menuLang,homeClick,homeLongClick, null,searchClick,titleClick,menuClick,backClick,null,catColor,true,false, book.isTalmudBavli()); //TODO.. I'm not actually sure this should be lang.. instead it shuold be MENU_LANG from Util.S
+            customActionbar = new CustomActionbar(this, menuNode, menuLang, homeClick, homeLongClick, null, searchClick, titleClick, menuClick, backClick, null, catColor, true, false, book.isTalmudBavli()); //TODO.. I'm not actually sure this should be lang.. instead it shuold be MENU_LANG from Util.S
             LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
             abRoot.addView(customActionbar);
             customActionbar.setLang(menuLang);
@@ -520,7 +520,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
         setCurrNode(firstLoadedNode);
     }
 
-    private void comingFromTOC(Intent intent){
+    private void comingFromTOC(Intent intent) {
         //lang = (Util.Lang) data.getSerializableExtra("lang"); TODO you might need to set lang here if user can change lang in TOC
         int nodeHash = intent.getIntExtra("nodeHash", -1);
         textNum = -1; //This is so that it jumps to the beginning of the Node
@@ -544,7 +544,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     }
     */
 
-    public InputMethodManager getInputMethodManager(){
+    public InputMethodManager getInputMethodManager() {
         return (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
     }
 
@@ -555,11 +555,11 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
-        if(openedNewBookTime >0 && !reportedNewBookBack){
+        if (openedNewBookTime > 0 && !reportedNewBookBack) {
             long time = (System.currentTimeMillis() - openedNewBookTime);
-            if(time <10000) {
+            if (time < 10000) {
                 String category;
-                if(reportedNewBookScroll || reportedNewBookTOC)
+                if (reportedNewBookScroll || reportedNewBookTOC)
                     category = GoogleTracker.CATEGORY_OPEN_NEW_BOOK_ACTION_2;
                 else
                     category = GoogleTracker.CATEGORY_OPEN_NEW_BOOK_ACTION;
@@ -571,7 +571,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
         Settings.BookSettings.setSavedBook(book, currNode, currSegment, textLang);
         if (drawerLayout.isDrawerOpen(Gravity.LEFT)) {
             drawerLayout.closeDrawer(Gravity.LEFT);
-        }else if(isTextMenuVisible)
+        } else if (isTextMenuVisible)
             toggleTextMenu();
         else if (linkFragment != null && linkFragment.getIsOpen()) {
             if (linkFragment.getCurrState() == LinkFragment.State.MAIN) {
@@ -581,7 +581,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
                 linkFragment.gotoState(LinkFragment.State.MAIN, linkFragment.getView(), null);
             }
 
-        } else if(getFindOnPageIsOpen()){
+        } else if (getFindOnPageIsOpen()) {
             //searchActionBarRoot.removeAllViews();
             findOnPageClose();
         } else {
@@ -592,14 +592,13 @@ public abstract class SuperTextActivity extends FragmentActivity {
     }
 
 
-
-    protected boolean getFindOnPageIsOpen(){
-        return searchActionBarRoot != null && searchActionBarRoot.getChildCount()>0;
+    protected boolean getFindOnPageIsOpen() {
+        return searchActionBarRoot != null && searchActionBarRoot.getChildCount() > 0;
     }
 
-    protected void findOnPageClose(){
-        if(findOnPage != null){
-            findOnPage.hideShowKeyboard(false,0);
+    protected void findOnPageClose() {
+        if (findOnPage != null) {
+            findOnPage.hideShowKeyboard(false, 0);
         }
         searchActionBarRoot.removeAllViews();
     }
@@ -607,21 +606,20 @@ public abstract class SuperTextActivity extends FragmentActivity {
     @Override
     public boolean onSearchRequested() {
         super.onSearchRequested();
-        if(findOnPage == null) findOnPage = new FindOnPage(SuperTextActivity.this);
+        if (findOnPage == null) findOnPage = new FindOnPage(SuperTextActivity.this);
         findOnPage.runFindOnPage(false);
         return true;
     }
 
-    protected Segment getSectionHeaderText(TextEnums dir){
+    protected Segment getSectionHeaderText(TextEnums dir) {
         Node node = null;
-        if(dir == TextEnums.NEXT_SECTION) {
+        if (dir == TextEnums.NEXT_SECTION) {
             node = lastLoadedNode;
-        } else if (dir == TextEnums.PREV_SECTION){
+        } else if (dir == TextEnums.PREV_SECTION) {
             node = firstLoadedNode;
         }
         return new Segment(node);
     }
-
 
 
     protected void toggleTextMenu() {
@@ -646,7 +644,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
         }
     };
 
-    View.OnClickListener findOnPageCloseClick = new View.OnClickListener(){
+    View.OnClickListener findOnPageCloseClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             findOnPageClose();
@@ -665,7 +663,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     View.OnClickListener findOnPageDownClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if(findOnPage == null) findOnPage = new FindOnPage(SuperTextActivity.this);
+            if (findOnPage == null) findOnPage = new FindOnPage(SuperTextActivity.this);
             findOnPage.runFindOnPage(true);
         }
     };
@@ -675,19 +673,19 @@ public abstract class SuperTextActivity extends FragmentActivity {
         @Override
         public void onClick(View v) {
             //Log.d("TextAct", "here");
-            if(searchActionbar == null) {
-                searchActionbar = new SearchActionbar(SuperTextActivity.this, findOnPageCloseClick, null,findOnPageUpClick,findOnPageDownClick,book.getCatColor(), getRString(R.string.search) + " " + book.getTitle(menuLang), null);
+            if (searchActionbar == null) {
+                searchActionbar = new SearchActionbar(SuperTextActivity.this, findOnPageCloseClick, null, findOnPageUpClick, findOnPageDownClick, book.getCatColor(), getRString(R.string.search) + " " + book.getTitle(menuLang), null);
             }
-            if(searchActionBarRoot == null)
+            if (searchActionBarRoot == null)
                 searchActionBarRoot = (LinearLayout) findViewById(R.id.searchBarRoot);
             searchActionBarRoot.removeAllViews();//in case you some how click on the search button while the search thing is already open (see if the old bar is visable through the search bar)
             searchActionBarRoot.addView(searchActionbar);
             searchActionbar.requestFocus();
 
-            if(findOnPage == null)
+            if (findOnPage == null)
                 findOnPage = new FindOnPage(SuperTextActivity.this);
 
-            if(linkFragment.getIsOpen()){
+            if (linkFragment.getIsOpen()) {
                 View linkRoot = findViewById(R.id.linkRoot);
                 AnimateLinkFragClose(linkRoot);
             }
@@ -695,21 +693,20 @@ public abstract class SuperTextActivity extends FragmentActivity {
     };
 
 
-
     View.OnClickListener titleClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Settings.BookSettings.setSavedBook(book, currNode, currSegment, textLang);//data also saved with home click
-            if(openedNewBookTime >0 && !reportedNewBookTOC){
+            if (openedNewBookTime > 0 && !reportedNewBookTOC) {
                 String category;
-                if(reportedNewBookScroll || reportedNewBookBack)
+                if (reportedNewBookScroll || reportedNewBookBack)
                     category = GoogleTracker.CATEGORY_OPEN_NEW_BOOK_ACTION_2;
                 else
                     category = GoogleTracker.CATEGORY_OPEN_NEW_BOOK_ACTION;
-                GoogleTracker.sendEvent(category,"Opening TOC", (System.currentTimeMillis() - openedNewBookTime));
+                GoogleTracker.sendEvent(category, "Opening TOC", (System.currentTimeMillis() - openedNewBookTime));
                 reportedNewBookTOC = true;
             }
-            Intent intent = TOCActivity.getStartTOCActivityIntent(SuperTextActivity.this, book,firstLoadedNode);
+            Intent intent = TOCActivity.getStartTOCActivityIntent(SuperTextActivity.this, book, firstLoadedNode);
             startActivityForResult(intent, TOC_CHAPTER_CLICKED_CODE);
         }
     };
@@ -779,15 +776,19 @@ public abstract class SuperTextActivity extends FragmentActivity {
                     }
                     break;
             }
-            textMenuBar.setState(textLang, isCts, isSideBySide,colorTheme);
+            textMenuBar.setState(textLang, isCts, isSideBySide, colorTheme);
             if (!updatedTextSize) toggleTextMenu();
         }
     };
 
 
-    public Util.Lang getTextLang() { return textLang; }
+    public Util.Lang getTextLang() {
+        return textLang;
+    }
 
-    public Util.Lang getMenuLang() { return menuLang; }
+    public Util.Lang getMenuLang() {
+        return menuLang;
+    }
 
     public float getTextSize() {
         return textSize;
@@ -798,26 +799,36 @@ public abstract class SuperTextActivity extends FragmentActivity {
         Settings.setDefaultFontSize(textSize);
     }
 
-    protected void incrementTextSize(boolean isIncrement){
+    protected void incrementTextSize(boolean isIncrement) {
         float increment = getResources().getDimension(R.dimen.text_font_size_increment);
         float tempTextSize = textSize;
-        if (isIncrement) tempTextSize  += increment;
+        if (isIncrement) tempTextSize += increment;
         else tempTextSize -= increment;
         setTextSize(tempTextSize);
     }
 
     //return the currently selected segment, as determined by the link fragment
-    public Segment getCurrLinkSegment() { return linkFragment.getSegment(); }
-    public boolean getFragmentIsOpen() { return linkFragment.getIsOpen(); }
+    public Segment getCurrLinkSegment() {
+        return linkFragment.getSegment();
+    }
 
-    protected void setMenuLang(Util.Lang menuLang){
+    public boolean getFragmentIsOpen() {
+        return linkFragment.getIsOpen();
+    }
+
+    protected void setMenuLang(Util.Lang menuLang) {
         this.menuLang = menuLang;
         customActionbar.setTitleText(currNode.getMenuBarTitle(book, menuLang), menuLang, true, true);
         linkFragment.notifyDataSetChanged();
     }
 
-    public Book getBook() { return book; }
-    public boolean getIsCts(){ return isCts;}
+    public Book getBook() {
+        return book;
+    }
+
+    public boolean getIsCts() {
+        return isCts;
+    }
 
     public static boolean canBeCts(Book book) {
         boolean isCtsText = false;
@@ -830,21 +841,27 @@ public abstract class SuperTextActivity extends FragmentActivity {
                         break;
                     }
                 }
-            }catch (Exception e){ //could throw if categories doesn't have the right stuff
+            } catch (Exception e) { //could throw if categories doesn't have the right stuff
                 e.printStackTrace();
             }
         }
         return isCtsText;
     }
 
-    public boolean getIsSideBySide() { return isSideBySide; }
-    public int getColorTheme() { return colorTheme; }
+    public boolean getIsSideBySide() {
+        return isSideBySide;
+    }
+
+    public int getColorTheme() {
+        return colorTheme;
+    }
+
     private void setColorTheme(int colorTheme) {
         Settings.setTheme(colorTheme);
         restartActivity();
     }
 
-    protected void restartActivity(){
+    protected void restartActivity() {
         Settings.BookSettings.setSavedBook(book, currNode, currSegment, textLang);
         finish();
         startNewTextActivityIntent(this, book, currSegment, currNode, false, searchingTerm, -1);
@@ -853,7 +870,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
     protected abstract void setTextLang(Util.Lang textLang);
 
     protected void setIsCts(boolean isCts) {
-        setIsCts(isCts,false);
+        setIsCts(isCts, false);
     }
 
     protected void setIsCts(boolean isCts, boolean forceRestart) {
@@ -862,18 +879,21 @@ public abstract class SuperTextActivity extends FragmentActivity {
             restartActivity();
         }
     }
-    protected void setIsSideBySide(boolean isSideBySide){
+
+    protected void setIsSideBySide(boolean isSideBySide) {
         this.isSideBySide = isSideBySide;
         Settings.setIsSideBySide(isSideBySide);
     }
 
     protected abstract void jumpToText(Segment segment);
+
     protected abstract void updateFocusedSegment();
 
-    protected void setCurrNode(Node node){
-        setCurrNode(node,null);
+    protected void setCurrNode(Node node) {
+        setCurrNode(node, null);
     }
-    protected  void setCurrNode(Segment segment) {
+
+    protected void setCurrNode(Segment segment) {
         Node node;
         if (segment == null) node = null;
         else node = segment.parentNode;
@@ -894,10 +914,10 @@ public abstract class SuperTextActivity extends FragmentActivity {
         setCurrNode(node, segment);
     }
 
-    private void setCurrNode(Node node, Segment segment){
+    private void setCurrNode(Node node, Segment segment) {
         currSegment = segment;
-        if(node == null) return;
-        if(currNode != node){
+        if (node == null) return;
+        if (currNode != node) {
             currNode = node;
             customActionbar.setTitleText(currNode.getMenuBarTitle(book, menuLang), menuLang, true, true);
         }
@@ -925,7 +945,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
 
 
         List<Segment> textsList;
-        if(newNode == null){//This error occurs when using API and the book no longer exists in Sefaria (it could also happen other times we don't know about)
+        if (newNode == null) {//This error occurs when using API and the book no longer exists in Sefaria (it could also happen other times we don't know about)
             //TODO add error segment into the list.
             //Node.dummyNode;
             return new ArrayList<>();
@@ -935,8 +955,6 @@ public abstract class SuperTextActivity extends FragmentActivity {
         return textsList;
         //} catch (API.APIException e) {
     }
-
-
 
 
     //-----
@@ -955,10 +973,13 @@ public abstract class SuperTextActivity extends FragmentActivity {
         slide.setAnimationListener(new Animation.AnimationListener() {
 
             @Override
-            public void onAnimationStart(Animation animation) {v.setVisibility(View.VISIBLE);}
+            public void onAnimationStart(Animation animation) {
+                v.setVisibility(View.VISIBLE);
+            }
 
             @Override
-            public void onAnimationRepeat(Animation animation) {}
+            public void onAnimationRepeat(Animation animation) {
+            }
 
             @Override
             public void onAnimationEnd(Animation animation) {
@@ -1006,11 +1027,12 @@ public abstract class SuperTextActivity extends FragmentActivity {
     //-----
 
     public int getLinkFragMaxHeight() {
-        return findViewById(R.id.root).getHeight()-findViewById(R.id.actionbarRoot).getHeight();
+        return findViewById(R.id.root).getHeight() - findViewById(R.id.actionbarRoot).getHeight();
     }
 
 
     protected abstract void onFinishLinkFragOpen();
+
     protected abstract void onStartLinkFragClose();
 
     //Thank you Farhan Shah! https://stackoverflow.com/questions/20323628/android-layout-animations-from-bottom-to-top-and-top-to-bottom-on-imageview-clic
@@ -1119,7 +1141,7 @@ public abstract class SuperTextActivity extends FragmentActivity {
         MyApp.openURLInBrowser(this, url);
     }
 
-    public void donateClick(View v){
+    public void donateClick(View v) {
         String url = "https://www.sefaria.org/donate";
         MyApp.openURLInBrowser(this, url);
     }
@@ -1132,36 +1154,36 @@ public abstract class SuperTextActivity extends FragmentActivity {
                 "mailto", email, null));
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Android App Feedback");
         emailIntent.putExtra(Intent.EXTRA_TEXT, getEmailHeader());
-        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String [] {email});
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
         startActivity(Intent.createChooser(emailIntent, "Send email"));
     }
 
-    public static String getEmailHeader(){
-        return  "App Version: " + BuildConfig.VERSION_NAME + " ("  + BuildConfig.VERSION_CODE + ")" + "\n"
+    public static String getEmailHeader() {
+        return "App Version: " + BuildConfig.VERSION_NAME + " (" + BuildConfig.VERSION_CODE + ")" + "\n"
                 + "Online Library Version: " + Util.convertDBnum(Database.getVersionInDB(true)) + "\n"
                 + "Offline Library Version: " + Util.convertDBnum(Database.getVersionInDB(false)) + "\n"
-                + "Using " + (Settings.getUseAPI()? "Online":"Offline") + " Library" + "\n"
+                + "Using " + (Settings.getUseAPI() ? "Online" : "Offline") + " Library" + "\n"
                 + GoogleTracker.randomID + "\n"
                 + Build.VERSION.RELEASE + " (" + Build.VERSION.SDK_INT + ")" + "\n"
-                +"\n\n\n";
+                + "\n\n\n";
     }
 
-    public void siteClick(View v){
+    public void siteClick(View v) {
         String url = "https://www.sefaria.org";
         MyApp.openURLInBrowser(this, url);
     }
 
-    public void recentMoreClick(View v){
+    public void recentMoreClick(View v) {
         Intent intent = new Intent(this, RecentsActivity.class);
         startActivity(intent);
     }
 
-    public void reloadClick(View v){
+    public void reloadClick(View v) {
 
-        if(Downloader.getHasInternet()) {
+        if (Downloader.getHasInternet()) {
             //Toast.makeText(SuperTextActivity.this, "Reloading texts", Toast.LENGTH_SHORT).show();
             restartActivity();
-        }else{
+        } else {
             Toast.makeText(SuperTextActivity.this, MyApp.getRString(R.string.problem_internet), Toast.LENGTH_SHORT).show();
         }
     }

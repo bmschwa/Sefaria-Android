@@ -44,7 +44,7 @@ public class MenuActivity extends Activity {
 
         Intent intent = getIntent();
         menuState = intent.getParcelableExtra("menuState");
-        hasSectionBack = intent.getBooleanExtra("hasSectionBack",false);
+        hasSectionBack = intent.getBooleanExtra("hasSectionBack", false);
 
         boolean hasTabs = false;
         if (in != null) {
@@ -61,19 +61,19 @@ public class MenuActivity extends Activity {
         int catColor = menuState.getCurrNode().getTopLevelColor();
         homeClick = null;
         homeLongClick = null;
-        customActionbar = new CustomActionbar(this, menuState.getCurrNode(),menuLang,homeClick,homeLongClick, null,null,null,null,backClick,menuClick,catColor,true,true);
+        customActionbar = new CustomActionbar(this, menuState.getCurrNode(), menuLang, homeClick, homeLongClick, null, null, null, null, backClick, menuClick, catColor, true, true);
         customActionbar.setMenuBtnLang(menuLang);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(customActionbar);
 
-        menuGrid = new MenuGrid(this,NUM_COLUMNS, menuState,LIMIT_GRID_SIZE,menuLang);
+        menuGrid = new MenuGrid(this, NUM_COLUMNS, menuState, LIMIT_GRID_SIZE, menuLang);
         LinearLayout root = (LinearLayout) findViewById(R.id.gridRoot);
         root.addView(menuGrid);
         setLang(menuLang);
     }
 
-    private void setLang(Util.Lang lang){
-        if(lang == Util.Lang.BI) {
+    private void setLang(Util.Lang lang) {
+        if (lang == Util.Lang.BI) {
             lang = Util.Lang.EN;
         }
         menuState.setLang(lang);
@@ -82,21 +82,22 @@ public class MenuActivity extends Activity {
     }
 
     private boolean veryFirstTime = true;
+
     @Override
     protected void onResume() {
         super.onResume();
 
-        if(oldTheme != Settings.getTheme()){
+        if (oldTheme != Settings.getTheme()) {
             restartActivity();
             return;
         }
 
         Huffman.makeTree(true);
         GoogleTracker.sendScreen("MenuActivity");
-        GoogleTracker.sendEvent(GoogleTracker.CATEGORY_OPEN_MENU,menuState.getCurrNode().getTitle(Util.Lang.EN));
-        if(!veryFirstTime) {
+        GoogleTracker.sendEvent(GoogleTracker.CATEGORY_OPEN_MENU, menuState.getCurrNode().getTitle(Util.Lang.EN));
+        if (!veryFirstTime) {
             setLang(Settings.getMenuLang());
-        }else
+        } else
             veryFirstTime = false;
 
         DialogNoahSnackbar.checkCurrentDialog(this, (ViewGroup) this.findViewById(R.id.dialogNoahSnackbarRoot));
@@ -124,10 +125,10 @@ public class MenuActivity extends Activity {
         //menuGrid.setLang(menuGrid.getLang());//TODO noah this line seems useless
     }
 
-    private void restartActivity(){
-        Intent intent = new Intent(this,MenuActivity.class);
-        intent.putExtra("menuState",menuState);
-        intent.putExtra("hasSectionBack",hasSectionBack);
+    private void restartActivity() {
+        Intent intent = new Intent(this, MenuActivity.class);
+        intent.putExtra("menuState", menuState);
+        intent.putExtra("hasSectionBack", hasSectionBack);
         startActivity(intent);
         finish();
     }
@@ -135,7 +136,7 @@ public class MenuActivity extends Activity {
     @Override
     public void onSaveInstanceState(Bundle out) {
         super.onSaveInstanceState(out);
-        out.putParcelable("menuState",menuState);
+        out.putParcelable("menuState", menuState);
         out.putBoolean("hasSectionBack", hasSectionBack);
     }
 

@@ -21,8 +21,8 @@ public class TOCVersionsAdapter extends ArrayAdapter<TOCVersion> {
     private int resId;
     private List<TOCVersion> items;
 
-    public TOCVersionsAdapter(Context context,int resId, List<TOCVersion> items) {
-        super(context,resId,items);
+    public TOCVersionsAdapter(Context context, int resId, List<TOCVersion> items) {
+        super(context, resId, items);
         this.context = context;
         this.resId = resId;
         this.items = items;
@@ -30,11 +30,11 @@ public class TOCVersionsAdapter extends ArrayAdapter<TOCVersion> {
 
     @Override
     public View getView(int position, View view, ViewGroup parent) {
-        return stupidGetView(position,view,parent);
+        return stupidGetView(position, view, parent);
     }
 
     public View getDropDownView(int position, View view, ViewGroup parent) {
-        return stupidGetView(position,view,parent);
+        return stupidGetView(position, view, parent);
     }
 
     private View stupidGetView(int position, View view, ViewGroup parent) {
@@ -43,7 +43,7 @@ public class TOCVersionsAdapter extends ArrayAdapter<TOCVersion> {
         if (view == null) {
             LayoutInflater inflater = (LayoutInflater)
                     context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(resId,parent,false);
+            view = inflater.inflate(resId, parent, false);
         }
 
         SefariaTextView stv = (SefariaTextView) view.findViewById(R.id.tv);

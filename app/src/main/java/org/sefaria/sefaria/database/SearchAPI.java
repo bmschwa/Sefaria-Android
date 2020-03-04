@@ -40,8 +40,8 @@ public class SearchAPI {
                         "\"from\": " + (pageNum * pageSize) + "," +
                         "\"size\": " + pageSize + "," +
                         "\"sort\": [{" +
-                            "\"order\": {}" +
-                            "}]," +
+                        "\"order\": {}" +
+                        "}]," +
                         "\"highlight\": {" +
                         "\"pre_tags\": [\"" + SearchingDB.BIG_BOLD_START + "\"]," +
                         "\"post_tags\": [\"" + SearchingDB.BIG_BOLD_END + "\"]," +
@@ -53,9 +53,9 @@ public class SearchAPI {
         if (getFilters) {
             jsonString += ",\"query\":{" +
                     coreQuery + "}" +
-            ",\"aggs\":{ \"category\":{\"terms\": { \"field\":\"path\",\"size\":0}}}";
+                    ",\"aggs\":{ \"category\":{\"terms\": { \"field\":\"path\",\"size\":0}}}";
         } else if (appliedFilters == null || appliedFilters.size() == 0) {
-            jsonString += ",\"query\":{" + coreQuery +"}";
+            jsonString += ",\"query\":{" + coreQuery + "}";
         } else {
             String clauses = "[";
             for (int i = 0; i < appliedFilters.size(); i++) {
@@ -67,11 +67,11 @@ public class SearchAPI {
 
                 clauses += "{\"regexp\":{" +
                         "\"path\":\"" + filterString + filterSuffix + "\"}}";
-                if (i != appliedFilters.size()-1) clauses += ",";
+                if (i != appliedFilters.size() - 1) clauses += ",";
             }
             clauses += "]";
             jsonString += ",\"query\":{" +
-                    "\"filtered\":{"+
+                    "\"filtered\":{" +
                     "\"query\":{" + coreQuery + "}," +
                     "\"filter\":{" +
                     "\"or\":" + clauses + "}}}";
@@ -83,7 +83,7 @@ public class SearchAPI {
         //Log.d("YOYO","GF = " + getFilters);
         String result = API.getDataFromURL(SEARCH_URL, jsonString, true, API.TimeoutType.REG);
 
-        return getParsedResults(result,getFilters);
+        return getParsedResults(result, getFilters);
     }
 
     private static SearchResultContainer getParsedResults(String resultString, boolean getFilters) {
@@ -127,7 +127,7 @@ public class SearchAPI {
 
                 String content = hits.getJSONObject(i).getJSONObject("highlight").getJSONArray("content").getString(0);
                 String path = source.getString("path");
-                String title = path.substring(path.lastIndexOf("/")+1);
+                String title = path.substring(path.lastIndexOf("/") + 1);
 
 
                 String heText = "";
@@ -152,12 +152,11 @@ public class SearchAPI {
             e.printStackTrace();
         }
 
-        return new SearchResultContainer(results,numResults,allFilters);
+        return new SearchResultContainer(results, numResults, allFilters);
 
     }
 
     /**
-     *
      * @param filterNodes - all currently selected filters
      * @return - the minimum number of filter nodes required to represent those filters
      */
@@ -171,9 +170,9 @@ public class SearchAPI {
             BilingualNode parent = node.getParent();
             if (parent == null) continue;
             if (!parentMap.containsKey(parent))
-                parentMap.put(parent,1);
+                parentMap.put(parent, 1);
             else
-                parentMap.put(parent,parentMap.get(parent)+1);
+                parentMap.put(parent, parentMap.get(parent) + 1);
         }
 
         for (BilingualNode node : filterNodes) {
@@ -202,7 +201,7 @@ public class SearchAPI {
         //Replace internal quotes with gershaim.
         final Pattern r = Pattern.compile("(\\S)\"(\\S)");
         String yo = r.matcher(query).replaceAll("$1\u05f4$2");
-        Log.d("QUERY",yo + " -> " + query);
+        Log.d("QUERY", yo + " -> " + query);
         return yo;
     }
 

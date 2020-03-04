@@ -45,7 +45,7 @@ public class JustifyTextView extends SefariaTextView {
             String line = text.substring(lineStart, lineEnd);
 
             float width = StaticLayout.getDesiredWidth(text, lineStart, lineEnd, getPaint());
-            if (needScale(line) && i != layout.getLineCount()-1) {
+            if (needScale(line) && i != layout.getLineCount() - 1) {
                 drawScaledText(canvas, lineStart, line, width);
             } else {
                 canvas.drawText(line, 0, mLineY, paint);

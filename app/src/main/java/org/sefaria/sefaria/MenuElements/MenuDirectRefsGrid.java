@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * Created by LenJ on 9/27/2016.
  */
-public class MenuDirectRefsGrid extends LinearLayout{
+public class MenuDirectRefsGrid extends LinearLayout {
     private Context context;
     private int numColumns;
 
@@ -41,6 +41,7 @@ public class MenuDirectRefsGrid extends LinearLayout{
     private List<MenuDirectRef> allMenuDirectRefs;
 
     private boolean flippedForHe; //are the views flipped for hebrew
+
     public MenuDirectRefsGrid(Context context, int numColumns, List<MenuDirectRef> menuDirectRefs) {
         super(context);
         this.allMenuDirectRefs = menuDirectRefs;
@@ -67,12 +68,12 @@ public class MenuDirectRefsGrid extends LinearLayout{
 
         int currNodeIndex = 0;
 
-        for (int i = 0; i <= Math.ceil(allMenuDirectRefs.size()/numColumns) && currNodeIndex < allMenuDirectRefs.size(); i++) {
+        for (int i = 0; i <= Math.ceil(allMenuDirectRefs.size() / numColumns) && currNodeIndex < allMenuDirectRefs.size(); i++) {
             LinearLayout ll = addRow(gridRoot);
-            for (int j = 0; j < numColumns && currNodeIndex < allMenuDirectRefs.size();  j++) {
+            for (int j = 0; j < numColumns && currNodeIndex < allMenuDirectRefs.size(); j++) {
                 ll.removeViewAt(j);
                 MenuDirectRef menuDirectRef = allMenuDirectRefs.get(currNodeIndex);
-                menuDirectRef.setPadding(10,0,10,0);
+                menuDirectRef.setPadding(10, 0, 10, 0);
                 menuDirectRef.setTVGravity(Gravity.CENTER);
 
                 ll.addView(menuDirectRef, j);
@@ -86,7 +87,7 @@ public class MenuDirectRefsGrid extends LinearLayout{
         }
     }
 
-    public void setNewList(List<MenuDirectRef> menuDirectRefs){
+    public void setNewList(List<MenuDirectRef> menuDirectRefs) {
         allMenuDirectRefs = menuDirectRefs;
         init();
     }
@@ -106,8 +107,6 @@ public class MenuDirectRefsGrid extends LinearLayout{
         parentView.addView(ll);
         return ll;
     }
-
-
 
 
     public void setLang(Util.Lang lang) {

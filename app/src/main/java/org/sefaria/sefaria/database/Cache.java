@@ -13,7 +13,7 @@ import android.util.Log;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.Util;
 
-public class Cache{
+public class Cache {
 
 
     public static final boolean USE_CACHE_DEFAULT = true;
@@ -24,36 +24,36 @@ public class Cache{
     private static int maxCache = -1;
     private static final int MB = 1048576;
 
-    private static int getMaxCache(){
-        if(maxCache == -1){
+    private static int getMaxCache() {
+        if (maxCache == -1) {
             long totalSpace = Util.getInternalAvailableSpace();
             Log.d("cache", "totalSpace: " + totalSpace);
-            if(totalSpace >5000l*MB){
-                maxCache = 40*MB;
-            }else if(totalSpace >512*MB){
-                maxCache = 20*MB;
-            }else if(totalSpace >256*MB){
-                maxCache = 10*MB;
-            }else if(totalSpace >128*MB){
-                maxCache = 3*MB;
-            }else {
+            if (totalSpace > 5000l * MB) {
+                maxCache = 40 * MB;
+            } else if (totalSpace > 512 * MB) {
+                maxCache = 20 * MB;
+            } else if (totalSpace > 256 * MB) {
+                maxCache = 10 * MB;
+            } else if (totalSpace > 128 * MB) {
+                maxCache = 3 * MB;
+            } else {
                 maxCache = MB;
             }
-            Log.d("cache","maxCache: " + maxCache);
+            Log.d("cache", "maxCache: " + maxCache);
         }
         return maxCache;
     }
 
-    public static boolean add(String url,String json, String data) {
+    public static boolean add(String url, String json, String data) {
         long time = System.currentTimeMillis();
-        if(data.length()<1 || data.length() > MAX_FILE_SIZE){
+        if (data.length() < 1 || data.length() > MAX_FILE_SIZE) {
             Log.d("cache", "bad filesize: " + data.length());
             return false;
         }
 
         try {
             Util.writeFile(urlToHashFile(url, json), data);
-            Util.writeFile(urlToTimeFile(url,json),"" + time);
+            Util.writeFile(urlToTimeFile(url, json), "" + time);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -63,12 +63,12 @@ public class Cache{
     }
 
 
-    public static String getCache(String url,String json){
+    public static String getCache(String url, String json) {
         try {
             Log.d("cache", "url:" + url);
-            String filename = urlToHashFile(url,json);
+            String filename = urlToHashFile(url, json);
             String data = Util.readFile(filename);
-            if(data != null && data.length() >0){
+            if (data != null && data.length() > 0) {
                 Log.d("cache", "Good Data api");
                 return data;
             }
@@ -78,26 +78,26 @@ public class Cache{
         return null;
     }
 
-    private static String timeFile(String hashName){
+    private static String timeFile(String hashName) {
         return path + "/" + hashName + ".time";
     }
 
-    private static String jsonFile(String hashName){
+    private static String jsonFile(String hashName) {
         return path + "/" + hashName + ".json";
     }
 
-    private static String urlToHashFile(String url,String json){
+    private static String urlToHashFile(String url, String json) {
         String hashcode;
-        if(json != null)
+        if (json != null)
             hashcode = "" + url.hashCode() + json.hashCode();
         else
             hashcode = "" + url.hashCode();
         return path + "/" + hashcode + ".json";
     }
 
-    private static String urlToTimeFile(String url,String json){
+    private static String urlToTimeFile(String url, String json) {
         String hashcode;
-        if(json != null)
+        if (json != null)
             hashcode = "" + url.hashCode() + json.hashCode();
         else
             hashcode = "" + url.hashCode();
@@ -105,8 +105,8 @@ public class Cache{
     }
 
 
-    private static void clearTooManyFiles(){
-        for(int i=0;i<10;i++){//10 times just so it doesn't accidently run for too long
+    private static void clearTooManyFiles() {
+        for (int i = 0; i < 10; i++) {//10 times just so it doesn't accidently run for too long
             long size = 0;
             int fileCount = 0;
             for (File file : path.listFiles()) {
@@ -115,16 +115,16 @@ public class Cache{
                     fileCount++;
                 }
             }
-            if(size < getMaxCache())
+            if (size < getMaxCache())
                 return;
-            double maxSize = size/fileCount*.8;
-            if(i == 9)
+            double maxSize = size / fileCount * .8;
+            if (i == 9)
                 maxSize = -1;
             clearBigFiles(maxSize);
         }
     }
 
-    private static void clearBigFiles(double maxSize){
+    private static void clearBigFiles(double maxSize) {
         for (File file : path.listFiles()) {
             if (file.isFile() && file.length() > maxSize) {
                 String timeFile = file.getAbsolutePath().replaceAll("\\.json", ".time");
@@ -135,8 +135,7 @@ public class Cache{
     }
 
 
-
-    private static boolean clearExpiredCacheFile(String filename){
+    private static boolean clearExpiredCacheFile(String filename) {
         filename = filename.replaceAll("\\.time", "").replaceAll("\\.json", "");
         //Log.d("cache", "filename cleared:" + filename);
         try {
@@ -152,7 +151,7 @@ public class Cache{
                 new File(timeFile(filename)).delete();
                 return true;
             }
-        }catch (IOException e1){
+        } catch (IOException e1) {
             //Log.w("cache", "unable to read:" + filename + "...." + e1.getMessage());
             new File(jsonFile(filename)).delete();
             return true;
@@ -160,23 +159,22 @@ public class Cache{
         return false;
     }
 
-    public static void clearExpiredCache(){
+    public static void clearExpiredCache() {
         Cache cache = new Cache();
         cache.new ClearCache().execute();
     }
 
-    private static void clearExpiredCacheTask(){
+    private static void clearExpiredCacheTask() {
         Log.d("cache", "starting clearExpiredCacheTask");
         int size = 0;
         for (File file : path.listFiles()) {
             if (file.isFile()) {
                 //Log.d("cache", "file: " + file.getName() + " " + file.length());
-                if(file.getName().matches(".*\\.time")) {
+                if (file.getName().matches(".*\\.time")) {
                     continue;
                 }
                 clearExpiredCacheFile(file.getName());
-            }
-            else{
+            } else {
                 Log.d("cache", "dir: " + file.getName());
             }
         }

@@ -7,12 +7,11 @@ package org.sefaria.sefaria.TOCElements;
 import org.sefaria.sefaria.Util;
 
 /**
- *  * Super class for a few similar
+ * * Super class for a few similar
  */
 public interface TOCElement {
 
     /**
-     *
      * @param lang
      */
     public abstract void setLang(Util.Lang lang);

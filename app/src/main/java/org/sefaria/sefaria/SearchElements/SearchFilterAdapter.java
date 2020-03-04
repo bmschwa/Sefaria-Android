@@ -45,7 +45,7 @@ public class SearchFilterAdapter extends ArrayAdapter<BilingualNode> {
 
 
     public SearchFilterAdapter(Context context, int resourceId, List<BilingualNode> objects, IndeterminateCheckBox.OnStateChangedListener checkedChangeListener, View.OnClickListener onCheckBoxClick, SearchFilterAdapter slaveAdapter) {
-        super(context,resourceId,objects);
+        super(context, resourceId, objects);
 
         this.context = context;
         this.resourceId = resourceId;
@@ -65,7 +65,7 @@ public class SearchFilterAdapter extends ArrayAdapter<BilingualNode> {
         if (view == null) {
             LayoutInflater inflater = (LayoutInflater)
                     context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(resourceId,null);
+            view = inflater.inflate(resourceId, null);
 
             searchFilterHolder = new SearchFilterHolder();
             searchFilterHolder.tv = (SefariaTextView) view.findViewById(R.id.tv);
@@ -80,11 +80,11 @@ public class SearchFilterAdapter extends ArrayAdapter<BilingualNode> {
         } else {
             searchFilterHolder = (SearchFilterHolder) view.getTag();
         }
-        String fadedTextHexColor = String.format("#%06X", (0xFFFFFF & Util.getColor(context,R.attr.text_color_faded)));
+        String fadedTextHexColor = String.format("#%06X", (0xFFFFFF & Util.getColor(context, R.attr.text_color_faded)));
         int count = node.getCount();
-        if(count > 0) {
+        if (count > 0) {
             searchFilterHolder.tv.setText(Html.fromHtml(node.getTitle(Settings.getMenuLang()) + " <font color=" + fadedTextHexColor + ">(" + count + ")</font>"));
-        }else {
+        } else {
             searchFilterHolder.tv.setText(Html.fromHtml(node.getTitle(Settings.getMenuLang())));
         }
         searchFilterHolder.checkBox.setPosition(position);
@@ -120,7 +120,7 @@ public class SearchFilterAdapter extends ArrayAdapter<BilingualNode> {
 
     public void clearAndAdd(List<BilingualNode> objects, List<BilingualNode> currChecked) {
         clearAndAdd(objects);
-        for(BilingualNode node : currChecked) {
+        for (BilingualNode node : currChecked) {
             int index = objects.indexOf(node);
             if (index != -1) {
                 isCheckedArray[index] = true;
@@ -129,7 +129,6 @@ public class SearchFilterAdapter extends ArrayAdapter<BilingualNode> {
     }
 
     /**
-     *
      * @param objects
      * @param initArray - default values to fill array with
      */
@@ -142,7 +141,7 @@ public class SearchFilterAdapter extends ArrayAdapter<BilingualNode> {
 
     @Override
     public void addAll(Collection<? extends BilingualNode> collection) {
-        List<SearchFilterNode> searchFilterNodes = (List<SearchFilterNode>)collection;
+        List<SearchFilterNode> searchFilterNodes = (List<SearchFilterNode>) collection;
         Collections.sort(searchFilterNodes);
         super.addAll(searchFilterNodes);
     }
@@ -152,12 +151,12 @@ public class SearchFilterAdapter extends ArrayAdapter<BilingualNode> {
         notifyDataSetChanged();
     }
 
-    public @Nullable Boolean getIsCheckedAtPos(int position) {
+    public @Nullable
+    Boolean getIsCheckedAtPos(int position) {
         return isCheckedArray[position];
     }
 
     /**
-     *
      * @param value
      * @return - returns true if everything in `isCheckedArray` is `value`
      */
@@ -172,7 +171,9 @@ public class SearchFilterAdapter extends ArrayAdapter<BilingualNode> {
         return isUniform;
     }
 
-    public boolean getIsMaster() { return isMaster; }
+    public boolean getIsMaster() {
+        return isMaster;
+    }
 
     public boolean getIsMasterPosition(int position) {
         return slaveAdapter != null && slaveAdapter.getMasterPosition() == position;
@@ -181,15 +182,20 @@ public class SearchFilterAdapter extends ArrayAdapter<BilingualNode> {
     public void setSlaveCheckBoxes(@Nullable Boolean isChecked) {
         if (slaveAdapter != null) {
             for (int i = 0; i < slaveAdapter.getCount(); i++) {
-                slaveAdapter.setIsCheckedAtPos(isChecked,i);
+                slaveAdapter.setIsCheckedAtPos(isChecked, i);
             }
             slaveAdapter.notifyDataSetChanged();
         }
 
     }
 
-    public int getMasterPosition() { return masterPosition; }
-    public void setMasterPosition(int masterPosition) { this.masterPosition = masterPosition; }
+    public int getMasterPosition() {
+        return masterPosition;
+    }
+
+    public void setMasterPosition(int masterPosition) {
+        this.masterPosition = masterPosition;
+    }
 
     private Boolean[] initIsCheckedArray(int size) {
         Boolean[] isCheckedArray = new Boolean[size];

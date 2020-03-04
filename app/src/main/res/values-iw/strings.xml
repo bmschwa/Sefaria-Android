@@ -6,8 +6,6 @@
     <string name="OK">קבל</string>
     <string name="CANCEL">בטל</string>
     <string name="none">ללא</string>
-    <string name="action_settings">הגדרות</string>
-    <string name="no_links">אין מקורות. שים לב לסימן ה-● המציין מקורות</string>
     <string name="no_links_filtered">אין מקורות</string>
     <string name="no_text">&lt;i&gt;(אין טקסט בשפה זו)&lt;/i&gt;</string>
     <string name="pinned_item">פריט נעוץ</string>
@@ -16,18 +14,12 @@
     <string name="english">אנגלית</string>
     <string name="bilingual">דו-לשוני</string>
     <string name="menu_lang">שפת תפריט</string>
-    <string name="settings_done">סיום</string>
-    <string name="clear_all_book_settings">נקה את כל ההגדרות</string>
-    <string name="need_library">בכדי לפתוח את הספר, יש צורך להוריד את קובץ הספריה. ניתן להוריד את הקובץ דרך תפריט ההגדרות בתחתית עמוד הבית</string>
-    <string name="cannot_parse_link">שגיאה בהבנת הקישור</string>
     <string name="opening_new_task">פותח לשונית חדשה</string>
     <string name="switching_to_api">עובר למצב מקוון</string>
     <string name="switching_to_offline">עובר לשימוש בספריה בלתי מקוונת</string>
-    <string name="online_only_Library">השתמש במצב מקוון</string>
     <string name="first_time_title">ברוכים הבאים</string>
     <string name="first_time_message">אנו ממליצים על שימוש במצב בלתי מקוון לחווית השימוש הטובה ביותר. גודל הספריה הוא כ250 מגהבייט. לחלופין, ניתן להמשיך להשתמש במצב המקוון.</string>
     <string name="first_time_positive">הורד עכשיו</string>
-    <string name="offline_Library">השתמש במצב בלתי מקוון (מומלץ)</string>
     <string name="without_permission">ללא הרשאות אחסון, לא ניתן להשתמש במצב הלא מקוון. ניתן להוריד את קובץ הספריה בתפריט הראשי של האפליקציה.</string>
     <string name="send_to">שתף</string>
     <string name="online_library_version">גרסה מקוונת: &#160;</string>
@@ -36,7 +28,7 @@
     <string name="consider_downloading">שקול להשתמש בספריה הבלתי מקוונת</string>
     <string name="searching_requires_internet">פונקצית החיפוש מצריכה חיבור לרשת</string>
     <string name="how_to_report_mistake">כיצד לדווח על שגיאה</string>
-    <!-- not used...dont translate --><string name="how_to_report_mistake_message">No one is perfect, and Sefaria is no exception. If you spot a mistake, we want to know about it. However, we find that most textual errors that get reported to us are not in fact mistakes. This is in part due to textual variances between different editions of a text. To properly report a typo or textual error to Sefaria, make sure to include what you think the text should be and what you are using to make your determination. If you are looking at a printed book, please provide enough information to uniquely identify the book you\'re using. If the edition you\'re using is not the same as the edition we are using, we will be unlikely to change the text based simply on differing textual traditions. We will only change it if we believe that either the printer made a mistake, or we made a mistake when we digitized a text. Textual differences can be handled by adding the second textual tradition as another text version.</string>
+    <!-- not used...dont translate -->
     <string name="how_to_report_mistake_message_short">אם שמתם לב לשגיאה, אנו נשמח לשמוע עליה. עם זאת, אנו מוצאים כי רוב הבעיות בטקסט המדווחות לנו מתגלות בסוף לא כשגיאות. דבר זה נובע לרוב מהשינויים בין הגרסאות השונות של טקסט מסויים. בכדי לדווח כראוי על שגיאה בטקסט או באיות לספאריה, הקפד לצרף \n\n1 מה צריך להיות כתוב לדעתך \n\n2 במה נעזרת בכדי להגיע לקביעה זו. אם אתה משתמש בספר מודפס, אנא הקפד לתת מספיק מידע בכדי לזהות את הגרסה הספציפית של הספר בו אתה משתמש. . </string>
     <string name="enter_word_to_search">הקלד מילה לחיפוש בספר</string>
     <string name="CHECKING_FOR_UPDATE_TITLE">בדוק עדכונים</string>

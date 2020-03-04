@@ -16,7 +16,6 @@ public abstract class MenuElement extends LinearLayout {
     }
 
     /**
-     *
      * @param lang
      */
     public abstract void setLang(Util.Lang lang);

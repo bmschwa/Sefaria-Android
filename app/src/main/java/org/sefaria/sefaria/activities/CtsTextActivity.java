@@ -46,7 +46,7 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
     @Override
     protected void onCreate(Bundle in) {
         super.onCreate(in);
-        if(!goodOnCreate){
+        if (!goodOnCreate) {
             finish();
             return;
         }
@@ -60,7 +60,7 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
         super.init();
         listView = (TextListView) findViewById(R.id.listview);
         listView.setSensitivity(250);
-        ctsTextAdapter = new CtsTextAdapter(this,R.layout.adapter_text_mono,new ArrayList<Section>(),onSegmentSpanClickListener);
+        ctsTextAdapter = new CtsTextAdapter(this, R.layout.adapter_text_mono, new ArrayList<Section>(), onSegmentSpanClickListener);
 
         listView.setAdapter(ctsTextAdapter);
         listView.setOnScrollListener(this);
@@ -72,7 +72,7 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
 
         listView.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View view, MotionEvent event) {
-                listView.setClickPos(new Point((int)event.getX(),(int)event.getY()));
+                listView.setClickPos(new Point((int) event.getX(), (int) event.getY()));
                 return false; // not consumed; forward to onClick
             }
         });
@@ -85,7 +85,7 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
 
                 if (!linkFragment.getIsOpen()) {
                     Point clickPos = listView.getClickPos();
-                    listView.smoothScrollBy(clickPos.y-SEGMENT_SELECTOR_LINE_FROM_TOP,LINK_FRAG_ANIM_TIME);
+                    listView.smoothScrollBy(clickPos.y - SEGMENT_SELECTOR_LINE_FROM_TOP, LINK_FRAG_ANIM_TIME);
                 }
 
                 updateFocusedSegment();
@@ -120,9 +120,8 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
             }
         });*/
 
-        AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION,null);
+        AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION, null);
         als.preExecute();
-
 
 
         registerForContextMenu(listView);
@@ -130,7 +129,7 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
         initTime = System.currentTimeMillis();
     }
 
-    private class AsyncLoadSection extends AsyncTask<Void,Void,List<Segment>> {
+    private class AsyncLoadSection extends AsyncTask<Void, Void, List<Segment>> {
 
         private TextEnums dir;
         private Section loaderSection;
@@ -138,7 +137,7 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
         private LoadSectionResult loadSectionResult;
 
         /**
-         * @param dir          - direction in which you want to load a section (either prev or next)
+         * @param dir             - direction in which you want to load a section (either prev or next)
          * @param catalystSection - the Segment which caused this loading to happen. Important, in case this segment has already failed to generate any new content, meaning that it's either the beginning or end of a book
          */
         public AsyncLoadSection(TextEnums dir, Section catalystSection) {
@@ -171,7 +170,7 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
         protected List<Segment> doInBackground(Void... params) {
             List<Segment> segmentList = null;
             try {
-                 segmentList = loadSection(dir);
+                segmentList = loadSection(dir);
             } catch (API.APIException e) {
                 loadSectionResult = LoadSectionResult.API_EXCEPTION;
                 segmentList = new ArrayList<>();
@@ -189,8 +188,7 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
             isLoadingInit = false;
 
 
-
-            if (loadSectionResult == LoadSectionResult.LAST_NODE){ //textsList == null) {
+            if (loadSectionResult == LoadSectionResult.LAST_NODE) { //textsList == null) {
                 problemLoadedSection = catalystSection;
                 ctsTextAdapter.remove(loaderSection);
                 //ctsTextAdapter.set
@@ -200,7 +198,7 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
             //if (textsList.size() == 0) return;//removed this line so that when it doesn't find segment it continues to look for the next item for segment
 
             Segment sectionHeader = getSectionHeaderText(dir);
-            if (loadSectionResult == LoadSectionResult.API_EXCEPTION){
+            if (loadSectionResult == LoadSectionResult.API_EXCEPTION) {
                 sectionHeader.setChapterHasTexts(false);
             }
             Section newSection = new Section(textsList, sectionHeader);
@@ -240,7 +238,7 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
     protected void setTextLang(Util.Lang textLang) {
         this.textLang = textLang;
         if (textLang == Util.Lang.BI) {
-            setIsCts(false,true); //force restart to apply changes
+            setIsCts(false, true); //force restart to apply changes
         }
 
         ctsTextAdapter.notifyDataSetChanged();
@@ -263,7 +261,7 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
         int midViewPos = listView.getFirstVisiblePosition();
         View midView = null;
         boolean foundMidView = false;
-        while(!foundMidView && midViewPos < ctsTextAdapter.getCount()) {
+        while (!foundMidView && midViewPos < ctsTextAdapter.getCount()) {
             midView = listView.getViewByPosition(midViewPos);
 
             foundMidView = midView.getBottom() > SEGMENT_SELECTOR_LINE_FROM_TOP;
@@ -279,7 +277,6 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
                 int lineEnd = layout.getLineEnd(lineNum);
 
                 String allText =  sectionTv.getText().toString();*/
-
 
 
                 SegmentSpannable midVs = getSpanNearY(sectionTv, midmid);
@@ -306,14 +303,14 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
         SegmentSpannable[] segmentSpannables = ss.getSpans(0, ss.length(), SegmentSpannable.class);
 
         int lo = 0;
-        int hi = segmentSpannables.length-1;
+        int hi = segmentSpannables.length - 1;
 
         int[] spanYs = new int[segmentSpannables.length];
         int[] mids = new int[segmentSpannables.length];
         int counter = 0;
         while (lo <= hi) {
             mids[counter] = lo + (hi - lo) / 2;
-            spanYs[counter] = getSpanYFast(ss, stv, segmentSpannables[mids[counter]],parentTextViewRect,textViewLayout);
+            spanYs[counter] = getSpanYFast(ss, stv, segmentSpannables[mids[counter]], parentTextViewRect, textViewLayout);
 
             if (y > spanYs[counter]) {
                 lo = mids[counter] + 1;
@@ -327,12 +324,12 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
 
         SegmentSpannable vs = null;
         if (counter > 1) {
-            if (Math.abs(y - spanYs[counter-1]) < Math.abs(y - spanYs[counter-2])) {
-                vs = segmentSpannables[mids[counter-1]];
+            if (Math.abs(y - spanYs[counter - 1]) < Math.abs(y - spanYs[counter - 2])) {
+                vs = segmentSpannables[mids[counter - 1]];
             } else {
-                vs = segmentSpannables[mids[counter-2]];
+                vs = segmentSpannables[mids[counter - 2]];
             }
-        } else if (counter == 1){
+        } else if (counter == 1) {
             vs = segmentSpannables[0];
         }
 
@@ -344,7 +341,7 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
         int currentLineStartOffset = textViewLayout.getLineForOffset(startOffsetOfClickedText);
         textViewLayout.getLineBounds(currentLineStartOffset, parentTextViewRect);
 
-        return (parentTextViewRect.top + parentTextViewRect.bottom)/2;
+        return (parentTextViewRect.top + parentTextViewRect.bottom) / 2;
     }
 
     private int getSpanY(SpannableString ss, TextView stv, SegmentSpannable vs) {
@@ -367,7 +364,7 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
         //boolean keywordIsInMultiLine = currentLineStartOffset != currentLineEndOffset;
         textViewLayout.getLineBounds(currentLineStartOffset, parentTextViewRect);
 
-        return (parentTextViewRect.top + parentTextViewRect.bottom)/2;
+        return (parentTextViewRect.top + parentTextViewRect.bottom) / 2;
         /*
         // Update the rectangle position to his real position on screen
         int[] parentTextViewLocation = {0,0};
@@ -422,7 +419,7 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
     public void onScroll(AbsListView lw, final int firstVisibleItem,
                          final int visibleItemCount, final int totalItemCount) {
 
-        switch(lw.getId()) {
+        switch (lw.getId()) {
             case R.id.listview:
 
                 int scrollY = 0;
@@ -437,7 +434,7 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
                         AsyncLoadSection als = new AsyncLoadSection(TextEnums.PREV_SECTION, ctsTextAdapter.getItem(0));
                         als.preExecute();
                     }
-                    if (lastItem == totalItemCount ) {
+                    if (lastItem == totalItemCount) {
                         preLast = lastItem;
                         AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION, ctsTextAdapter.getItem(lastItem - 1));
                         als.preExecute();
@@ -504,7 +501,7 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
 
     OnSegmentSpanClickListener onSegmentSpanClickListener = new OnSegmentSpanClickListener() {
         @Override
-        public void onSegmentClick(TextView tv,SegmentSpannable segmentSpannable) {
+        public void onSegmentClick(TextView tv, SegmentSpannable segmentSpannable) {
             CtsTextActivity.this.onSegmentClick(segmentSpannable.getSegment());
         }
     };
@@ -516,7 +513,7 @@ public class CtsTextActivity extends SuperTextActivity implements AbsListView.On
             return;
         }
 
-        if(getFindOnPageIsOpen()){
+        if (getFindOnPageIsOpen()) {
             findOnPageClose();
         }
 

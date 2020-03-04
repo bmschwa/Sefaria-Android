@@ -27,11 +27,11 @@ public class TextListView extends ListView implements ScaleGestureDetector.OnSca
             new ScaleGestureDetector(getContext(), this);
     private SuperTextActivity superTextActivity;
 
-    public interface OnScrollStoppedListener{
+    public interface OnScrollStoppedListener {
         void onScrollStopped();
     }
 
-    public interface OnScrollStartedListener{
+    public interface OnScrollStartedListener {
         void onScrollStarted();
     }
 
@@ -45,13 +45,13 @@ public class TextListView extends ListView implements ScaleGestureDetector.OnSca
     }
 
     public TextListView(Context context, AttributeSet attributeSet) {
-        super(context,attributeSet);
+        super(context, attributeSet);
         this.superTextActivity = (SuperTextActivity) context;
         isZoomZooming = false;
     }
 
     public TextListView(Context context, AttributeSet attributeSet, int defStyle) {
-        super(context,attributeSet,defStyle);
+        super(context, attributeSet, defStyle);
         this.superTextActivity = (SuperTextActivity) context;
         isZoomZooming = false;
     }
@@ -66,7 +66,7 @@ public class TextListView extends ListView implements ScaleGestureDetector.OnSca
 
         super.onScrollChanged(x, y, oldX, oldY);
         if (lastScrollUpdate == -1) {
-            if(onScrollStartedListener!=null){
+            if (onScrollStartedListener != null) {
                 onScrollStartedListener.onScrollStarted();
             }
             postDelayed(new ScrollStateHandler(), sensitivity);
@@ -82,7 +82,7 @@ public class TextListView extends ListView implements ScaleGestureDetector.OnSca
             long currentTime = System.currentTimeMillis();
             if ((currentTime - lastScrollUpdate) > sensitivity) {
                 lastScrollUpdate = -1;
-                if(onScrollStoppedListener!=null){
+                if (onScrollStoppedListener != null) {
                     onScrollStoppedListener.onScrollStopped();
                 }
             } else {
@@ -91,11 +91,11 @@ public class TextListView extends ListView implements ScaleGestureDetector.OnSca
         }
     }
 
-    public void setOnScrollStoppedListener(TextListView.OnScrollStoppedListener listener){
+    public void setOnScrollStoppedListener(TextListView.OnScrollStoppedListener listener) {
         onScrollStoppedListener = listener;
     }
 
-    public void setOnScrollStartedListener(TextListView.OnScrollStartedListener listener){
+    public void setOnScrollStartedListener(TextListView.OnScrollStartedListener listener) {
         onScrollStartedListener = listener;
     }
 
@@ -103,7 +103,7 @@ public class TextListView extends ListView implements ScaleGestureDetector.OnSca
         final int firstListItemPosition = this.getFirstVisiblePosition();
         final int lastListItemPosition = firstListItemPosition + this.getChildCount() - 1;
 
-        if (pos < firstListItemPosition || pos > lastListItemPosition ) {
+        if (pos < firstListItemPosition || pos > lastListItemPosition) {
             return this.getAdapter().getView(pos, null, this);
         } else {
             final int childIndex = pos - firstListItemPosition;
@@ -115,7 +115,9 @@ public class TextListView extends ListView implements ScaleGestureDetector.OnSca
         clickPos = pos;
     }
 
-    public Point getClickPos() { return clickPos; }
+    public Point getClickPos() {
+        return clickPos;
+    }
 
     /*
     GESTURES
@@ -136,8 +138,8 @@ public class TextListView extends ListView implements ScaleGestureDetector.OnSca
         float max_font = MyApp.getRDimen(R.dimen.max_text_font_size);
         float min_font = MyApp.getRDimen(R.dimen.min_text_font_size);
         //Log.d("zoom", "min: " + min_font + " max: " + max_font + " current: " + currentSize);
-        if ((newTextSize <  max_font   && newTextSize > min_font)
-                ||(newTextSize >= max_font && scale < 1)
+        if ((newTextSize < max_font && newTextSize > min_font)
+                || (newTextSize >= max_font && scale < 1)
                 || (newTextSize <= min_font && scale > 1)) {
             superTextActivity.setTextSize(newTextSize);
         }
@@ -156,7 +158,7 @@ public class TextListView extends ListView implements ScaleGestureDetector.OnSca
     public void onScaleEnd(ScaleGestureDetector detector) {
         isZoomZooming = false;
         setClickable(true);
-       superTextActivity.registerForContextMenu(this);
+        superTextActivity.registerForContextMenu(this);
     }
 
     @Override

@@ -18,7 +18,7 @@ public class LinkBiTextHolder extends LinkTextHolder {
     public SefariaTextView heTv;
 
     public LinkBiTextHolder(View v, List<Segment> itemList, SuperTextActivity activity) {
-        super( v,itemList,activity);
+        super(v, itemList, activity);
         enTv = (SefariaTextView) v.findViewById(R.id.en);
         heTv = (SefariaTextView) v.findViewById(R.id.he);
     }

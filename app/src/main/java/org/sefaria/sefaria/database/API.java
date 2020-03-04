@@ -57,24 +57,25 @@ public class API {
     final static int READ_TIMEOUT_SHORT = 1500;
     final static int CONNECT_TIMEOUT_SHORT = 1500;
     private TimeoutType timeoutType;
+
     public enum TimeoutType {
-        REG,LONG,SHORT
+        REG, LONG, SHORT
     }
     //TODO determine good times
 
     public static void makeAPIErrorToast(Context context) {
         String extraString = MyApp.getRString(R.string.consider_downloading);
-        makeAPIErrorToast(context,extraString);
+        makeAPIErrorToast(context, extraString);
     }
 
-    public static void makeAPIErrorToast(Context context, String extraString){
+    public static void makeAPIErrorToast(Context context, String extraString) {
         String message = MyApp.getRString(R.string.problem_internet);
-        if(extraString != null && extraString.length() >0)
-            message  += " - " + extraString;
+        if (extraString != null && extraString.length() > 0)
+            message += " - " + extraString;
         try {
-            Toast.makeText(context,message, Toast.LENGTH_LONG).show();
-        }catch (Exception e){
-            GoogleTracker.sendException(e,"API toast");
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            GoogleTracker.sendException(e, "API toast");
             e.printStackTrace();
         }
     }
@@ -90,43 +91,43 @@ public class API {
     }
 
     //non-static methods
-    private String fetchData(String urlString){
+    private String fetchData(String urlString) {
         String data = "";
         this.url = urlString;
         long startTime = System.currentTimeMillis();
-        if(!alreadyDisplayedURL)
-            Log.d("api","URL: " + url);
+        if (!alreadyDisplayedURL)
+            Log.d("api", "URL: " + url);
 
-        if(Downloader.getNetworkStatus() == Downloader.ConnectionType.NONE){
+        if (Downloader.getNetworkStatus() == Downloader.ConnectionType.NONE) {
             this.status = STATUS_ERROR;
             return data;
         }
         int readTimeout = READ_TIMEOUT;
         int connectionTimeout = CONNECT_TIMEOUT;
-        if(timeoutType == TimeoutType.LONG){
+        if (timeoutType == TimeoutType.LONG) {
             readTimeout = READ_TIMEOUT_LONG;
             connectionTimeout = CONNECT_TIMEOUT_LONG;
-        }else if(timeoutType == TimeoutType.SHORT){
+        } else if (timeoutType == TimeoutType.SHORT) {
             readTimeout = READ_TIMEOUT_SHORT;
             connectionTimeout = CONNECT_TIMEOUT_SHORT;
         }
 
         try {
-            if(jsonString == null) {//!use JSON post
+            if (jsonString == null) {//!use JSON post
                 URL url = new URL(urlString);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setReadTimeout(readTimeout);
                 conn.setConnectTimeout(connectionTimeout);
 
                 if (isRedirect(conn.getResponseCode())) {
-                    Log.d("API","redirecting to " + conn.getHeaderField("Location"));
+                    Log.d("API", "redirecting to " + conn.getHeaderField("Location"));
                     return fetchData(conn.getHeaderField("Location"));
                 }
 
                 conn.connect();
                 InputStream stream = conn.getInputStream();
                 data = convertStreamToString(stream);
-            }else{
+            } else {
                 URL url = new URL(urlString);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setDoOutput(true);
@@ -136,9 +137,9 @@ public class API {
                 connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
                 connection.setRequestProperty("charset", "utf-8");
                 //connection.setRequestProperty("Content-Length", "" + Integer.toString(urlParameters.getBytes().length));
-                connection.setUseCaches (false);
+                connection.setUseCaches(false);
 
-                DataOutputStream wr = new DataOutputStream(connection.getOutputStream ());
+                DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
                 //wr.writeBytes(otherParametersUrServiceNeed);
 
                 byte[] buf = jsonString.getBytes("UTF-8");
@@ -165,12 +166,12 @@ public class API {
         }
 
         long timeForAPI = System.currentTimeMillis() - startTime;
-        if(status == STATUS_NONE && data.length() >0) {
+        if (status == STATUS_NONE && data.length() > 0) {
             status = STATUS_GOOD;
-            if(useCache)
-                Cache.add(url,jsonString,data); //cache data for later
+            if (useCache)
+                Cache.add(url, jsonString, data); //cache data for later
             GoogleTracker.sendEvent(GoogleTracker.CATEGORY_API_REQUEST, "good", timeForAPI);
-        }else{
+        } else {
             GoogleTracker.sendEvent(GoogleTracker.CATEGORY_API_REQUEST, "error", timeForAPI);
         }
 
@@ -197,17 +198,17 @@ public class API {
                 } else {
                     try {
                         book = new Book(title);
-                        Log.d("api","Found book");
+                        Log.d("api", "Found book");
                     } catch (Book.BookNotFoundException e) {
                         book = null;
                     }
                 }
             }
 
-            if (book != null){
+            if (book != null) {
                 placeRef.book = book;
                 place = place.replaceFirst("^" + book.title + "\\s*", "");
-            } else{
+            } else {
                 List<Book> books = Book.getAll();
                 for (Book tempBook : books) {
                     String newPlace = place.replaceFirst("^" + tempBook.title + "\\s*", "");
@@ -257,8 +258,8 @@ public class API {
                     }
                     placeRef.node = tempNode;
                 }
-            }catch (Exception e){
-                if(placeRef.node != null)
+            } catch (Exception e) {
+                if (placeRef.node != null)
                     placeRef.node = placeRef.node.getFirstDescendant();
             }
             return placeRef;
@@ -266,16 +267,15 @@ public class API {
     }
 
 
-
-
-
-    public class APIException extends Exception{
+    public class APIException extends Exception {
         public APIException() {
             super("API exception");
         }
-        public APIException(String message){
+
+        public APIException(String message) {
             super(message);
         }
+
         private static final long serialVersionUID = 1L;
     }
 
@@ -288,7 +288,7 @@ public class API {
      * @param url
      * @return api;
      */
-    public static API getDataFromURLAsync(String url, String jsonString){
+    public static API getDataFromURLAsync(String url, String jsonString) {
         API api = new API();
         api.jsonString = jsonString;
         api.new GetDataTask().execute(url);
@@ -299,18 +299,18 @@ public class API {
      * Waits for async task to finish.
      * Returns when api.data and api.status is available to use.
      */
-    public void waitForComplete(){
+    public void waitForComplete() {
         try {
             long startTime = System.currentTimeMillis();
-            while(!isDone){
-                if(System.currentTimeMillis() - startTime > SPIN_TIMEOUT){
-                    Log.e("api","Spin time out");
+            while (!isDone) {
+                if (System.currentTimeMillis() - startTime > SPIN_TIMEOUT) {
+                    Log.e("api", "Spin time out");
                     isDone = true;
                     status = STATUS_ERROR;
                 }
                 Thread.sleep(20);
             }
-        }catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             e.printStackTrace();
             isDone = true;
             //maybe change status
@@ -318,29 +318,32 @@ public class API {
     }
 
     /**
-     *  Waits for data from Internet then returns data
+     * Waits for data from Internet then returns data
+     *
      * @return data
      */
-    public String getData(){
+    public String getData() {
         waitForComplete();
         //TODO maybe check status to make sure it's ok
         return data;
     }
 
     /**
-     *  Waits for data from Internet then returns status
+     * Waits for data from Internet then returns status
+     *
      * @return status
      */
-    public int getStatus(){
+    public int getStatus() {
         waitForComplete();
         return status;
     }
 
     /**
      * true if it finished it's request from the web and false if it's still getting data.
+     *
      * @return isDone
      */
-    public boolean isDone(){
+    public boolean isDone() {
         return isDone;
     }
 
@@ -352,70 +355,66 @@ public class API {
 
     //static methods
 
-    public static String getDataFromURL(String url) throws APIException{
-        return getDataFromURL(url,null,Cache.USE_CACHE_DEFAULT,TimeoutType.REG);
+    public static String getDataFromURL(String url) throws APIException {
+        return getDataFromURL(url, null, Cache.USE_CACHE_DEFAULT, TimeoutType.REG);
     }
 
-    public static String getDataFromURL(String url, TimeoutType timeoutType) throws APIException{
-        return getDataFromURL(url,null,Cache.USE_CACHE_DEFAULT,timeoutType);
+    public static String getDataFromURL(String url, TimeoutType timeoutType) throws APIException {
+        return getDataFromURL(url, null, Cache.USE_CACHE_DEFAULT, timeoutType);
     }
 
 
-    public static String getDataFromURL(String url, boolean useCache) throws APIException{
-        return getDataFromURL(url,null,useCache,TimeoutType.REG);
+    public static String getDataFromURL(String url, boolean useCache) throws APIException {
+        return getDataFromURL(url, null, useCache, TimeoutType.REG);
     }
-
 
 
     /**
-
      * @param url
      * @return data as String from url request
      * @throws APIException
      */
 
     /**
-     *
      * This function will wait until it gets the data from the Internet to return.
      * It is possible that it will take a while if you are asking for lots of data or bad connection.
      * Read timeout is {@value #READ_TIMEOUT}ms and connection timeout is {@value #CONNECT_TIMEOUT}ms.
      *
-     *
-     * @param url the URL to get the data from
-     * @param jsonString the jsonString to send or null if you don't need to send JSON
-     * @param useCache if the cache is available
+     * @param url         the URL to get the data from
+     * @param jsonString  the jsonString to send or null if you don't need to send JSON
+     * @param useCache    if the cache is available
      * @param timeoutType if you really want to wait a while if it's a bad connection, or short if you barley want to try
      * @return string data
      * @throws APIException
      */
-    public static String getDataFromURL(String url, String jsonString, boolean useCache, TimeoutType timeoutType) throws APIException{
+    public static String getDataFromURL(String url, String jsonString, boolean useCache, TimeoutType timeoutType) throws APIException {
         String data;
-        if(useCache){
+        if (useCache) {
 
-            data = Cache.getCache(url,jsonString);
-            if(data != null && data.length()>0) {
+            data = Cache.getCache(url, jsonString);
+            if (data != null && data.length() > 0) {
                 return data;
             }
         }
 
         API api = new API();
-        try{//try to get the data with the current thread.  This will only work if it's on a background thread.
+        try {//try to get the data with the current thread.  This will only work if it's on a background thread.
             api.timeoutType = timeoutType;
             api.jsonString = jsonString;
             api.useCache = useCache;
             data = api.fetchData(url);
-        }catch (NetworkOnMainThreadException e){//if it was running on main thread, create our own background thread to handle it
-            api = getDataFromURLAsync(url,jsonString);//creating an instance of api which will fetch data
+        } catch (NetworkOnMainThreadException e) {//if it was running on main thread, create our own background thread to handle it
+            api = getDataFromURLAsync(url, jsonString);//creating an instance of api which will fetch data
             api.alreadyDisplayedURL = true;
             api.useCache = useCache;
             data = api.getData();//waiting for data to be returned from internet
         }
 
 
-        Log.d("api","in API.getDataFromURL: data length: " + data.length() );
+        Log.d("api", "in API.getDataFromURL: data length: " + data.length());
 
-        if(api.status != API.STATUS_GOOD){
-            Log.e("api","throwing apiexception");
+        if (api.status != API.STATUS_GOOD) {
+            Log.e("api", "throwing apiexception");
             throw api.new APIException();
         }
         return data;
@@ -466,8 +465,10 @@ public class API {
     }
 
 */
+
     /**
      * Get links that are tied to the whole chapter, but not to a specific verse.
+     *
      * @param dummyChapSegment
      * @param limit
      * @param offset
@@ -488,12 +489,12 @@ public class API {
     }
 
 
-    static private String createPlace(String bookTitle, int[] levels){
+    static private String createPlace(String bookTitle, int[] levels) {
         String place = bookTitle.replace(" ", "_"); //the api call doesn't have spaces
 
-        for(int i= levels.length-1;i>=0;i--){
+        for (int i = levels.length - 1; i >= 0; i--) {
             //TODO error check on bad input (like [1,0,1] which doesn't make any sense)
-            if(levels[i]== 0)
+            if (levels[i] == 0)
                 continue;
             place += "." + levels[i];
         }
@@ -501,8 +502,7 @@ public class API {
     }
 
 
-
-    private class GetDataTask extends AsyncTask <String, Void, String> {
+    private class GetDataTask extends AsyncTask<String, Void, String> {
 
         @Override
         protected void onPreExecute() {

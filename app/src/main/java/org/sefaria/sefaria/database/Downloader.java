@@ -37,8 +37,9 @@ import org.sefaria.sefaria.Settings;
 public class Downloader {
 
     public enum ConnectionType {
-        WIFI,DATA,NONE
+        WIFI, DATA, NONE
     }
+
     //public static final String GOOGLE_DRIVE_PATH = "https://googledrive.com/host/0B42RTqGcyx8kbjgtaVJLRlFBSlE/";
     public static final String CSV_FILE_NAME = "sefaria_mobile_updating_csv.csv";
     //reason for moving to v3 is the old code couldn't handle rming the "Tosefta" from the index.
@@ -51,12 +52,12 @@ public class Downloader {
     private static final String HOSTING_URL = "http://readonly.sefaria.org/static/android-export/v3/";
     private static final String CSV_DEBUG_URL = HOSTING_URL + "dev_" + CSV_FILE_NAME; //developing version
     private static final String CSV_TESTER_URL = HOSTING_URL + "dev_tester_" + CSV_FILE_NAME; //developing version
-    private static final String CSV_REAL_URL  = HOSTING_URL + CSV_FILE_NAME;
+    private static final String CSV_REAL_URL = HOSTING_URL + CSV_FILE_NAME;
 
     public static final String CSV_DOWNLOAD_TITLE = "Sefaria Pre Update";
     public static final String DB_DOWNLOAD_TITLE = "Sefaria Library Update";
     public static final String JSON_INDEX_TITLE = "Sefaria Index";
-    public static final String DB_DOWNLOAD_PATH = ".sefariaTempDownld/" ; // + "/";
+    public static final String DB_DOWNLOAD_PATH = ".sefariaTempDownld/"; // + "/";
     public static final String FULL_DOWNLOAD_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + DB_DOWNLOAD_PATH; //Environment.getExternalStorageDirectory()
     public static final String INDEX_JSON_NAME = "sefaria_mobile_updating_index.json";
 
@@ -76,28 +77,27 @@ public class Downloader {
 
     private static Activity activity;
 
-    public static Activity getActivity(){
+    public static Activity getActivity() {
         return activity;
     }
 
     public static int downloadErrorNum;
 
-    public static String getCSVurl(){
-        if(Settings.getIsDebug())
+    public static String getCSVurl() {
+        if (Settings.getIsDebug())
             return CSV_DEBUG_URL;
         else
             return CSV_REAL_URL;
     }
 
-    private static boolean hasPermission(Context context){
+    private static boolean hasPermission(Context context) {
         return (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 == PackageManager.PERMISSION_GRANTED);
     }
 
 
-
     public static void updateLibrary(Activity activity, boolean evenOverwriteOldDB) {
-        if(Database.getIsDownloadingDatabase()){
+        if (Database.getIsDownloadingDatabase()) {
             Toast.makeText(activity, MyApp.getRString(R.string.still_downloading_library), Toast.LENGTH_SHORT).show();
             return;
         }
@@ -106,15 +106,15 @@ public class Downloader {
         UpdateService.lockOrientation(activity);
         if (!hasPermission(activity)) {
             ActivityCompat.requestPermissions(activity,
-                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                MyApp.REQUEST_WRITE_STORAGE);
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    MyApp.REQUEST_WRITE_STORAGE);
         }
-        if(!hasPermission(activity)){
-            Toast.makeText(activity,MyApp.getRString(R.string.cant_download_without_storage_perms), Toast.LENGTH_SHORT).show();
+        if (!hasPermission(activity)) {
+            Toast.makeText(activity, MyApp.getRString(R.string.cant_download_without_storage_perms), Toast.LENGTH_SHORT).show();
             return;
         }
         Downloader.activity = activity;
-        Intent intent = new Intent(activity,UpdateReceiver.class);
+        Intent intent = new Intent(activity, UpdateReceiver.class);
         intent.putExtra("isPre", true);
         intent.putExtra("userInit", true);
 
@@ -127,10 +127,10 @@ public class Downloader {
 
     }
 
-    private static String getErrorReason(Cursor cursor){
+    private static String getErrorReason(Cursor cursor) {
         int reason = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_REASON));
         String failedReason = "";
-        switch(reason){
+        switch (reason) {
             case DownloadManager.ERROR_CANNOT_RESUME:
                 failedReason = "ERROR_CANNOT_RESUME";
                 break;
@@ -193,7 +193,7 @@ public class Downloader {
                 String reasonStr = getErrorReason(cursor);
                 GoogleTracker.sendEvent("DOWNLOAD_ERROR", "Error : " + reasonStr);
 
-                Log.d("status","Download Status " + status);
+                Log.d("status", "Download Status " + status);
                 /*
                 if (reason == DownloadManager.ERROR_CANNOT_RESUME) {
                     downloadErrorNum = DownloadManager.ERROR_CANNOT_RESUME;
@@ -207,8 +207,8 @@ public class Downloader {
 
                     downloadErrorNum = reason;
                 }*/
-                Log.e("Downloader",reasonStr);
-                Toast.makeText(context,reasonStr,Toast.LENGTH_LONG).show();
+                Log.e("Downloader", reasonStr);
+                Toast.makeText(context, reasonStr, Toast.LENGTH_LONG).show();
                 UpdateService.handler.sendEmptyMessage(Downloader.UNKNOWN_ERROR);
 
                 return;
@@ -217,13 +217,15 @@ public class Downloader {
             int colIndex = cursor.getColumnIndex(DownloadManager.COLUMN_TITLE);
             String downloadTitle = cursor.getString(colIndex);
 
-            Log.d("update",downloadTitle);
+            Log.d("update", downloadTitle);
 
             if (downloadTitle.equals(DB_DOWNLOAD_TITLE)) {
-                if (eitherDBorIndexFinished) UpdateService.handler.sendEmptyMessage(UpdateService.UPDATE_STAGE_2_COMPLETE);
+                if (eitherDBorIndexFinished)
+                    UpdateService.handler.sendEmptyMessage(UpdateService.UPDATE_STAGE_2_COMPLETE);
                 else eitherDBorIndexFinished = true;
             } else if (downloadTitle.equals(JSON_INDEX_TITLE)) {
-                if (eitherDBorIndexFinished) UpdateService.handler.sendEmptyMessage(UpdateService.UPDATE_STAGE_2_COMPLETE);
+                if (eitherDBorIndexFinished)
+                    UpdateService.handler.sendEmptyMessage(UpdateService.UPDATE_STAGE_2_COMPLETE);
                 else eitherDBorIndexFinished = true;
             }
         }
@@ -252,8 +254,10 @@ public class Downloader {
         // in order for this if to run, you must use the android 3.2 to compile your app
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             request.allowScanningByMediaScanner();
-            if (isHidden) request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_HIDDEN);
-            else request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE); //used to be visible
+            if (isHidden)
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_HIDDEN);
+            else
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE); //used to be visible
         }
 
         //get the data dir...
@@ -265,9 +269,9 @@ public class Downloader {
         } catch (NameNotFoundException e) {
             GoogleTracker.sendException(e);
             Log.w("yourtag", "Error Package name not found ", e);
-        }catch (Exception e1) { //JH added
+        } catch (Exception e1) { //JH added
             GoogleTracker.sendException(e1);
-            Log.e("downloader","" + e1);
+            Log.e("downloader", "" + e1);
         }
 
         //i would use the var s, but it doesn't seem to work...
@@ -291,8 +295,7 @@ public class Downloader {
 
     }
 
-    public static ConnectionType getNetworkStatus()
-    {
+    public static ConnectionType getNetworkStatus() {
         final ConnectivityManager connMgr = (ConnectivityManager)
                 MyApp.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = connMgr.getActiveNetworkInfo();
@@ -312,8 +315,7 @@ public class Downloader {
         }
     }
 
-    public static boolean getHasInternet()
-    {
+    public static boolean getHasInternet() {
         return (getNetworkStatus() != ConnectionType.NONE);
     }
 
@@ -344,7 +346,7 @@ public class Downloader {
             //  to know is we can neither read nor write
             mExternalStorageAvailable = mExternalStorageWriteable = false;
         }
-        Log.d("stor","Avail " + mExternalStorageAvailable + " Write " + mExternalStorageWriteable);
+        Log.d("stor", "Avail " + mExternalStorageAvailable + " Write " + mExternalStorageWriteable);
         return mExternalStorageAvailable && mExternalStorageWriteable;
     }
 
@@ -361,7 +363,7 @@ public class Downloader {
                         if (downloadIdList.size() > 0) {
 
                             Query query = new Query();
-                            query.setFilterById(downloadIdList.get(downloadIdList.size()-1));
+                            query.setFilterById(downloadIdList.get(downloadIdList.size() - 1));
                             Cursor c = manager.query(query);
                             if (c.moveToFirst()) {
                                 int sizeIndex = c.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES);
@@ -371,18 +373,18 @@ public class Downloader {
 
                                 if (size != -1) {
 
-                                    double newprogress = downloaded*100.0/size;
+                                    double newprogress = downloaded * 100.0 / size;
 
-                                    int diff = (int) (0.4*(Math.floor(newprogress) - Math.floor(progress)));
+                                    int diff = (int) (0.4 * (Math.floor(newprogress) - Math.floor(progress)));
 
                                     //SWITCH TO NEW DialogManager...
                                     /*if (DialogManager.isShowingDialog && oldprogress != progress) {
 
                                         ((ProgressDialog)DialogManager.dialog).incrementProgressBy(diff);
                                     }*/
-                                    Log.d("dm","Diff: "+diff);
-                                    Log.d("dm","Prog: " + progress);
-                                    Log.d("dm","NPro: " + newprogress);
+                                    Log.d("dm", "Diff: " + diff);
+                                    Log.d("dm", "Prog: " + progress);
+                                    Log.d("dm", "NPro: " + newprogress);
                                     oldprogress = progress;
                                     progress = newprogress;
 

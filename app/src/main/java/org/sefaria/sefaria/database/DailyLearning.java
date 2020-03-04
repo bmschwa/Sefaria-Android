@@ -25,27 +25,26 @@ public class DailyLearning {
     private String heTitle;
     private String nodePath;
 
-    public DailyLearning(){
+    public DailyLearning() {
     }
 
-    private static MenuDirectRef getDafYomi(Context context){
+    private static MenuDirectRef getDafYomi(Context context) {
         String today = getLongDate(0);
         try {
             JSONArray dafs = Util.openJSONArrayFromAssets("calendar/daf-yomi.json");
             for (int i = 0; i < dafs.length(); i++) {
                 JSONObject daf = dafs.getJSONObject(i);
                 String date = daf.getString("date");
-                if(date.equals(today))
-                {
+                if (date.equals(today)) {
 
                     String todayDaf = daf.getString("daf");
                     String bookTitle = todayDaf.replaceFirst("\\s[0-9]*$", "");
-                    String dafNum = todayDaf.replaceFirst("^[^0-9]*\\s","");
+                    String dafNum = todayDaf.replaceFirst("^[^0-9]*\\s", "");
 
                     Book book = new Book(bookTitle);
                     Node node = book.getTOCroots().get(0);
-                    for(Node child: node.getChildren()){
-                        if(child.getNiceGridNum(Util.Lang.EN).equals(dafNum + "a")){
+                    for (Node child : node.getChildren()) {
+                        if (child.getNiceGridNum(Util.Lang.EN).equals(dafNum + "a")) {
                             node = child;
                             break;
 
@@ -71,10 +70,10 @@ public class DailyLearning {
         return null;
     }
 
-    private static Node getParshaFromSefar(Book sefer, String parshaName) throws API.APIException{
+    private static Node getParshaFromSefar(Book sefer, String parshaName) throws API.APIException {
         Node node = sefer.getTOCroots().get(1);
-        for(Node child : node.getChildren()){
-            if(child.getTitle(Util.Lang.EN).equals(parshaName)){
+        for (Node child : node.getChildren()) {
+            if (child.getTitle(Util.Lang.EN).equals(parshaName)) {
                 //go to first aliyah
                 return child.getFirstDescendant();
             }
@@ -84,7 +83,7 @@ public class DailyLearning {
         return node.getFirstDescendant();
     }
 
-    static class ChapVersePath{
+    static class ChapVersePath {
         public ChapVerse start = null;
         public ChapVerse end = null;
 
@@ -96,10 +95,10 @@ public class DailyLearning {
             }
         }
 
-        public void add(ChapVerse chapVerse, int index){
-            if(index == 0){
+        public void add(ChapVerse chapVerse, int index) {
+            if (index == 0) {
                 start = chapVerse;
-            }else{
+            } else {
                 end = chapVerse;
             }
         }
@@ -108,24 +107,25 @@ public class DailyLearning {
     static class ChapVerse {
         public Integer chap = null;
         public Integer verse = null;
-        public String toHeString(){
-            if(chap == null)
+
+        public String toHeString() {
+            if (chap == null)
                 return "";
-            else if(verse == null)
+            else if (verse == null)
                 return Util.int2heb(chap);
             else
                 return Util.int2heb(chap) + ":" + Util.int2heb(verse);
         }
     }
 
-    private static ChapVersePath getChapVerses(String fullNumber){
-        String [] numbers = fullNumber.split("-");
+    private static ChapVersePath getChapVerses(String fullNumber) {
+        String[] numbers = fullNumber.split("-");
         ChapVersePath chapVersePath = new ChapVersePath();
-        for(int i = 0; i < numbers.length; i++){
-            String [] chapVerseStrings = numbers[i].split(":");
+        for (int i = 0; i < numbers.length; i++) {
+            String[] chapVerseStrings = numbers[i].split(":");
             ChapVerse chapVerse = new ChapVerse();
             chapVerse.chap = Integer.valueOf(chapVerseStrings[0]);
-            if(chapVerseStrings.length == 2){
+            if (chapVerseStrings.length == 2) {
                 chapVerse.verse = Integer.valueOf(chapVerseStrings[1]);
             }
             chapVersePath.add(chapVerse, i);
@@ -158,7 +158,7 @@ public class DailyLearning {
 
     }
 
-    public static MenuDirectRef [] getParsha(Context context){
+    public static MenuDirectRef[] getParsha(Context context) {
         String todaysDate = getLongDate(1);
         boolean shouldOverrideParsha = shouldOverrideParsha();
 
@@ -170,9 +170,9 @@ public class DailyLearning {
 
             for (int i = 0; i < weeks.length(); i++) {
                 JSONObject week = weeks.getJSONObject(i);
-                if(week.getString("date").equals(todaysDate)){
+                if (week.getString("date").equals(todaysDate)) {
                     String parsha = week.getString("parasha");
-                    String [] multiParshas = parsha.split("-"); // If it's a double parsha only get the first
+                    String[] multiParshas = parsha.split("-"); // If it's a double parsha only get the first
                     String aliyah = week.getJSONArray("aliyot").getString(0);
                     if (shouldOverrideParsha && parsha.equals("Emor")) {
                         parsha = "Behar";
@@ -189,7 +189,7 @@ public class DailyLearning {
                     Node node = getParshaFromSefar(book, multiParshas[0]);
                     Settings.BookSettings bookSettings = Settings.BookSettings.getSavedBook(book);
                     Integer textNum = null;
-                    if(bookSettings.node != null) {
+                    if (bookSettings.node != null) {
                         String currSavedPlaceParshaName = bookSettings.node.getParent().getTitle(Util.Lang.EN);
                         if (currSavedPlaceParshaName.equals(node.getParent().getTitle(Util.Lang.EN))
                                 || (multiParshas.length == 2 && currSavedPlaceParshaName.equals(multiParshas[1]))) {
@@ -201,9 +201,9 @@ public class DailyLearning {
                         }
                     }
                     String heTitle;
-                    if(multiParshas.length == 1){
+                    if (multiParshas.length == 1) {
                         heTitle = node.getParent().getTitle(Util.Lang.HE);
-                    }else{
+                    } else {
                         Node secondParshaNode = getParshaFromSefar(book, multiParshas[1]);
                         heTitle = node.getParent().getTitle(Util.Lang.HE)
                                 + "-" + secondParshaNode.getParent().getTitle(Util.Lang.HE);
@@ -216,7 +216,7 @@ public class DailyLearning {
                             book,
                             "Parsha",
                             textNum
-                            );
+                    );
 
 
                     JSONArray haftaras = week.getJSONArray("haftara");
@@ -229,28 +229,28 @@ public class DailyLearning {
                     Book firstHaftaraBook = null;
                     Node firstHaftaraNode = null;
                     Integer haftaraTextNum = null;
-                    for(int j = 0; j < haftaras.length(); j++){
+                    for (int j = 0; j < haftaras.length(); j++) {
                         String haftara = haftaras.getString(j);
-                        String haftaraBookName = haftara.replaceFirst("\\s[0-9]+.*$","");
+                        String haftaraBookName = haftara.replaceFirst("\\s[0-9]+.*$", "");
                         String haftaraFullNumber = haftara.replaceFirst("^[^0-9]+\\s", "");
                         ChapVersePath chapVersePath = getChapVerses(haftaraFullNumber);
                         Book haftaraBook = new Book(haftaraBookName);
                         Node haftaraNode = haftaraBook.getTOCroots().get(0);
                         haftaraNode = haftaraNode.getChildren().get(chapVersePath.start.chap - 1);
-                        if(j == 0) { // only going to make link go there
+                        if (j == 0) { // only going to make link go there
                             firstHaftaraBook = haftaraBook;
                             firstHaftaraNode = haftaraNode;
                             haftaraTextNum = chapVersePath.start.verse - 1;
-                        }else{ // add commas from more than one
+                        } else { // add commas from more than one
                             fullHaftaraStr += ", ";
                             heFullHaftaraStr += ", ";
                         }
 
-                        if(fullHaftaraStr.contains(haftaraBookName)){
+                        if (fullHaftaraStr.contains(haftaraBookName)) {
                             //I know that there is never A, B, A (so I don't have to worry about something else in the mid
                             fullHaftaraStr += haftaraFullNumber;
                             heFullHaftaraStr += chapVersePath.toHeString();
-                        }else{
+                        } else {
                             fullHaftaraStr += haftara;
                             heFullHaftaraStr += haftaraBook.getTitle(Util.Lang.HE) + " " + chapVersePath.toHeString();
                         }
@@ -271,7 +271,7 @@ public class DailyLearning {
                             "",
                             haftaraTextNum
                     );
-                    return new MenuDirectRef [] {parshaMenu, haftaraMenu};
+                    return new MenuDirectRef[]{parshaMenu, haftaraMenu};
                 }
 
 
@@ -283,32 +283,33 @@ public class DailyLearning {
         return new MenuDirectRef[]{};
     }
 
-    public static List<MenuDirectRef> getDailyLearnings(Context context){
+    public static List<MenuDirectRef> getDailyLearnings(Context context) {
         //Log.d("DailyLearning", "starting get dailyLearning");
         List<MenuDirectRef> dailyLearnings = new ArrayList<>();
 
-        for(MenuDirectRef menuDirectRef:getParsha(context)) {
+        for (MenuDirectRef menuDirectRef : getParsha(context)) {
             dailyLearnings.add(menuDirectRef);
         }
 
         MenuDirectRef dafMenu = getDafYomi(context);
-        if(dafMenu !=null){
+        if (dafMenu != null) {
             dailyLearnings.add(dafMenu);
         }
 
         return dailyLearnings;
     }
 
-    static final String [] months = new String[] {"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
-    private static String getLongDate(int type){
+    static final String[] months = new String[]{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+
+    private static String getLongDate(int type) {
         Calendar c = Calendar.getInstance();
         String date;
-        if(type == 0)
-            date= (c.get(Calendar.MONTH)+1) + "/" + c.get(Calendar.DAY_OF_MONTH) + "/" + c.get(Calendar.YEAR);
+        if (type == 0)
+            date = (c.get(Calendar.MONTH) + 1) + "/" + c.get(Calendar.DAY_OF_MONTH) + "/" + c.get(Calendar.YEAR);
         else { // if (type==1)
-            c.add(Calendar.DAY_OF_MONTH,(7-c.get(Calendar.DAY_OF_WEEK)));
-            date =  c.get(Calendar.DAY_OF_MONTH) + "-" + months[c.get(Calendar.MONTH)] + "" + "-" + c.get(Calendar.YEAR);
-            if(c.get(Calendar.DAY_OF_MONTH) <10)
+            c.add(Calendar.DAY_OF_MONTH, (7 - c.get(Calendar.DAY_OF_WEEK)));
+            date = c.get(Calendar.DAY_OF_MONTH) + "-" + months[c.get(Calendar.MONTH)] + "" + "-" + c.get(Calendar.YEAR);
+            if (c.get(Calendar.DAY_OF_MONTH) < 10)
                 date = "0" + date;
         }
         return date;

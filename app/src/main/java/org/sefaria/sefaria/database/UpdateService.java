@@ -65,13 +65,12 @@ public class UpdateService extends Service {
     private static WifiManager.WifiLock wifiLock;
 
 
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Downloader.init(this);
 
         WifiManager wm = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        wifiLock= wm.createWifiLock(WifiManager.WIFI_MODE_FULL, "wifiTag");
+        wifiLock = wm.createWifiLock(WifiManager.WIFI_MODE_FULL, "wifiTag");
         wifiLock.acquire();
 
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
@@ -156,28 +155,30 @@ public class UpdateService extends Service {
 
     }
 
-    private static class UpdateCSVData{
+    private static class UpdateCSVData {
         int dbVersion;
         String zipUrl;
         String indexURL;
         int newestAppVersionNum;
-        public UpdateCSVData() throws Exception{
+
+        public UpdateCSVData() throws Exception {
             String csvData = null;
-            csvData = API.getDataFromURL(Downloader.getCSVurl(),null,false, API.TimeoutType.LONG);
+            csvData = API.getDataFromURL(Downloader.getCSVurl(), null, false, API.TimeoutType.LONG);
             Log.d("Downloader", "postUpdateStage1 CSV: " + csvData);
             String[] firstLine = csvData.split(",");
             dbVersion = Integer.parseInt(firstLine[0]);
             zipUrl = firstLine[1];
             indexURL = firstLine[2];
             String newestAppVersion = firstLine[3];
-            Log.d("Downloader","postUpdateStage1: +" + newestAppVersion + "+");
-            newestAppVersionNum  = Integer.parseInt(newestAppVersion.replace("[^0-9]","").replace("\n",""));
+            Log.d("Downloader", "postUpdateStage1: +" + newestAppVersion + "+");
+            newestAppVersionNum = Integer.parseInt(newestAppVersion.replace("[^0-9]", "").replace("\n", ""));
         }
     }
 
 
     static public class silentlyCheckForUpdates extends AsyncTask<Activity, Void, UpdateCSVData> {
         Activity activity;
+
         @Override
         protected void onPreExecute() {
         }
@@ -188,7 +189,7 @@ public class UpdateService extends Service {
             try {
                 UpdateCSVData updateCSVData = new UpdateCSVData();
                 return updateCSVData;
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
                 return null;
             }
@@ -196,9 +197,9 @@ public class UpdateService extends Service {
 
         @Override
         protected void onPostExecute(UpdateCSVData updateCSVData) {
-            if(updateCSVData != null){
+            if (updateCSVData != null) {
                 Settings.setLastUpdateCheckToNow();
-                if(updateCSVData.dbVersion > Database.getVersionInDB(false)){
+                if (updateCSVData.dbVersion > Database.getVersionInDB(false)) {
                     DialogManager2.showDialog(activity, DialogManager2.DialogPreset.NEW_UPDATE_FROM_SILENT_CHECK);
                 }
             }
@@ -210,8 +211,8 @@ public class UpdateService extends Service {
             UpdateCSVData updateCSVData = new UpdateCSVData();
             updatedVersionNum = updateCSVData.dbVersion; //save this for later
 
-            if((updateCSVData.newestAppVersionNum > MyApp.getContext().getPackageManager().getPackageInfo(MyApp.getAppPackageName(), 0).versionCode)
-                    && !MyApp.askedForUpgradeThisTime){
+            if ((updateCSVData.newestAppVersionNum > MyApp.getContext().getPackageManager().getPackageInfo(MyApp.getAppPackageName(), 0).versionCode)
+                    && !MyApp.askedForUpgradeThisTime) {
                 Toast.makeText(MyApp.getContext(), MyApp.getContext().getString(R.string.upgrade_to_newest) + " " + MyApp.APP_NAME, Toast.LENGTH_SHORT).show();
                 try {
                     MyApp.getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + MyApp.getAppPackageName())));
@@ -219,45 +220,45 @@ public class UpdateService extends Service {
                     MyApp.getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + MyApp.getAppPackageName())));
                 }
                 MyApp.askedForUpgradeThisTime = true;
-                if(userInitiated)
+                if (userInitiated)
                     DialogManager2.dismissCurrentDialog(); //dismiss progressDialog
-                unlockOrientation((Activity)MyApp.getContext());
+                unlockOrientation((Activity) MyApp.getContext());
                 return;
 
             }//else just continue to check if there's an update
 
             //check versions before continuing
-            if ((updatedVersionNum > currentVersionNum && userInitiated) || evenOverWriteOldDatabase ) {
+            if ((updatedVersionNum > currentVersionNum && userInitiated) || evenOverWriteOldDatabase) {
                 //DialogManager2.dismissCurrentDialog();
                 //DialogManager2.showDialog((Activity)MyApp.getContext(), DialogManager2.DialogPreset.UPDATE_STARTED);
                 updateStage2(updateCSVData.zipUrl, updateCSVData.indexURL);
             } else if (updatedVersionNum > currentVersionNum && !userInitiated) {
                 if (currentVersionNum == -1) {
                     //click yes very quickly...
-                    Intent intent = new Intent(MyApp.getContext(),UpdateReceiver.class);
-                    intent.putExtra("isPre",true);
-                    intent.putExtra("userInit",true);
+                    Intent intent = new Intent(MyApp.getContext(), UpdateReceiver.class);
+                    intent.putExtra("isPre", true);
+                    intent.putExtra("userInit", true);
                     Downloader.getActivity().sendBroadcast(intent);
-                    DialogManager2.showDialog((Activity)MyApp.getContext(), DialogManager2.DialogPreset.CHECKING_FOR_UPDATE);
+                    DialogManager2.showDialog((Activity) MyApp.getContext(), DialogManager2.DialogPreset.CHECKING_FOR_UPDATE);
                 } else {
-                    DialogManager2.showDialog((Activity)MyApp.getContext(), DialogManager2.DialogPreset.NEW_UPDATE);
+                    DialogManager2.showDialog((Activity) MyApp.getContext(), DialogManager2.DialogPreset.NEW_UPDATE);
                 }
             } else if (updatedVersionNum <= currentVersionNum && userInitiated) {
                 DialogManager2.dismissCurrentDialog(); //dismiss progressDialog
-                DialogManager2.showDialog((Activity)MyApp.getContext(),DialogManager2.DialogPreset.NO_NEW_UPDATE);
+                DialogManager2.showDialog((Activity) MyApp.getContext(), DialogManager2.DialogPreset.NO_NEW_UPDATE);
                 //UpdateService.endService(); //PROBABLY NOT NECESSARY, BUT ADDED IN CASE OF FUTURE BUG (ES)
             } else {
                 //no new update and not user initiated
                 UpdateService.endService(); //ADDED TO STOP THE SERVICE, SINCE THERE IS NO UPDATE (ES)
-                unlockOrientation((Activity)MyApp.getContext());
+                unlockOrientation((Activity) MyApp.getContext());
 
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             GoogleTracker.sendException(e, "postUpdateStage1");
-            if(userInitiated) DialogManager2.dismissCurrentDialog();
-            unlockOrientation((Activity)MyApp.getContext());
+            if (userInitiated) DialogManager2.dismissCurrentDialog();
+            unlockOrientation((Activity) MyApp.getContext());
             return;
         }
     }
@@ -274,7 +275,7 @@ public class UpdateService extends Service {
         if (testIndexFile.exists()) testIndexFile.delete();
         Downloader.eitherDBorIndexFinished = false;
         Downloader.download(indexURL, Downloader.JSON_INDEX_TITLE, Downloader.DB_DOWNLOAD_PATH, Downloader.INDEX_JSON_NAME, false);
-        Downloader.download(zipUrl,Downloader.DB_DOWNLOAD_TITLE,Downloader.DB_DOWNLOAD_PATH, Database.DB_NAME + ".zip",false);
+        Downloader.download(zipUrl, Downloader.DB_DOWNLOAD_TITLE, Downloader.DB_DOWNLOAD_PATH, Database.DB_NAME + ".zip", false);
         //this guy calls a complete handler in Downloader to inform us we're down and move on to stage2
     }
 
@@ -299,7 +300,7 @@ public class UpdateService extends Service {
                         Util.moveFile(Downloader.FULL_DOWNLOAD_PATH, Downloader.INDEX_JSON_NAME, Database.getInternalFolder(), MenuState.jsonIndexFileName);
 
                         long timeToCompleteUpdate = System.currentTimeMillis() - startedUpdateTime;
-                        if(startedUpdateTime != 0 && timeToCompleteUpdate > 0){
+                        if (startedUpdateTime != 0 && timeToCompleteUpdate > 0) {
                             Settings.setDownloadSuccess(timeToCompleteUpdate);
                         }
                         Thread.sleep(200);
@@ -327,7 +328,7 @@ public class UpdateService extends Service {
 
 
                 } catch (Exception e) {
-                    GoogleTracker.sendException(e,"updateStage3. THROWING");
+                    GoogleTracker.sendException(e, "updateStage3. THROWING");
                     throw new Error(e);
                 }
 
@@ -338,11 +339,11 @@ public class UpdateService extends Service {
 
     }
 
-    private static Map<Integer,String> messageMap = new HashMap<>();
+    private static Map<Integer, String> messageMap = new HashMap<>();
 
 
-    private static void sendMessage(String string){
-        messageMap.put(string.hashCode(),string);
+    private static void sendMessage(String string) {
+        messageMap.put(string.hashCode(), string);
         handler.sendEmptyMessage(string.hashCode());
     }
 
@@ -367,7 +368,7 @@ public class UpdateService extends Service {
                 default:
                     endService();
                     DialogManager2.showDialog((Activity) MyApp.getContext(), new DialogCallable("Download Error",
-                            messageMap.get(msg.what),MyApp.getRString(R.string.OK),null,null, DialogCallable.DialogType.ALERT) {
+                            messageMap.get(msg.what), MyApp.getRString(R.string.OK), null, null, DialogCallable.DialogType.ALERT) {
                         @Override
                         public void positiveClick() {
                             DialogManager2.dismissCurrentDialog();
@@ -381,7 +382,7 @@ public class UpdateService extends Service {
 
     public static void lockOrientation(Activity ac) {
 
-        if(ac.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+        if (ac.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             ac.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         } else ac.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     }
@@ -395,7 +396,7 @@ public class UpdateService extends Service {
 
         DialogManager2.dismissCurrentDialog();
         //Toast.makeText(MyApp.currActivityContext, "Installation complete. Enjoy the Torah!", Toast.LENGTH_SHORT).show();
-        unlockOrientation((Activity)MyApp.getContext());
+        unlockOrientation((Activity) MyApp.getContext());
         //total restart. To be safe, restart so the database is readable.
         MyApp.restart();
     }
@@ -409,7 +410,7 @@ public class UpdateService extends Service {
             UpdateReceiver.completeWakefulIntent(intentYo);
             wifiLock.release();
             powerLock.release();
-        } catch( Exception e) {
+        } catch (Exception e) {
             GoogleTracker.sendException(e);
             e.printStackTrace();
         }
@@ -419,7 +420,6 @@ public class UpdateService extends Service {
         nMgr.cancel(UpdateService.NOTIFICATION_ID);
 
     }
-
 
 
 }

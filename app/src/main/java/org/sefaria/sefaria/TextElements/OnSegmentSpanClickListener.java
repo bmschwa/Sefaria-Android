@@ -7,5 +7,6 @@ import android.widget.TextView;
  */
 public class OnSegmentSpanClickListener {
 
-    public void onSegmentClick(TextView tv, SegmentSpannable segmentSpannable){}
+    public void onSegmentClick(TextView tv, SegmentSpannable segmentSpannable) {
+    }
 }

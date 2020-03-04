@@ -18,7 +18,7 @@ import org.sefaria.sefaria.database.Node;
 import org.sefaria.sefaria.layouts.SefariaTextView;
 
 
-public class MenuDirectRef extends LinearLayout{
+public class MenuDirectRef extends LinearLayout {
 
     private Node node = null;
     private String nodePath;
@@ -31,23 +31,23 @@ public class MenuDirectRef extends LinearLayout{
     private SefariaTextView tv;
     private View colorBar;
 
-    public MenuDirectRef(Context context, String enTitle, String heTitle, String nodePath, Book book, String colorWording, Integer textNum){
+    public MenuDirectRef(Context context, String enTitle, String heTitle, String nodePath, Book book, String colorWording, Integer textNum) {
         super(context);
         inflate(context, R.layout.menu_direct_ref_button, this);
 
 
         this.context = context;
-        if(textNum == null){
+        if (textNum == null) {
             this.textNum = -1;
-        }else {
+        } else {
             this.textNum = textNum;
         }
 
-        if(enTitle.length()>0)
+        if (enTitle.length() > 0)
             this.enTitle = enTitle;
         else
             this.enTitle = book.title;
-        if(heTitle.length() >0)
+        if (heTitle.length() > 0)
             this.heTitle = heTitle;
         else
             this.heTitle = book.heTitle;
@@ -75,16 +75,16 @@ public class MenuDirectRef extends LinearLayout{
         setOnClickListener(clickListener);
     }
 
-    public void setTVGravity(int gravity){
+    public void setTVGravity(int gravity) {
         tv.setGravity(gravity);
     }
 
-    public void setLongClickPinning(){
+    public void setLongClickPinning() {
         setOnLongClickListener(longClickListener);
     }
 
     public void setLang(Util.Lang lang) {
-        tv.setFont(lang,true,getResources().getDimension(R.dimen.menu_button_font_size), TypedValue.COMPLEX_UNIT_PX);
+        tv.setFont(lang, true, getResources().getDimension(R.dimen.menu_button_font_size), TypedValue.COMPLEX_UNIT_PX);
         if (lang == Util.Lang.HE) {
             tv.setText(heTitle);
         } else {
@@ -93,13 +93,13 @@ public class MenuDirectRef extends LinearLayout{
     }
 
     private Node getNode() {
-        if(node == null){
+        if (node == null) {
             try {
-                if(nodePath == null) {
+                if (nodePath == null) {
                     Settings.BookSettings bookSettings = Settings.BookSettings.getSavedBook(book);
                     node = bookSettings.node;
                     textNum = bookSettings.textNum;
-                }else {
+                } else {
                     node = Node.getNodeFromPathStr(book, nodePath);
                 }
 
@@ -107,7 +107,7 @@ public class MenuDirectRef extends LinearLayout{
                 try {
                     node = book.getTOCroots().get(0).getFirstDescendant(); //true); //tihs was used to check about if it has the segment
                     textNum = -1;
-                }catch (Exception e2){
+                } catch (Exception e2) {
                     e2.printStackTrace();
                 }
             }
@@ -135,10 +135,10 @@ public class MenuDirectRef extends LinearLayout{
     OnLongClickListener longClickListener = new OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
-            if(Settings.RecentTexts.addPinnedBook(book.title))
-                Toast.makeText(context, R.string.pinned_item,Toast.LENGTH_SHORT).show();
+            if (Settings.RecentTexts.addPinnedBook(book.title))
+                Toast.makeText(context, R.string.pinned_item, Toast.LENGTH_SHORT).show();
             else
-                Toast.makeText(context, R.string.remove_pinned_item,Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, R.string.remove_pinned_item, Toast.LENGTH_SHORT).show();
             return true;
         }
     };

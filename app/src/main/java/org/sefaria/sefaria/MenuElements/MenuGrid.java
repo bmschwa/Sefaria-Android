@@ -42,7 +42,6 @@ import java.util.List;
 public class MenuGrid extends LinearLayout {
 
 
-
     private static final int HOME_MENU_OVERFLOW_NUM = 8;
 
     private Context context;
@@ -67,7 +66,7 @@ public class MenuGrid extends LinearLayout {
     private MenuButton moreMenuButton;
     SefariaTextView williamDTalumd;
 
-    public MenuGrid(Context context,int numColumns,MenuState menuState, boolean limitGridSize, Util.Lang lang) {
+    public MenuGrid(Context context, int numColumns, MenuState menuState, boolean limitGridSize, Util.Lang lang) {
         super(context);
         this.menuState = menuState;
         this.context = context;
@@ -116,35 +115,34 @@ public class MenuGrid extends LinearLayout {
     }
 
     /**
-     *
      * @param mainNode
      * @param subNodes
      * @param limitGridSize
-     * @param isFirst - true if this is the first section
+     * @param isFirst       - true if this is the first section
      */
     public void addSubsection(MenuNode mainNode, List<BilingualNode> subNodes, boolean limitGridSize, boolean isFirst) {
         if (subNodes.size() == 0) return;
 
         if (mainNode != null) {
-            MenuSubtitle ms = new MenuSubtitle(context,mainNode, menuState.getLang(),isFirst);
+            MenuSubtitle ms = new MenuSubtitle(context, mainNode, menuState.getLang(), isFirst);
             menuElementList.add(ms);
             gridRoot.addView(ms);
         }
 
         int currNodeIndex = 0;
 
-        for (int i = 0; i <= Math.ceil(subNodes.size()/numColumns) && currNodeIndex < subNodes.size(); i++) {
+        for (int i = 0; i <= Math.ceil(subNodes.size() / numColumns) && currNodeIndex < subNodes.size(); i++) {
             LinearLayout ll = addRow();
-            for (int j = 0; j < numColumns && currNodeIndex < subNodes.size();  j++) {
-                MenuButton mb = addElement((MenuNode)subNodes.get(currNodeIndex),mainNode, ll,j);
-                if (currNodeIndex >= HOME_MENU_OVERFLOW_NUM-1 && limitGridSize) {
+            for (int j = 0; j < numColumns && currNodeIndex < subNodes.size(); j++) {
+                MenuButton mb = addElement((MenuNode) subNodes.get(currNodeIndex), mainNode, ll, j);
+                if (currNodeIndex >= HOME_MENU_OVERFLOW_NUM - 1 && limitGridSize) {
                     mb.setVisibility(View.GONE);
                     overflowButtonList.add(mb);
                 }
                 currNodeIndex++;
             }
             //add 'more' button in the row which was overflowed
-            if (Math.floor(HOME_MENU_OVERFLOW_NUM/numColumns) == i+1 && limitGridSize) {
+            if (Math.floor(HOME_MENU_OVERFLOW_NUM / numColumns) == i + 1 && limitGridSize) {
                 addMoreButton(ll);
             }
         }
@@ -152,7 +150,8 @@ public class MenuGrid extends LinearLayout {
 
     /**
      * add the section tabs for different segment structures. For example in Genesis these can be:
-     *  Chapters | Parshas | Commentary
+     * Chapters | Parshas | Commentary
+     *
      * @param nodeList
      */
     private void addTabsection(List<BilingualNode> nodeList) {
@@ -174,10 +173,10 @@ public class MenuGrid extends LinearLayout {
                 LayoutInflater inflater = (LayoutInflater)
                         context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 
-                inflater.inflate(R.layout.tab_divider_menu,tabRoot);
+                inflater.inflate(R.layout.tab_divider_menu, tabRoot);
             }
 
-            MenuButtonTab mbt = new MenuButtonTab(context,menuNode, menuState.getLang());
+            MenuButtonTab mbt = new MenuButtonTab(context, menuNode, menuState.getLang());
             mbt.setOnClickListener(tabButtonClick);
             tabRoot.addView(mbt);
             menuElementList.add(mbt);
@@ -201,8 +200,8 @@ public class MenuGrid extends LinearLayout {
 
     //adds the 'Other' button for home page
     private MenuButton addMoreButton(LinearLayout ll) {
-        MenuNode moreNode = new MenuNode("More","עוד",null);
-        moreMenuButton = new MenuButton(context,moreNode,null, menuState.getLang());
+        MenuNode moreNode = new MenuNode("More", "עוד", null);
+        moreMenuButton = new MenuButton(context, moreNode, null, menuState.getLang());
         moreMenuButton.setIsMore(true);
         moreMenuButton.setOnClickListener(moreButtonClick);
         ll.addView(moreMenuButton);
@@ -212,13 +211,13 @@ public class MenuGrid extends LinearLayout {
         return moreMenuButton;
     }
 
-    public static SefariaTextView getWilliamDTalumd(Context context, int paddingTop, int paddingBottom){
+    public static SefariaTextView getWilliamDTalumd(Context context, int paddingTop, int paddingBottom) {
         SefariaTextView williamDTalumd = new SefariaTextView(context);
         williamDTalumd.setTextColor(Util.getColor(context, R.attr.text_color_faded));
         williamDTalumd.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         williamDTalumd.setGravity(Gravity.CENTER);
         williamDTalumd.setText(MyApp.getRString(R.string.william_d_tal));
-        if(Settings.getSystemLang() == Util.Lang.HE)
+        if (Settings.getSystemLang() == Util.Lang.HE)
             williamDTalumd.setFont(Util.Lang.EN, true, 25);
         else //EN
             williamDTalumd.setFont(Util.Lang.EN, true, 25, TypedValue.COMPLEX_UNIT_SP, Typeface.ITALIC);
@@ -228,29 +227,29 @@ public class MenuGrid extends LinearLayout {
 
 
     //add a little space
-    private void addLittleSpace(){
-        MenuSubtitle ms = new MenuSubtitle(context, new MenuNode("","",null), Util.Lang.EN, true);
+    private void addLittleSpace() {
+        MenuSubtitle ms = new MenuSubtitle(context, new MenuNode("", "", null), Util.Lang.EN, true);
         menuElementList.add(ms);
         gridRoot.addView(ms);
     }
 
-    private void buildPageSections(MenuState menuState1, boolean considerLimitingGridSize){
+    private void buildPageSections(MenuState menuState1, boolean considerLimitingGridSize) {
         //thing that has (like Prophets) subsections first
         MenuState.SectionAndSub sectionAndSub = menuState1.getPageSections();
         boolean wasSectionless = false;
         for (int i = 0; i < sectionAndSub.sections.size(); i++) {
             MenuNode sectionsItem = (MenuNode) sectionAndSub.sections.get(i);
-            if(sectionsItem == null){
-                if(!wasSectionless && i != 0){
+            if (sectionsItem == null) {
+                if (!wasSectionless && i != 0) {
                     addLittleSpace();
                 }
                 wasSectionless = true;
-            }else{
+            } else {
                 wasSectionless = false;
             }
 
             boolean limitGridSize = considerLimitingGridSize && sectionsItem == null;
-            addSubsection(sectionsItem, sectionAndSub.subsections.get(i), limitGridSize, (i==0));
+            addSubsection(sectionsItem, sectionAndSub.subsections.get(i), limitGridSize, (i == 0));
         }
     }
 
@@ -259,14 +258,14 @@ public class MenuGrid extends LinearLayout {
             hasTabs = true;
 
             MenuState.SectionAndSub sectionAndSub = menuState.getPageSections();
-            if(sectionAndSub.sections != null || sectionAndSub.subsections.size() != 1){
+            if (sectionAndSub.sections != null || sectionAndSub.subsections.size() != 1) {
                 Log.e("MENU", "We shouldn't be with tabs like this... " + sectionAndSub.sections + "..." + sectionAndSub.subsections.size());
             }
             List<BilingualNode> tabSections = sectionAndSub.subsections.get(0);
             addTabsection(tabSections);
             //default to the first tab in the list
             try {
-                menuState = menuState.goForward((MenuNode)tabSections.get(0), null);
+                menuState = menuState.goForward((MenuNode) tabSections.get(0), null);
             } catch (Book.BookNotFoundException e) {
                 //This shouldn't happen here
                 GoogleTracker.sendException(e, "MenuGrid no tab");
@@ -335,9 +334,13 @@ public class MenuGrid extends LinearLayout {
         }
     }
 
-    public Util.Lang getLang() { return menuState.getLang(); }
+    public Util.Lang getLang() {
+        return menuState.getLang();
+    }
 
-    public boolean getHasTabs() { return hasTabs; }
+    public boolean getHasTabs() {
+        return hasTabs;
+    }
 
     //used when you're rebuilding after memore dump
     //you need to make sure that you add the correct tabs
@@ -354,7 +357,7 @@ public class MenuGrid extends LinearLayout {
     public OnLongClickListener menuButtonLongClick = new OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
-            return menuClick(v,true);
+            return menuClick(v, true);
         }
     };
 
@@ -365,15 +368,15 @@ public class MenuGrid extends LinearLayout {
         }
     };
 
-    private boolean menuClick(View v, boolean longClick){
+    private boolean menuClick(View v, boolean longClick) {
         boolean goToTOC = longClick;
         longClick = false;
         MenuButton mb = (MenuButton) v;
         MenuState newMenuState;
-        try{
-             newMenuState = menuState.goForward(mb.getNode(), mb.getSectionNode());
-        }catch (Book.BookNotFoundException e){
-            Toast.makeText(context,MyApp.getRString(R.string.sorry_book_not_found),Toast.LENGTH_SHORT).show();
+        try {
+            newMenuState = menuState.goForward(mb.getNode(), mb.getSectionNode());
+        } catch (Book.BookNotFoundException e) {
+            Toast.makeText(context, MyApp.getRString(R.string.sorry_book_not_found), Toast.LENGTH_SHORT).show();
             return false;
         }
 
@@ -381,30 +384,30 @@ public class MenuGrid extends LinearLayout {
         if (mb.isBook()) {
             Book book = null;
             try {
-                if(!Settings.getUseAPI() && !Database.hasOfflineDB()){ //There's no DB //TODO make it work with API
+                if (!Settings.getUseAPI() && !Database.hasOfflineDB()) { //There's no DB //TODO make it work with API
                     Settings.setUseAPI(true);
                 }
                 book = new Book(newMenuState.getCurrNode().getTitle(Util.Lang.EN));
-                if(goToTOC){
-                    intent = TOCActivity.getStartTOCActivityIntent(context, book,null);
+                if (goToTOC) {
+                    intent = TOCActivity.getStartTOCActivityIntent(context, book, null);
                     ///intent = new Intent(context, TOCActivity.class);
                     //intent.putExtra("currBook", book);
                     //intent.putExtra("lang", newMenuState.getLang());
                     context.startActivity(intent);
                     return true;
-                }else {
+                } else {
                     SuperTextActivity.startNewTextActivityIntent(context, book, longClick);
                 }
             } catch (Book.BookNotFoundException e) {
-                Toast.makeText(context,MyApp.getRString(R.string.sorry_book_not_found),Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, MyApp.getRString(R.string.sorry_book_not_found), Toast.LENGTH_SHORT).show();
             }
 
-        }else {
+        } else {
             intent = new Intent(context, MenuActivity.class);
             Bundle options = null;
-            if(longClick) {
+            if (longClick) {
                 intent = MyApp.startNewTab(intent);
-                options = ActivityOptionsCompat.makeCustomAnimation(context,R.animator.activity_zoom_in,R.animator.activity_zoom_out).toBundle();
+                options = ActivityOptionsCompat.makeCustomAnimation(context, R.animator.activity_zoom_in, R.animator.activity_zoom_out).toBundle();
             }
             intent.putExtra("menuState", newMenuState);
             intent.putExtra("hasSectionBack", mb.getSectionNode() != null);
@@ -412,7 +415,7 @@ public class MenuGrid extends LinearLayout {
 
 
             if (longClick) {
-                ActivityCompat.startActivityForResult((Activity)context, intent, 0, options);
+                ActivityCompat.startActivityForResult((Activity) context, intent, 0, options);
             } else {
                 ((Activity) context).startActivityForResult(intent, 0);
             }
@@ -421,8 +424,8 @@ public class MenuGrid extends LinearLayout {
         return false;
     }
 
-    void setVisablityOfWillaimTalmud(MenuButtonTab currentMenuButtonTab){
-        if(williamDTalumd != null) {
+    void setVisablityOfWillaimTalmud(MenuButtonTab currentMenuButtonTab) {
+        if (williamDTalumd != null) {
             if ("Bavli".equals(currentMenuButtonTab.getNode().getBookTitle()))
                 williamDTalumd.setVisibility(View.VISIBLE);
             else
@@ -441,8 +444,8 @@ public class MenuGrid extends LinearLayout {
         }
     };
 
-    public void closeMoreClick(){
-        if(moreMenuButton != null)
+    public void closeMoreClick() {
+        if (moreMenuButton != null)
             moreMenuButton.setVisibility(View.VISIBLE);
         for (MenuButton mb : overflowButtonList) {
             mb.setVisibility(View.GONE);

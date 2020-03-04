@@ -35,7 +35,7 @@ import java.util.Map;
 /**
  * Created by nss on 6/17/16.
  */
-public class SearchFilterBox extends LinearLayout{
+public class SearchFilterBox extends LinearLayout {
 
     private SearchActivity searchActivity;
     private boolean isOpen;
@@ -54,19 +54,19 @@ public class SearchFilterBox extends LinearLayout{
 
     public SearchFilterBox(Context context) {
         super(context);
-        inflate(context, R.layout.search_filter_box,this);
+        inflate(context, R.layout.search_filter_box, this);
         init(context);
     }
 
     public SearchFilterBox(Context context, AttributeSet attributeSet) {
-        super(context,attributeSet);
-        inflate(context, R.layout.search_filter_box,this);
+        super(context, attributeSet);
+        inflate(context, R.layout.search_filter_box, this);
         init(context);
     }
 
     public SearchFilterBox(Context context, AttributeSet attributeSet, int defStyle) {
-        super(context,attributeSet,defStyle);
-        inflate(context, R.layout.search_filter_box,this);
+        super(context, attributeSet, defStyle);
+        inflate(context, R.layout.search_filter_box, this);
 
         init(context);
     }
@@ -89,8 +89,8 @@ public class SearchFilterBox extends LinearLayout{
         filterListMain.setOnItemClickListener(filterListItemClick);
 
 
-        filterAdapterSlave = new SearchFilterAdapter(context,R.layout.search_filter_item,new ArrayList<BilingualNode>(),checkedChangeListener,onCheckBoxClick,null);
-        filterAdapterMain = new SearchFilterAdapter(context,R.layout.search_filter_item,new ArrayList<BilingualNode>(),checkedChangeListener,onCheckBoxClick,filterAdapterSlave);
+        filterAdapterSlave = new SearchFilterAdapter(context, R.layout.search_filter_item, new ArrayList<BilingualNode>(), checkedChangeListener, onCheckBoxClick, null);
+        filterAdapterMain = new SearchFilterAdapter(context, R.layout.search_filter_item, new ArrayList<BilingualNode>(), checkedChangeListener, onCheckBoxClick, filterAdapterSlave);
         filterListMain.setAdapter(filterAdapterMain);
         filterListSlave.setAdapter(filterAdapterSlave);
         setIsOpen(false);
@@ -169,9 +169,9 @@ public class SearchFilterBox extends LinearLayout{
                         if (j == 0)
                             parent = root;
                         else
-                            parent = nodeMap.get(fullFilterStringList[j-1]);
-                        if (filterString.replaceAll("\\s+","").equals("") ) continue;
-                        searchFilterNode = new SearchFilterNode(filterString,filterStringHe,parent);
+                            parent = nodeMap.get(fullFilterStringList[j - 1]);
+                        if (filterString.replaceAll("\\s+", "").equals("")) continue;
+                        searchFilterNode = new SearchFilterNode(filterString, filterStringHe, parent);
 
                         int minIndex = minSelectedFilterNodes.indexOf(searchFilterNode);
                         //make sure you replace old filter objects so that the hashcodes are the same. whatever, this makes sense...don't worry about it
@@ -182,7 +182,7 @@ public class SearchFilterBox extends LinearLayout{
 
                     }
                     searchFilterNode.addCount(count);
-                    nodeMap.put(fullFilterString,searchFilterNode);
+                    nodeMap.put(fullFilterString, searchFilterNode);
                     j++;
                 }
             }
@@ -190,9 +190,9 @@ public class SearchFilterBox extends LinearLayout{
             minSelectedFilterNodes = new ArrayList<>();
             this.setIsOpen(false);
             allSelectedFilterNodes = new HashSet<>();
-            SearchFilterNode.mergeTrees(root,minSelectedFilterNodes);
+            SearchFilterNode.mergeTrees(root, minSelectedFilterNodes);
             //Log.d("YOYO","OLD FILTERS " + minSelectedFilterNodes.toString());
-            filterAdapterMain.clearAndAdd(root.getChildren(),minSelectedFilterNodes);
+            filterAdapterMain.clearAndAdd(root.getChildren(), minSelectedFilterNodes);
             filterListMain.setSelection(0);
 
             filterAdapterSlave.clear();
@@ -204,7 +204,7 @@ public class SearchFilterBox extends LinearLayout{
             }
             isCheckedArraySlave = new Boolean[root.getNumChildren()][];
             for (int i = 0; i < isCheckedArraySlave.length; i++) {
-                Boolean[] innerArray = new Boolean[((SearchFilterNode)root.getChild(i)).getLeaves().size()];
+                Boolean[] innerArray = new Boolean[((SearchFilterNode) root.getChild(i)).getLeaves().size()];
                 for (int j = 0; j < innerArray.length; j++) {
                     innerArray[j] = false;
                 }
@@ -263,7 +263,7 @@ public class SearchFilterBox extends LinearLayout{
 
         minSelectedFilterNodes = SearchAPI.getMinFilterNodes(new ArrayList<>(allSelectedFilterNodes));
 
-        Log.d("YOYO","Min Nodes from Master = " + minSelectedFilterNodes.toString());
+        Log.d("YOYO", "Min Nodes from Master = " + minSelectedFilterNodes.toString());
     }
 
     private void updateSelectedFilterNodes(List<BilingualNode> nodes, @Nullable Boolean isChecked) {
@@ -280,15 +280,15 @@ public class SearchFilterBox extends LinearLayout{
 
         minSelectedFilterNodes = SearchAPI.getMinFilterNodes(new ArrayList<>(allSelectedFilterNodes));
 
-        Log.d("YOYO","Min Nodes = " + minSelectedFilterNodes.toString());
+        Log.d("YOYO", "Min Nodes = " + minSelectedFilterNodes.toString());
         for (BilingualNode yo : minSelectedFilterNodes) {
-            Log.d("YOYO","\tMin Node Children = " + yo.getChildren().toString() + " HASH " + yo.hashCode());
+            Log.d("YOYO", "\tMin Node Children = " + yo.getChildren().toString() + " HASH " + yo.hashCode());
         }
     }
 
     private void openFilterAtPos(int position) {
         SearchFilterNode node = (SearchFilterNode) filterAdapterMain.getItem(position);
-        filterAdapterSlave.clearAndAdd(node.getLeaves(),isCheckedArraySlave[position]);
+        filterAdapterSlave.clearAndAdd(node.getLeaves(), isCheckedArraySlave[position]);
         filterListSlave.setSelection(0);
         filterAdapterSlave.setMasterPosition(position);
         filterAdapterMain.notifyDataSetChanged(); //update so that it shows nice little arrow
@@ -325,7 +325,7 @@ public class SearchFilterBox extends LinearLayout{
             ListViewCheckBox listViewCheckBox = (ListViewCheckBox) buttonView;
             int position = listViewCheckBox.getPosition();
             SearchFilterAdapter searchFilterAdapter = (SearchFilterAdapter) listViewCheckBox.getAdapter();
-            searchFilterAdapter.setIsCheckedAtPos(state,position);
+            searchFilterAdapter.setIsCheckedAtPos(state, position);
 
             //openFilterAtPos(position);
 
@@ -341,20 +341,21 @@ public class SearchFilterBox extends LinearLayout{
 
             SearchFilterNode tempNode = (SearchFilterNode) searchFilterAdapter.getItem(position);
             if (searchFilterAdapter.getIsMaster()) {
-                updateSelectedFilterNodes(tempNode.getLeaves(),state);
+                updateSelectedFilterNodes(tempNode.getLeaves(), state);
                 isCheckedArrayMain[position] = state;
             } else {
-                updateSelectedFilterNodes(tempNode,state);
+                updateSelectedFilterNodes(tempNode, state);
 
                 int masterPos = filterAdapterSlave.getMasterPosition();
                 isCheckedArraySlave[masterPos][position] = state;
                 if (state != null) {
 
                     if (state && filterAdapterSlave.isUniformValue(true)) {
-                        filterAdapterMain.setIsCheckedAtPos(true,masterPos);
+                        filterAdapterMain.setIsCheckedAtPos(true, masterPos);
                     } else {
-                        if (filterAdapterSlave.isUniformValue(false)) filterAdapterMain.setIsCheckedAtPos(false,masterPos);
-                        else filterAdapterMain.setIsCheckedAtPos(null,masterPos);
+                        if (filterAdapterSlave.isUniformValue(false))
+                            filterAdapterMain.setIsCheckedAtPos(false, masterPos);
+                        else filterAdapterMain.setIsCheckedAtPos(null, masterPos);
                     }
                 }
 

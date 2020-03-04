@@ -61,28 +61,27 @@ public class FindOnPage {
             autoCompleteTextView.requestFocus();
 
             //open the keyboard focused in the edtSearch
-            hideShowKeyboard(true,InputMethodManager.SHOW_IMPLICIT);
+            hideShowKeyboard(true, InputMethodManager.SHOW_IMPLICIT);
         }
     }
 
     /**
-     *
      * @param show
      * @param InputMethodManagerFlags 0 for regular (good for regular hide). or can use something like InputMethodManager.SHOW_FORCED or InputMethodManager.SHOW_IMPLICIT
      */
-    public void hideShowKeyboard(boolean show,int InputMethodManagerFlags){
-        if(inputMethodManager == null)
+    public void hideShowKeyboard(boolean show, int InputMethodManagerFlags) {
+        if (inputMethodManager == null)
             inputMethodManager = superTextActivity.getInputMethodManager();
-        if(show)
+        if (show)
             inputMethodManager.showSoftInput(autoCompleteTextView, InputMethodManagerFlags);
         else
             inputMethodManager.hideSoftInputFromWindow(autoCompleteTextView.getWindowToken(), InputMethodManagerFlags);
 
     }
 
-    private void setAutoCompleteAdapter(){
+    private void setAutoCompleteAdapter() {
         ArrayList<String> allSearchTerms = new ArrayList<>(Settings.getSearchTerms());
-        ArrayAdapter<String> autoComAdapter = new ArrayAdapter<>(superTextActivity, android.R.layout.select_dialog_item,allSearchTerms);
+        ArrayAdapter<String> autoComAdapter = new ArrayAdapter<>(superTextActivity, android.R.layout.select_dialog_item, allSearchTerms);
         autoCompleteTextView.setAdapter(autoComAdapter);
     }
 
@@ -90,7 +89,7 @@ public class FindOnPage {
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                Log.d("SearchAct","autoComEnterClick");
+                Log.d("SearchAct", "autoComEnterClick");
                 superTextActivity.findOnPage.runFindOnPage(true);
                 return true;
             }
@@ -108,8 +107,8 @@ public class FindOnPage {
     View.OnFocusChangeListener autoComFocus = new View.OnFocusChangeListener() {
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
-            Log.d("SearchAct","onFocusChange" + hasFocus);
-            hideShowKeyboard(hasFocus,hasFocus ? InputMethodManager.SHOW_FORCED:1);
+            Log.d("SearchAct", "onFocusChange" + hasFocus);
+            hideShowKeyboard(hasFocus, hasFocus ? InputMethodManager.SHOW_FORCED : 1);
         }
     };
 
@@ -128,12 +127,12 @@ public class FindOnPage {
             Log.d("FindOnPage", "isWorking");
         }
 
-        if(!superTextActivity.searchingTerm.equals(lastSearchingTerm)){
-            GoogleTracker.sendEvent(GoogleTracker.CATEGORY_FIND_ON_PAGE,superTextActivity.searchingTerm);
+        if (!superTextActivity.searchingTerm.equals(lastSearchingTerm)) {
+            GoogleTracker.sendEvent(GoogleTracker.CATEGORY_FIND_ON_PAGE, superTextActivity.searchingTerm);
         }
 
         Settings.addSearchTerm(superTextActivity.searchingTerm);
-        hideShowKeyboard(false,0);
+        hideShowKeyboard(false, 0);
         setAutoCompleteAdapter();
     }
 
@@ -165,7 +164,7 @@ public class FindOnPage {
 
 
         private boolean lookForAlreadyFoundWord(List<Segment> list, boolean presort) {
-            Log.d("findOnPage","looking for already Found word list.size:" + list.size() + "... myTID:" + myTID);
+            Log.d("findOnPage", "looking for already Found word list.size:" + list.size() + "... myTID:" + myTID);
             if (presort) {
                 sort(list);
             }
@@ -186,7 +185,7 @@ public class FindOnPage {
                     }
                 }
             }
-            if(found != null) {
+            if (found != null) {
                 goingToNode = found.parentNode;
                 goingToSegment = found;
                 lastFoundTID = found.tid;
@@ -300,10 +299,10 @@ public class FindOnPage {
             super.onPostExecute(success);
             isWorking = false;
             if (success == false) {
-                if(APIError)
-                    Toast.makeText(superTextActivity,MyApp.getRString(R.string.not_avil_in_online_mode),Toast.LENGTH_SHORT).show();
+                if (APIError)
+                    Toast.makeText(superTextActivity, MyApp.getRString(R.string.not_avil_in_online_mode), Toast.LENGTH_SHORT).show();
                 if (finishedEverything)
-                    Toast.makeText(superTextActivity,MyApp.getRString(R.string.didnt_find_query_in_book), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(superTextActivity, MyApp.getRString(R.string.didnt_find_query_in_book), Toast.LENGTH_SHORT).show();
                 return;
             }
             superTextActivity.postFindOnPageBackground();
@@ -313,7 +312,7 @@ public class FindOnPage {
                 superTextActivity.firstLoadedNode = goingToNode;
                 superTextActivity.openToSegment = goingToSegment;
                 if (superTextActivity.openToSegment != null) {
-                    if(snackbar == null || !snackbar.isShown())
+                    if (snackbar == null || !snackbar.isShown())
                         snackbar = Snackbar.make(superTextActivity.searchActionBarRoot, superTextActivity.openToSegment.getLocationString(superTextActivity.menuLang), Snackbar.LENGTH_SHORT);
                     else {
                         snackbar.setText(superTextActivity.openToSegment.getLocationString(superTextActivity.menuLang));

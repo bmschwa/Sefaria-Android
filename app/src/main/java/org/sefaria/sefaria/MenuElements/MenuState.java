@@ -73,7 +73,7 @@ public class MenuState implements Parcelable {
         }
     }
 
-    public static MenuNode getRootNode(IndexType type){
+    public static MenuNode getRootNode(IndexType type) {
         if (!isMenuInited(type)) initMenu(type);
         if (type == IndexType.MAIN) {
             return rootNode;
@@ -83,7 +83,7 @@ public class MenuState implements Parcelable {
     }
 
     public MenuState(IndexType type, List<MenuNode> currPath, Util.Lang lang) {
-        this.currNode = currPath.get(currPath.size()-1);
+        this.currNode = currPath.get(currPath.size() - 1);
         this.currPath = currPath;
         this.currLang = lang;
         this.type = type;
@@ -100,14 +100,14 @@ public class MenuState implements Parcelable {
     private static JSONArray getMenuJSON(IndexType type) throws IOException, JSONException {
         JSONArray jsonRoot;
         String tempIndexName = type == IndexType.MAIN ? jsonIndexFileName : searchIndexFileName;
-        if(!Settings.getUseAPI()){
+        if (!Settings.getUseAPI()) {
             try {
                 jsonRoot = new JSONArray(Util.readFile(Database.getInternalFolder() + tempIndexName));
-            }catch (Exception e1){
+            } catch (Exception e1) {
                 e1.printStackTrace();
                 jsonRoot = Util.openJSONArrayFromAssets(tempIndexName);
             }
-        }else{
+        } else {
             jsonRoot = Util.openJSONArrayFromAssets(tempIndexName);
         }
         return jsonRoot;
@@ -143,7 +143,7 @@ public class MenuState implements Parcelable {
             String heTitle;
             MenuNode tempMenuNode;
             JSONObject tempNode = node.getJSONObject(i);
-            if(tempNode.has("contents")){
+            if (tempNode.has("contents")) {
                 JSONArray tempChildNode = tempNode.getJSONArray("contents");
                 enTitle = tempNode.getString("category");
                 //if(enTitle.equals("Commentary2"))
@@ -151,29 +151,29 @@ public class MenuState implements Parcelable {
                 heTitle = tempNode.getString("heCategory");
                 tempMenuNode = new MenuNode(enTitle, heTitle, parent);
                 createChildrenNodes(type, tempChildNode, tempMenuNode, false);
-            }else if(tempNode.has("title")){//This means it didn't find contents and it's at a book
+            } else if (tempNode.has("title")) {//This means it didn't find contents and it's at a book
                 enTitle = tempNode.getString("title");
                 heTitle = tempNode.getString("heTitle");
                 new MenuNode(enTitle, heTitle, parent);
             }//if for some reason it doesn't have a title or a contents, then just skip it
         }
 
-            if (isRoot) {
-                String [] moveNames = new String[] {"Tosefta", "Tanaitic"};
-                for(String moveName: moveNames) {
-                    try {
-                        if (type == IndexType.MAIN) {
-                            MenuNode tosefta = (MenuNode) rootNode.getChildren().remove(rootNode.getChildIndex(moveName, Util.Lang.EN));
-                            rootNode.getChildren().add(rootNode.getChildIndex("Philosophy", Util.Lang.EN) + 1, tosefta);
-                        } else {
-                            MenuNode tosefta = (MenuNode) rootSearchNode.getChildren().remove(rootSearchNode.getChildIndex(moveName, Util.Lang.EN));
-                            rootSearchNode.getChildren().add(rootSearchNode.getChildIndex("Philosophy", Util.Lang.EN) + 1, tosefta);
-                        }
-                    } catch (Exception e) {
-                        ;//this is expected with newer indexes without "Tosefeta
+        if (isRoot) {
+            String[] moveNames = new String[]{"Tosefta", "Tanaitic"};
+            for (String moveName : moveNames) {
+                try {
+                    if (type == IndexType.MAIN) {
+                        MenuNode tosefta = (MenuNode) rootNode.getChildren().remove(rootNode.getChildIndex(moveName, Util.Lang.EN));
+                        rootNode.getChildren().add(rootNode.getChildIndex("Philosophy", Util.Lang.EN) + 1, tosefta);
+                    } else {
+                        MenuNode tosefta = (MenuNode) rootSearchNode.getChildren().remove(rootSearchNode.getChildIndex(moveName, Util.Lang.EN));
+                        rootSearchNode.getChildren().add(rootSearchNode.getChildIndex("Philosophy", Util.Lang.EN) + 1, tosefta);
                     }
+                } catch (Exception e) {
+                    ;//this is expected with newer indexes without "Tosefeta
                 }
             }
+        }
 
     }
 
@@ -197,10 +197,12 @@ public class MenuState implements Parcelable {
 
 
     /***************
-    MEMBER FUNCTIONS
+     MEMBER FUNCTIONS
      ***************/
 
-    public MenuNode getCurrNode() {return currNode;}
+    public MenuNode getCurrNode() {
+        return currNode;
+    }
 
     //optional parameter 'sectionNode' is used when user clicks on button in a section
     //technically, goForward needs to be run twice, once for the section and once for the button
@@ -211,14 +213,14 @@ public class MenuState implements Parcelable {
         else tempNode = node;
 
         //if coming from memory restore, currPath contains half-nodes, but you need full-node
-        List<BilingualNode> tempChildren = currPath.get(currPath.size()-1).getChildren();
+        List<BilingualNode> tempChildren = currPath.get(currPath.size() - 1).getChildren();
         int ind = tempChildren.indexOf(tempNode);
         MenuNode realNode;
         if (ind == -1) {
             tempChildren = tempChildren.get(0).getChildren();
 
             ind = tempChildren.indexOf(tempNode);
-            if(ind == -1){
+            if (ind == -1) {
                 // then we  don't have the next level at all
                 // (probably means we don't have the book)
                 throw new Book.BookNotFoundException();
@@ -235,7 +237,7 @@ public class MenuState implements Parcelable {
         MenuState tempMenuState = new MenuState(this.type, tempCurrPath, currLang);
 
 
-        if (sectionNode != null) return tempMenuState.goForward(node,null);
+        if (sectionNode != null) return tempMenuState.goForward(node, null);
         else return tempMenuState;
     }
 
@@ -244,10 +246,12 @@ public class MenuState implements Parcelable {
         List<MenuNode> tempCurrPath = new ArrayList<>(currPath);
         tempCurrPath.remove(tempCurrPath.size() - 1);
 
-        MenuState tempMenuState = new MenuState(this.type, tempCurrPath,currLang);
+        MenuState tempMenuState = new MenuState(this.type, tempCurrPath, currLang);
 
-        if (hasSectionBack) return tempMenuState.goBack(false, false); //go back twice to account for clicking on subsection
-        if (hasTabBack) return tempMenuState.goBack(false, false); //potentially go back thrice if tabs
+        if (hasSectionBack)
+            return tempMenuState.goBack(false, false); //go back twice to account for clicking on subsection
+        if (hasTabBack)
+            return tempMenuState.goBack(false, false); //potentially go back thrice if tabs
 
         return tempMenuState;
     }
@@ -261,8 +265,9 @@ public class MenuState implements Parcelable {
 
 
     private List<BilingualNode> sectionlessGroup = null;
-    private void addSectionlessNode(MenuNode tempSubChild, List<BilingualNode> sectionList, List<List<BilingualNode>> subsectionList){
-        if(sectionlessGroup == null){
+
+    private void addSectionlessNode(MenuNode tempSubChild, List<BilingualNode> sectionList, List<List<BilingualNode>> subsectionList) {
+        if (sectionlessGroup == null) {
             sectionlessGroup = new ArrayList<>();
             sectionList.add(null);
             subsectionList.add(sectionlessGroup);
@@ -270,10 +275,11 @@ public class MenuState implements Parcelable {
         sectionlessGroup.add(tempSubChild);
     }
 
-    public class SectionAndSub{
+    public class SectionAndSub {
         List<BilingualNode> sections = new ArrayList<>();
         List<List<BilingualNode>> subsections = new ArrayList<>();
-        public SectionAndSub(){
+
+        public SectionAndSub() {
         }
     }
 
@@ -285,7 +291,7 @@ public class MenuState implements Parcelable {
         boolean isHome = currNode.equals(rootNode);
         for (int i = 0; i < currNode.getNumChildren(); i++) {
             MenuNode tempChild = (MenuNode) currNode.getChild(i);
-            if(Database.getVersionInDB(false) < PRE_DB_262_DONT_DISPLAY_NUM && PRE_START_SECTION_RIGHT_AWAY_LIST.contains(tempChild.getTitle(Util.Lang.EN))){
+            if (Database.getVersionInDB(false) < PRE_DB_262_DONT_DISPLAY_NUM && PRE_START_SECTION_RIGHT_AWAY_LIST.contains(tempChild.getTitle(Util.Lang.EN))) {
                 //don't display these guys
                 continue;
             }
@@ -293,12 +299,12 @@ public class MenuState implements Parcelable {
             // with minDepth == 2 (like Mishneh Torah) we want to display it on it's own page b/c
             // that would look nice. If it's in START_SECTION_RIGHT_AWAY_LIST, then just put it there right away
             if (minDepth >= 1 && !isHome &&
-                (
-                    minDepth != 2 ||
-                    START_SECTION_RIGHT_AWAY_LIST.contains(tempChild.getTitle(Util.Lang.EN))
-                )
-            ){
-                if(tempChild.getNumChildren() == 1 && tempChild.getChild(0).getNumChildren() == 0
+                    (
+                            minDepth != 2 ||
+                                    START_SECTION_RIGHT_AWAY_LIST.contains(tempChild.getTitle(Util.Lang.EN))
+                    )
+            ) {
+                if (tempChild.getNumChildren() == 1 && tempChild.getChild(0).getNumChildren() == 0
                         && tempChild.getChild(0).getTitle(Util.Lang.EN).startsWith(tempChild.getTitle(Util.Lang.EN))) {
                     //check if any of the children has only one child which is a leaf
                     // and the leaf starts with the parents' name (so it's just a repeat).
@@ -306,7 +312,7 @@ public class MenuState implements Parcelable {
                     MenuNode tempSubChild = (MenuNode) tempChild.getChild(0);
                     tempSubChild.overridePrettyTitle(true);
                     addSectionlessNode(tempSubChild, sectionAndSub.sections, sectionAndSub.subsections);
-                }else {
+                } else {
                     //check if any of the children has only one child which is a leaf. in that case, put the leaf in instead of the actual child
                     List<BilingualNode> tempSubsection = new ArrayList<>();
                     for (BilingualNode child : tempChild.getChildren()) {
@@ -391,7 +397,6 @@ public class MenuState implements Parcelable {
         this.currPath = tempMenuState.currPath;
         this.currNode = tempMenuState.currNode;
     }
-
 
 
 }

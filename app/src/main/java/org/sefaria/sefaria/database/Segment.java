@@ -1,4 +1,5 @@
 package org.sefaria.sefaria.database;
+
 import org.sefaria.sefaria.GoogleTracker;
 
 import java.util.ArrayList;
@@ -22,24 +23,22 @@ public class Segment implements Parcelable {
     private static final boolean usingHuffman = true;
 
 
-
     public Node parentNode = null; //for SepTextAdapter. not null indicates that this obj is actually a placeholder for a perek title (and the node represents that perek)
     public int tid;
     public int bid;
     private String enText;
     private String heText;
-    private byte [] enTextCompress;
+    private byte[] enTextCompress;
     private int enTextLength = 0;
     private int heTextLength = 0;
-    private byte [] heTextCompress;
+    private byte[] heTextCompress;
     private boolean isChapter = false;
     private boolean isLoader = false; //true when this is a filler segment which indicates that the next/prev section is loading
     private boolean chapterHasTexts = true;
     //protected int parentNID;
     private String ref = null;
 
-    public String getText(Util.Lang lang)
-    {
+    public String getText(Util.Lang lang) {
         if (lang == Util.Lang.EN) {
             if (enText == null) {
                 if (enTextCompress == null)
@@ -49,67 +48,76 @@ public class Segment implements Parcelable {
             }
             return enText;
         } else if (lang == Util.Lang.HE) {
-            if(heText == null){
-                if(heTextCompress == null)
+            if (heText == null) {
+                if (heTextCompress == null)
                     heText = "";
                 else
-                    heText = Huffman.decode(heTextCompress,heTextLength);
+                    heText = Huffman.decode(heTextCompress, heTextLength);
             }
             return heText;
-        } else{// if(lang == Util.Lang.BI) {
+        } else {// if(lang == Util.Lang.BI) {
             return getText(Util.Lang.HE) + "<br>\n" + getText(Util.Lang.EN);
         }
     }
 
-    public void setText(String text, Util.Lang lang){
-        if(lang == Util.Lang.HE)
+    public void setText(String text, Util.Lang lang) {
+        if (lang == Util.Lang.HE)
             heText = text;
         else
             enText = text;
     }
 
-    public void setChapterHasTexts(boolean chapterHasTexts){
+    public void setChapterHasTexts(boolean chapterHasTexts) {
         this.chapterHasTexts = chapterHasTexts;
     }
 
-    public boolean getChapterHasTexts(){
+    public boolean getChapterHasTexts() {
         return chapterHasTexts;
     }
 
     private int numLinks = 0;
 
-    public int getNumLinks(){ return numLinks;}
+    public int getNumLinks() {
+        return numLinks;
+    }
 
-    public String getRef(){ return ref; }
-    public boolean isChapter() { return isChapter;}
-    public boolean isLoader() { return isLoader;}
+    public String getRef() {
+        return ref;
+    }
+
+    public boolean isChapter() {
+        return isChapter;
+    }
+
+    public boolean isLoader() {
+        return isLoader;
+    }
+
     /**
      * Little sections (like verse) to Big (like chap) and the rest zeros
      * For ex. chapter 3, verse 8 would be {8,3,0,0,0,0}
      */
-    public int [] levels;
+    public int[] levels;
     //public int hid;
     public boolean displayNum;
 
     public static final String TABLE_TEXTS = "Texts";
 
 
-
-
-
     /**
      * this is used as a chapter heading as part of the segment list
+     *
      * @param node
      */
     public Segment(Node node) {
         isChapter = true;
         parentNode = node;
-        levels = new int [MAX_LEVELS];
+        levels = new int[MAX_LEVELS];
 
         if (node != null) {
             boolean doSectionName = true;
             try {
-                String category  = node.getBook().categories[0];
+                String category = node.getBook().categories[0];
                 if ((category.equals("Tanach") || category.equals("Talmud") || category.equals("Mishnah") || category.equals("Tosefta")) && (node.getTocRootNum() == 0))
                     doSectionName = false;
             } catch (Exception e) {
@@ -123,13 +131,14 @@ public class Segment implements Parcelable {
 
     /**
      * Filler constructor to make a Segment object which indicates that the next/prev section is loading
+     *
      * @param isLoader
      */
     public Segment(boolean isLoader) {
         this.isLoader = isLoader;
     }
 
-    public Segment(Cursor cursor ){
+    public Segment(Cursor cursor) {
         getFromCursor(cursor);
     }
 
@@ -140,79 +149,76 @@ public class Segment implements Parcelable {
         this.tid = 0;
         this.bid = bid;
         this.ref = ref;
-        levels = new int [MAX_LEVELS];
+        levels = new int[MAX_LEVELS];
         this.displayNum = true;//unless we know otherwise, we'll default to display the verse Number
     }
 
     public Segment(int tid) {
         SQLiteDatabase db = Database.getDB();
-        try{
+        try {
             Cursor cursor = db.query(TABLE_TEXTS, null, "_id" + "=?",
-                    new String[] { String.valueOf(tid) }, null, null, null, null);
+                    new String[]{String.valueOf(tid)}, null, null, null, null);
 
-            if (cursor.moveToFirst()){
+            if (cursor.moveToFirst()) {
                 getFromCursor(cursor);
-            }
-            else{
+            } else {
                 this.tid = 0;
-                this.levels = new int [MAX_LEVELS];
+                this.levels = new int[MAX_LEVELS];
             }
             cursor.close();
-        }catch(SQLiteException e){
-            if(!e.toString().contains(API.NO_TEXT_MESSAGE)){
+        } catch (SQLiteException e) {
+            if (!e.toString().contains(API.NO_TEXT_MESSAGE)) {
                 throw e; //don't know what the problem is so throw it back out
             }
             //This probably means that it's the API database
             this.tid = 0;
-            this.levels = new int [MAX_LEVELS];
+            this.levels = new int[MAX_LEVELS];
         }
     }
 
 
-    private void getFromCursor(Cursor cursor){
+    private void getFromCursor(Cursor cursor) {
         tid = cursor.getInt(0);
         bid = cursor.getInt(1);
-        int flags = cursor.getInt(MAX_LEVELS +4);
+        int flags = cursor.getInt(MAX_LEVELS + 4);
         displayNum = ((flags & 0x01) != 0);
-        if(!usingHuffman) {
+        if (!usingHuffman) {
             enText = cursor.getString(2);
             heText = cursor.getString(3);
-        }
-        else{
+        } else {
             enTextCompress = cursor.getBlob(2);
             heTextCompress = cursor.getBlob(3);
 
-            enTextLength =  (flags & 0x0e)>>1;
-            if(enTextCompress != null)
-                enTextLength += (enTextCompress.length-((enTextLength != 0)?1:0))*8;
-            heTextLength =  (flags & 0x70)>>4;
-            if(heTextCompress != null)
-                heTextLength += (heTextCompress.length-((heTextLength != 0)?1:0))*8;
+            enTextLength = (flags & 0x0e) >> 1;
+            if (enTextCompress != null)
+                enTextLength += (enTextCompress.length - ((enTextLength != 0) ? 1 : 0)) * 8;
+            heTextLength = (flags & 0x70) >> 4;
+            if (heTextCompress != null)
+                heTextLength += (heTextCompress.length - ((heTextLength != 0) ? 1 : 0)) * 8;
 
         }
-        levels = new int [MAX_LEVELS];
-        for(int i=0;i<MAX_LEVELS;i++){
-            levels[i] = cursor.getInt(i+4);
+        levels = new int[MAX_LEVELS];
+        for (int i = 0; i < MAX_LEVELS; i++) {
+            levels[i] = cursor.getInt(i + 4);
         }
 
-        numLinks = cursor.getInt(MAX_LEVELS+5);
+        numLinks = cursor.getInt(MAX_LEVELS + 5);
         //parentNID = cursor.getInt(MAX_LEVELS+6);
     }
 
 
     /**
-     *
      * @param prependDomain if you want to go to the GUI site
      * @return "" if there's an error
      */
     public String getURL(boolean prependDomain) throws Book.BookNotFoundException {
 
         StringBuilder str = new StringBuilder();
-        if(prependDomain) {
+        if (prependDomain) {
             str.append("https://www.sefaria.org/");
         }
-        if(parentNode != null && (!parentNode.isRef())){
-            String path = parentNode.getPath(Util.Lang.EN,true, true, true)
+        if (parentNode != null && (!parentNode.isRef())) {
+            String path = parentNode.getPath(Util.Lang.EN, true, true, true)
                     + "." + levels[0];
             return str + path;
         }
@@ -231,14 +237,14 @@ public class Segment implements Parcelable {
                 str.append("." + Header.getNiceGridNum(Util.Lang.EN, num, isDaf));
                 sectionNum--;
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new Book.BookNotFoundException();
         }
-        return str.toString().replace(" ","_");
+        return str.toString().replace(" ", "_");
     }
 
-    public String getLocationString(Util.Lang lang){
-        if(ref != null)
+    public String getLocationString(Util.Lang lang) {
+        if (ref != null)
             return ref;
         Book book = null;
         try {
@@ -247,44 +253,42 @@ public class Segment implements Parcelable {
             return "";
         }
         String str = book.getTitle(lang);
-        if(parentNode != null && !parentNode.isRef()){ //It's a complex segment... I Don't think it's always complex segment... it could also be just from the Popupmenu for example
+        if (parentNode != null && !parentNode.isRef()) { //It's a complex segment... I Don't think it's always complex segment... it could also be just from the Popupmenu for example
 
-            str = parentNode.getPath(lang,false, true, false);
-            if(str.charAt(str.length()-1) == '.' || str.charAt(str.length()-1) == ':')// it ends in a daf
-                str += " " + Header.getNiceGridNum(lang,levels[0],false);
+            str = parentNode.getPath(lang, false, true, false);
+            if (str.charAt(str.length() - 1) == '.' || str.charAt(str.length() - 1) == ':')// it ends in a daf
+                str += " " + Header.getNiceGridNum(lang, levels[0], false);
             else
-                str += ":" + Header.getNiceGridNum(lang,levels[0],false);
+                str += ":" + Header.getNiceGridNum(lang, levels[0], false);
             Log.d("Segment", "getLocationStri using getPath()" + str);
             return str;
         }
         Log.d("Segment", "getLocationStri using levels");
-        int sectionNum = book.sectionNamesL2B.length-1;
+        int sectionNum = book.sectionNamesL2B.length - 1;
         boolean useSpace = true; //starting true so has space after book.title
-        for(int i=levels.length-1;i>=0;i--){
+        for (int i = levels.length - 1; i >= 0; i--) {
             int num = levels[i];
-            if(num == 0) continue;
+            if (num == 0) continue;
             boolean isDaf = false;
 
-            if(book.sectionNamesL2B.length > sectionNum && sectionNum >0) {
+            if (book.sectionNamesL2B.length > sectionNum && sectionNum > 0) {
                 isDaf = (book.sectionNamesL2B[sectionNum].equals("Daf"));
                 //str += " " + book.psectionNamesL2B[sectionNum];
             }
-            if(useSpace)
-                str +=  " " +  Header.getNiceGridNum(lang,num,isDaf);
+            if (useSpace)
+                str += " " + Header.getNiceGridNum(lang, num, isDaf);
             else
-                str +=  ":" +  Header.getNiceGridNum(lang,num,isDaf);
+                str += ":" + Header.getNiceGridNum(lang, num, isDaf);
 
             sectionNum--;
             useSpace = isDaf && (lang == Util.Lang.HE);
         }
 
 
-
         return str;
     }
 
     /**
-     *
      * @param book
      * @return the Node that is the parent of the current Segment or null if it has problems doing that
      * @throws API.APIException
@@ -292,10 +296,10 @@ public class Segment implements Parcelable {
      */
     public Node getNodeFromText(Book book) throws API.APIException, Book.BookNotFoundException {
         Segment segment = this;
-        if(segment.ref != null && segment.ref.length() > 0){
-            API.PlaceRef placeRef = API.PlaceRef.getPlace(segment.ref,book);
+        if (segment.ref != null && segment.ref.length() > 0) {
+            API.PlaceRef placeRef = API.PlaceRef.getPlace(segment.ref, book);
             segment.parentNode = placeRef.node;
-            if(placeRef.segment != null){
+            if (placeRef.segment != null) {
                 segment.levels = placeRef.segment.levels.clone();
                 segment.tid = placeRef.segment.tid;
             }
@@ -303,38 +307,38 @@ public class Segment implements Parcelable {
         }
 
         List<Node> roots = Node.getRoots(book);
-        if(roots.size() == 0){
+        if (roots.size() == 0) {
             return null; //TODO deal with if can't find TOCRoots
         }
         Node node = roots.get(0);
         try {
             if (!node.isComplex()) {
-                for (int i = segment.levels.length-1; i > 0; i--) {
+                for (int i = segment.levels.length - 1; i > 0; i--) {
                     if (segment.levels[i] == 0)
                         continue;
                     int num = segment.levels[i];
                     boolean foundChild = false;
-                    for(Node child:node.getChildren()) {
-                        if(num == child.gridNum) {
+                    for (Node child : node.getChildren()) {
+                        if (num == child.gridNum) {
                             node = child;
                             foundChild = true;
                             break;
                         }
                     }
-                    if(!foundChild){
-                        Log.e("Node","Problem finding getNodeFromLink child. node" + node);
+                    if (!foundChild) {
+                        Log.e("Node", "Problem finding getNodeFromLink child. node" + node);
                         segment.parentNode = node.getFirstDescendant();
                         return segment.parentNode;
                     }
 
                 }
-            }else{
-                Log.d("Node","not getting complex node yet");
+            } else {
+                Log.d("Node", "not getting complex node yet");
                 segment.parentNode = node.getFirstDescendant();
                 return segment.parentNode;
             }
-        }catch (Exception e){
-            Log.d("Node",e.toString());
+        } catch (Exception e) {
+            Log.d("Node", e.toString());
             return null;
         }
 
@@ -344,11 +348,11 @@ public class Segment implements Parcelable {
 
 
     private static List<Segment> getFromDB(Book book, int[] levels) throws API.APIException {
-        if(book.textDepth != levels.length){
+        if (book.textDepth != levels.length) {
             Log.e("Error_sql", "wrong size of levels.");
             return new ArrayList<>();
         }
-        return getFromDB(book.bid, levels,0);
+        return getFromDB(book.bid, levels, 0);
     }
 
 
@@ -365,12 +369,11 @@ public class Segment implements Parcelable {
 	 */
 
 
-
     public static List<Segment> getFromDB(int bid, int[] levels, int parentNID) {
         List<Segment> segmentList = new ArrayList<>();
         SQLiteDatabase db = Database.getDB();
 
-        String sql = "SELECT DISTINCT * FROM "+ TABLE_TEXTS +" " + fullWhere(bid, levels, parentNID) + " ORDER BY " + orderBy(levels);
+        String sql = "SELECT DISTINCT * FROM " + TABLE_TEXTS + " " + fullWhere(bid, levels, parentNID) + " ORDER BY " + orderBy(levels);
         Cursor cursor = db.rawQuery(sql, null);
 
         if (cursor.moveToFirst()) {
@@ -420,12 +423,12 @@ public class Segment implements Parcelable {
     }
     */
 
-    public static List<Segment> getWithTids(int startTID, int endTID){
+    public static List<Segment> getWithTids(int startTID, int endTID) {
         List<Segment> segmentList = new ArrayList<Segment>();
         SQLiteDatabase db = Database.getDB();
 
-        String sql = "SELECT * FROM "+ TABLE_TEXTS +" where _id BETWEEN ? AND ? ORDER BY _id";
-        Cursor cursor = db.rawQuery(sql, new String [] {"" + startTID,"" + endTID});
+        String sql = "SELECT * FROM " + TABLE_TEXTS + " where _id BETWEEN ? AND ? ORDER BY _id";
+        Cursor cursor = db.rawQuery(sql, new String[]{"" + startTID, "" + endTID});
 
         if (cursor.moveToFirst()) {
             do {
@@ -457,12 +460,12 @@ public class Segment implements Parcelable {
         return dummyChapText;
     }
     */
-    public static Segment makeDummyChapText0(Segment segment, int wherePage){
+    public static Segment makeDummyChapText0(Segment segment, int wherePage) {
         Segment dummyChapSegment = deepCopy(segment);
         //dummyChapSegment.log();
 
-        for(int i=0;i<6;i++){
-            if(wherePage > i+1)
+        for (int i = 0; i < 6; i++) {
+            if (wherePage > i + 1)
                 dummyChapSegment.levels[i] = 0;
         }
 
@@ -486,8 +489,8 @@ public class Segment implements Parcelable {
 
                     Cursor cursor;
                     Log.d("sql_textFind", "start");
-                    String sql = "select heText from Texts "+
-                            " WHERE _id >= " + 0  + " AND _id <" + chunkSize ;
+                    String sql = "select heText from Texts " +
+                            " WHERE _id >= " + 0 + " AND _id <" + chunkSize;
 
                     cursor = db.rawQuery(sql, null);
                     // looping through all rows and adding to list
@@ -498,10 +501,10 @@ public class Segment implements Parcelable {
                         do {
 
                             yo = cursor.getString(0);
-                            if(yo == null)
+                            if (yo == null)
                                 continue;
                             count++;
-                            if(Util.getRemovedNikudString(yo).contains("\u05d1\u05d2"))
+                            if (Util.getRemovedNikudString(yo).contains("\u05d1\u05d2"))
                                 //if(yo.replaceAll("[\u0591-\u05C7]", "").contains("\u05d1\u05d2"))
                                 foundCount++;
 
@@ -510,11 +513,11 @@ public class Segment implements Parcelable {
                         } while (cursor.moveToNext());
                     }
                     cursor.close();
-                    Log.d("sql_textFind", "end.." + "finished!!! " + foundCount + " ..."  + count);
+                    Log.d("sql_textFind", "end.." + "finished!!! " + foundCount + " ..." + count);
                     //LOGING:
                     //for(int i = 0; i < segmentList.size(); i++)
                     //	segmentList.get(i).log();
-                }catch(Exception e){
+                } catch (Exception e) {
                     GoogleTracker.sendException(e, "moving index.json");
                 }
             }
@@ -525,8 +528,8 @@ public class Segment implements Parcelable {
 
     public static int getNonZeroLevel(int[] levels) {
         int nonZeroLevel;
-        for(nonZeroLevel = 0; nonZeroLevel < levels.length; nonZeroLevel++){
-            if(levels[nonZeroLevel] != 0)
+        for (nonZeroLevel = 0; nonZeroLevel < levels.length; nonZeroLevel++) {
+            if (levels[nonZeroLevel] != 0)
                 break;
         }
         return nonZeroLevel;
@@ -534,30 +537,30 @@ public class Segment implements Parcelable {
 
 
     /**
-     *  makes a where statement for getting the texts from a book with a id (as bid) or with segment that have a parentNode with nid of id
+     * makes a where statement for getting the texts from a book with a id (as bid) or with segment that have a parentNode with nid of id
      *
      * @param bid
      * @param levels
      * @return whereStatement
      */
-    private static String fullWhere(int bid, int[] levels, int parentNID){
+    private static String fullWhere(int bid, int[] levels, int parentNID) {
         String fullWhere;
 
         fullWhere = " WHERE " + Kbid + "= " + String.valueOf(bid);
-        if(parentNID >0)
+        if (parentNID > 0)
             fullWhere += " AND parentNode = " + String.valueOf(parentNID);
-        for(int i = 0; i < levels.length; i++){
-            if(!(levels[i] == 0)){
-                fullWhere +=  " AND level" + String.valueOf(i + 1) + "= " + String.valueOf(levels[i]);
+        for (int i = 0; i < levels.length; i++) {
+            if (!(levels[i] == 0)) {
+                fullWhere += " AND level" + String.valueOf(i + 1) + "= " + String.valueOf(levels[i]);
             }
         }
         return fullWhere;
     }
 
-    private static String orderBy(int[] levels){
+    private static String orderBy(int[] levels) {
         String orderBy = Klevel1;
-        for(int i = 0; i < levels.length - 2; i++){
-            orderBy = "level"+ String.valueOf(i + 2) + ", " + orderBy;
+        for (int i = 0; i < levels.length - 2; i++) {
+            orderBy = "level" + String.valueOf(i + 2) + ", " + orderBy;
         }
         return orderBy;
     }
@@ -569,7 +572,7 @@ public class Segment implements Parcelable {
 
     @Override
     public int hashCode() {
-        if(tid == 0)
+        if (tid == 0)
             return super.hashCode();
         return tid;
     }
@@ -580,20 +583,20 @@ public class Segment implements Parcelable {
             return false;
 
         Segment segment = (Segment) o;
-        if(segment.tid != 0 && this.tid != 0)
+        if (segment.tid != 0 && this.tid != 0)
             return segment.tid == this.tid;
 
-        if(super.equals(o))
+        if (super.equals(o))
             return true;
 
-        boolean isEqual =  (
-                Arrays.equals(segment.levels,this.levels)
-                &&
-                this.bid == segment.bid
+        boolean isEqual = (
+                Arrays.equals(segment.levels, this.levels)
+                        &&
+                        this.bid == segment.bid
                 //&& this.parentNode.equals(segment.parentNode)
                 //TODO maybe needs stricter def... but for now this is fine
         );
-        if(this.parentNode != null && segment.parentNode != null)
+        if (this.parentNode != null && segment.parentNode != null)
             return isEqual && this.parentNode.pseudoEquals(segment.parentNode);
         return isEqual;
         /*
@@ -607,7 +610,7 @@ public class Segment implements Parcelable {
     private static Segment deepCopy(Segment segment) {
         Segment newSegment = new Segment(segment.getText(Util.Lang.EN), segment.getText(Util.Lang.HE), segment.bid, segment.ref);
         newSegment.levels = segment.levels.clone();
-        newSegment.tid    = segment.tid;
+        newSegment.tid = segment.tid;
         newSegment.displayNum = segment.displayNum;
         newSegment.parentNode = segment.parentNode;
         return newSegment;
@@ -615,12 +618,12 @@ public class Segment implements Parcelable {
 
     @Override
     public String toString() {
-        String string =  tid + "-" + bid ;
+        String string = tid + "-" + bid;
         try {
             for (int i = 0; i < levels.length; i++)
                 string += "." + levels[i];
             string += " " + getText(Util.Lang.BI);
-        }catch (Exception e){
+        } catch (Exception e) {
             ;
         }
         return string;

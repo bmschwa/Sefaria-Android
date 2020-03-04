@@ -39,9 +39,9 @@ public class LinkDraggerView extends LinearLayout {
 
         TypedArray a = context.obtainStyledAttributes(attributeSet, R.styleable.LinkDraggerView);
         final int N = a.getIndexCount();
-        for(int i = 0; i < N; i++){
+        for (int i = 0; i < N; i++) {
             int attr = a.getIndex(i);
-            switch(attr){
+            switch (attr) {
                 case R.styleable.LinkDraggerView_dragView:
                     dragViewId = a.getResourceId(attr, -1);
                     break;
@@ -61,7 +61,6 @@ public class LinkDraggerView extends LinearLayout {
     private void init() {
 
     }
-
 
 
     @Override
@@ -104,13 +103,20 @@ public class LinkDraggerView extends LinearLayout {
                     });
                     animation.addListener(new Animator.AnimatorListener() {
                         @Override
-                        public void onAnimationStart(Animator animation) {}
+                        public void onAnimationStart(Animator animation) {
+                        }
+
                         @Override
-                        public void onAnimationEnd(Animator animation) {}
+                        public void onAnimationEnd(Animator animation) {
+                        }
+
                         @Override
-                        public void onAnimationCancel(Animator animation) {}
+                        public void onAnimationCancel(Animator animation) {
+                        }
+
                         @Override
-                        public void onAnimationRepeat(Animator animation) {}
+                        public void onAnimationRepeat(Animator animation) {
+                        }
                     });
                     animation.start();
                 } else if (tempNewHeight < SuperTextActivity.MAX_LINK_FRAG_SNAP_DISTANCE) {
@@ -142,7 +148,7 @@ public class LinkDraggerView extends LinearLayout {
             }
             case MotionEvent.ACTION_MOVE: {
                 long clickDuration = Calendar.getInstance().getTimeInMillis() - startClickTime;
-                if(clickDuration < MAX_CLICK_DURATION) {
+                if (clickDuration < MAX_CLICK_DURATION) {
                     return false; //click event has occured
                 } else {
                     //drag event
@@ -162,7 +168,7 @@ public class LinkDraggerView extends LinearLayout {
         newHeight = Math.max(0, newHeight);
 
 
-        newHeight = Math.min(newHeight,activity.getLinkFragMaxHeight()); //dragView can't be taller than parentView
+        newHeight = Math.min(newHeight, activity.getLinkFragMaxHeight()); //dragView can't be taller than parentView
 
         //newHeight = newHeight > maxH-SuperTextActivity.MAX_LINK_FRAG_SNAP_DISTANCE ? maxH : newHeight;
 

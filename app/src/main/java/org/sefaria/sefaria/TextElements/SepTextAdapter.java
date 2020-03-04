@@ -38,7 +38,7 @@ public class SepTextAdapter extends ArrayAdapter<Segment> {
     private int preLast;
 
     public SepTextAdapter(SepTextActivity sepTextActivity, int resourceId, List<Segment> objects) {
-        super(sepTextActivity,resourceId,objects);
+        super(sepTextActivity, resourceId, objects);
         this.sepTextActivity = sepTextActivity;
         this.segments = objects;
         this.resourceId = resourceId;
@@ -53,11 +53,10 @@ public class SepTextAdapter extends ArrayAdapter<Segment> {
         if (segment.isLoader()) {
             LayoutInflater inflater = (LayoutInflater)
                     sepTextActivity.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.adapter_text_loader,null);
+            view = inflater.inflate(R.layout.adapter_text_loader, null);
             view.setClickable(false);
             return view;
         }
-
 
 
         String enText = segment.getText(Util.Lang.EN);
@@ -74,7 +73,7 @@ public class SepTextAdapter extends ArrayAdapter<Segment> {
         }
 
 
-        float linkAlpha = ((float)segment.getNumLinks() - MIN_ALPHA_NUM_LINKS) / (MAX_ALPHA_NUM_LINKS-MIN_ALPHA_NUM_LINKS);
+        float linkAlpha = ((float) segment.getNumLinks() - MIN_ALPHA_NUM_LINKS) / (MAX_ALPHA_NUM_LINKS - MIN_ALPHA_NUM_LINKS);
         if (linkAlpha < MIN_ALPHA) linkAlpha = MIN_ALPHA;
         else if (linkAlpha > MAX_ALPHA) linkAlpha = MAX_ALPHA;
 
@@ -91,10 +90,11 @@ public class SepTextAdapter extends ArrayAdapter<Segment> {
             LayoutInflater inflater = (LayoutInflater)
                     sepTextActivity.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
             if (lang == Util.Lang.BI) {
-                if (isSideBySide) view = inflater.inflate(R.layout.adapter_text_bilingual_side_by_side,null);
-                else view = inflater.inflate(R.layout.adapter_text_bilingual_top_bottom,null);
+                if (isSideBySide)
+                    view = inflater.inflate(R.layout.adapter_text_bilingual_side_by_side, null);
+                else view = inflater.inflate(R.layout.adapter_text_bilingual_top_bottom, null);
             } else {
-                view = inflater.inflate(R.layout.adapter_text_mono,null);
+                view = inflater.inflate(R.layout.adapter_text_mono, null);
             }
         }
 
@@ -102,11 +102,10 @@ public class SepTextAdapter extends ArrayAdapter<Segment> {
         boolean isCurrLinkSegment = segment.equals(sepTextActivity.getCurrLinkSegment());
 
 
-
         if (isCurrLinkSegment && sepTextActivity.getFragmentIsOpen()) {
-            view.setBackgroundColor(Util.getColor(sepTextActivity,R.attr.text_verse_selected_bg));
-        } else if(segment.equals(highlightIncomingSegment)){
-            view.setBackgroundColor(Util.getColor(sepTextActivity,R.attr.text_verse_selected_bg));
+            view.setBackgroundColor(Util.getColor(sepTextActivity, R.attr.text_verse_selected_bg));
+        } else if (segment.equals(highlightIncomingSegment)) {
+            view.setBackgroundColor(Util.getColor(sepTextActivity, R.attr.text_verse_selected_bg));
         } else {
             view.setBackgroundColor(sepTextActivity.getResources().getColor(android.R.color.transparent));
         }
@@ -116,10 +115,10 @@ public class SepTextAdapter extends ArrayAdapter<Segment> {
         SefariaTextView heNum = (SefariaTextView) view.findViewById(R.id.heVerseNum);
 
         //add padding to the last segment so that you're able to get to the links for the last segment
-        if(loadedLastText && position == segments.size() -1 && sepTextActivity.getFragmentIsOpen()){
-            view.setPadding(view.getPaddingLeft(),view.getPaddingTop(),view.getPaddingRight(),MyApp.getScreenSizePixels().y/4);
-        }else{
-            view.setPadding(view.getPaddingLeft(),view.getPaddingTop(),view.getPaddingRight(),0);
+        if (loadedLastText && position == segments.size() - 1 && sepTextActivity.getFragmentIsOpen()) {
+            view.setPadding(view.getPaddingLeft(), view.getPaddingTop(), view.getPaddingRight(), MyApp.getScreenSizePixels().y / 4);
+        } else {
+            view.setPadding(view.getPaddingLeft(), view.getPaddingTop(), view.getPaddingRight(), 0);
         }
 
         if (lang == Util.Lang.BI) {
@@ -148,27 +147,27 @@ public class SepTextAdapter extends ArrayAdapter<Segment> {
                 enNum.setVisibility(View.VISIBLE);
                 heNum.setVisibility(View.VISIBLE);
 
-                enTv.setText(Html.fromHtml(Util.getBidiString(enText,Util.Lang.EN)));
-                heTv.setText(Html.fromHtml(Util.getBidiString(heText,Util.Lang.HE)));
+                enTv.setText(Html.fromHtml(Util.getBidiString(enText, Util.Lang.EN)));
+                heTv.setText(Html.fromHtml(Util.getBidiString(heText, Util.Lang.HE)));
 
                 //enTv.setTextColor(Color.parseColor("#999999"));
                 enTv.setFont(Util.Lang.EN, true, sepTextActivity.getTextSize());
                 //enTv.setTextSize(sepTextActivity.getTextSize());
 
                 //heTv.setTextColor(Color.parseColor("#000000"));
-                heTv.setFont(Util.Lang.HE,true, sepTextActivity.getTextSize());
+                heTv.setFont(Util.Lang.HE, true, sepTextActivity.getTextSize());
                 Util.Lang menuLang = Settings.getMenuLang();
-                if(segment.displayNum) {
-                    if(menuLang == Util.Lang.HE) {
+                if (segment.displayNum) {
+                    if (menuLang == Util.Lang.HE) {
                         heNum.setText(Util.int2heb(segment.levels[0]));
-                    }else { // if == EN
+                    } else { // if == EN
                         heNum.setText("" + segment.levels[0]);
                     }
                 } else
                     heNum.setText("");
 
                 heNum.setAlpha(1);
-                heNum.setFont(menuLang,false);
+                heNum.setFont(menuLang, false);
                 enNum.setText(Util.VERSE_BULLET);
                 enNum.setAlpha(linkAlpha);
                 enNum.setFont(Util.Lang.HE, false);
@@ -201,12 +200,12 @@ public class SepTextAdapter extends ArrayAdapter<Segment> {
                     monoText = MyApp.getRString(R.string.no_text);
 
                 if (lang == Util.Lang.HE) {
-                    tv.setText(Html.fromHtml(Util.getBidiString(monoText,lang)));
+                    tv.setText(Html.fromHtml(Util.getBidiString(monoText, lang)));
                     //tv.setText(Html.fromHtml(monoText));
                     enNum.setText(Util.VERSE_BULLET);
                     enNum.setAlpha(linkAlpha);
                     enNum.setFont(Util.Lang.HE, false);
-                    if(segment.displayNum) //todo maybe this should be based on menuLang like in bilang mode
+                    if (segment.displayNum) //todo maybe this should be based on menuLang like in bilang mode
                         heNum.setText(Util.int2heb(segment.levels[0]));
                     else
                         heNum.setText("");
@@ -215,9 +214,9 @@ public class SepTextAdapter extends ArrayAdapter<Segment> {
 
 
                 } else /*if (lang == Util.Lang.EN)*/ {
-                    tv.setText(Html.fromHtml(Util.getBidiString(monoText,lang)));
-                    if(segment.displayNum) //todo maybe this should be based on menuLang like in bilang mode
-                        enNum.setText(""+segment.levels[0]);
+                    tv.setText(Html.fromHtml(Util.getBidiString(monoText, lang)));
+                    if (segment.displayNum) //todo maybe this should be based on menuLang like in bilang mode
+                        enNum.setText("" + segment.levels[0]);
                     else
                         enNum.setText("");
 
@@ -227,10 +226,10 @@ public class SepTextAdapter extends ArrayAdapter<Segment> {
                     heNum.setAlpha(linkAlpha);
                     heNum.setFont(Util.Lang.HE, false);
                 }
-                tv.setFont(lang,true);
+                tv.setFont(lang, true);
                 float newTextSize = sepTextActivity.getTextSize();
-                if(lang == Util.Lang.EN)
-                    newTextSize *=.85;
+                if (lang == Util.Lang.EN)
+                    newTextSize *= .85;
 
                 tv.setTextSize(newTextSize);
             }
@@ -242,12 +241,12 @@ public class SepTextAdapter extends ArrayAdapter<Segment> {
 
     }
 
-    public void setLoadedLastText(){
+    public void setLoadedLastText() {
         loadedLastText = true;
         notifyDataSetChanged();
     }
 
-    public void highlightIncomingText(Segment segment){
+    public void highlightIncomingText(Segment segment) {
         highlightIncomingSegment = segment;
         notifyDataSetChanged();
     }
@@ -260,7 +259,7 @@ public class SepTextAdapter extends ArrayAdapter<Segment> {
 
     @Override
     public void addAll(Collection<? extends Segment> collection) {
-       addAll(segments.size(), collection);
+        addAll(segments.size(), collection);
 
     }
 

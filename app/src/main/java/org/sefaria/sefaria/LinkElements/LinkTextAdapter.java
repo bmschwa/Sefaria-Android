@@ -36,8 +36,6 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
     private SefariaTextView noLinksTV;
 
 
-
-
     public LinkTextAdapter(SuperTextActivity context, List<Segment> itemList, SefariaTextView noLinksTV) {
         this.itemList = itemList;
         this.activity = context;
@@ -56,10 +54,10 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
         LinkTextHolder linkHolder;
         if (viewType == MONO_LINK_TEXT_VIEW_TYPE) {
             layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.link_text_mono, null);
-            linkHolder = new LinkMonoTextHolder(layoutView,itemList,activity);
+            linkHolder = new LinkMonoTextHolder(layoutView, itemList, activity);
         } else {
             layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.link_text_bilingual, null);
-            linkHolder = new LinkBiTextHolder(layoutView,itemList,activity);
+            linkHolder = new LinkBiTextHolder(layoutView, itemList, activity);
         }
 
         return linkHolder;
@@ -82,7 +80,7 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
 
         holder.title.setVisibility(View.VISIBLE);
         holder.title.setText(Html.fromHtml(link.getLocationString(Settings.getMenuLang())));
-        holder.title.setFont(Settings.getMenuLang(),true,activity.getTextSize());
+        holder.title.setFont(Settings.getMenuLang(), true, activity.getTextSize());
         holder.setPosition(position);
 
         //itemList might not have updated yet if you switched pesukim. make sure it's up to date
@@ -114,14 +112,14 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
             if (enText.length() == 0)
                 biHolder.enTv.setVisibility(View.GONE);
             else
-                biHolder.enTv.setText(Html.fromHtml(Util.getBidiString(enText,Util.Lang.EN)));
-            biHolder.enTv.setFont(Util.Lang.EN,true,activity.getTextSize());
+                biHolder.enTv.setText(Html.fromHtml(Util.getBidiString(enText, Util.Lang.EN)));
+            biHolder.enTv.setFont(Util.Lang.EN, true, activity.getTextSize());
 
             if (heText.length() == 0)
                 biHolder.heTv.setVisibility(View.GONE);
             else
-                biHolder.heTv.setText(Html.fromHtml(Util.getBidiString(heText,Util.Lang.HE)));
-            biHolder.heTv.setFont(Util.Lang.HE,true,activity.getTextSize());
+                biHolder.heTv.setText(Html.fromHtml(Util.getBidiString(heText, Util.Lang.HE)));
+            biHolder.heTv.setFont(Util.Lang.HE, true, activity.getTextSize());
         }
 
     }
@@ -160,16 +158,19 @@ public class LinkTextAdapter extends RecyclerView.Adapter<LinkTextHolder> {
                 } catch (API.APIException e) {
                     setItemList(new ArrayList<Segment>());
                     API.makeAPIErrorToast(activity);
-                } catch (Exception e){
+                } catch (Exception e) {
                     setItemList(new ArrayList<Segment>());
-                    try{
-                        Toast.makeText(activity,MyApp.getRString(R.string.error_getting_links),Toast.LENGTH_SHORT).show();
-                    }catch (Exception e1){
+                    try {
+                        Toast.makeText(activity, MyApp.getRString(R.string.error_getting_links), Toast.LENGTH_SHORT).show();
+                    } catch (Exception e1) {
                         e1.printStackTrace();
                     }
                 }
         }
     }
-    public LinkFilter getCurrLinkCount() { return currLinkCount; }
+
+    public LinkFilter getCurrLinkCount() {
+        return currLinkCount;
+    }
 
 }

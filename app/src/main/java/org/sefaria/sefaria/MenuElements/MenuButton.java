@@ -28,7 +28,7 @@ public class MenuButton extends MenuElement {
         this.setVisibility(View.INVISIBLE);
     }
 
-    public MenuButton(Context context, MenuNode menuNode, MenuNode sectionNode,Util.Lang lang) {
+    public MenuButton(Context context, MenuNode menuNode, MenuNode sectionNode, Util.Lang lang) {
         super(context);
         //home and menu buttons are slightly different.
         //annoyingly, it's difficult to set margin dynamically, instead I'll just switch views
@@ -61,7 +61,7 @@ public class MenuButton extends MenuElement {
 
     }
 
-    private void setColor(int colorInt){
+    private void setColor(int colorInt) {
         if (colorInt != -1) {
             this.colorBar.setBackgroundColor(getResources().getColor(colorInt));
             //this.tv.setAllCaps(true); //only when there's color? (ie home page)
@@ -79,11 +79,17 @@ public class MenuButton extends MenuElement {
         this.setClickable(true);
     }*/
 
-    public MenuNode getSectionNode() { return sectionNode; }
+    public MenuNode getSectionNode() {
+        return sectionNode;
+    }
 
-    public MenuNode getNode() { return menuNode; }
+    public MenuNode getNode() {
+        return menuNode;
+    }
 
-    public boolean isBook() { return menuNode.getNumChildren() == 0; }
+    public boolean isBook() {
+        return menuNode.getNumChildren() == 0;
+    }
 
     public void setLang(Util.Lang lang) {
         SefariaTextView tv;

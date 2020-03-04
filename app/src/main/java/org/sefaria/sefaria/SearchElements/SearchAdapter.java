@@ -37,11 +37,11 @@ public class SearchAdapter extends ArrayAdapter<Segment> {
         Segment segment = results.get(position);
         //Language is exclusively either Hebrew or Enlgihs, depending on which exists in the segment
         Util.Lang lang;
-        if (segment.getText(langSearchedIn).length() > 0 ){
+        if (segment.getText(langSearchedIn).length() > 0) {
             lang = langSearchedIn;
-        } else if(segment.getText(Util.Lang.HE).length() > 0 ){
+        } else if (segment.getText(Util.Lang.HE).length() > 0) {
             lang = Util.Lang.HE;
-        } else /*if (segment.getText(Util.Lang.EN)...)*/{
+        } else /*if (segment.getText(Util.Lang.EN)...)*/ {
             lang = Util.Lang.EN;
         }
 
@@ -49,16 +49,16 @@ public class SearchAdapter extends ArrayAdapter<Segment> {
         if (view == null) {
             LayoutInflater inflater = (LayoutInflater)
                     context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.search_item_mono,null);
+            view = inflater.inflate(R.layout.search_item_mono, null);
         }
         SefariaTextView title = (SefariaTextView) view.findViewById(R.id.title);
         SefariaTextView mono = (SefariaTextView) view.findViewById(R.id.mono);
 
         title.setText(segment.getLocationString(Settings.getMenuLang()));
-        mono.setText(Html.fromHtml(Util.getBidiString(segment.getText(lang),lang)));
+        mono.setText(Html.fromHtml(Util.getBidiString(segment.getText(lang), lang)));
 
         title.setFont(Settings.getMenuLang(), true, 18);
-        mono.setFont(lang, true,18);
+        mono.setFont(lang, true, 18);
 
 
         return view;
@@ -78,7 +78,7 @@ public class SearchAdapter extends ArrayAdapter<Segment> {
         notifyDataSetChanged();
     }
 
-    public void setLangSearchedIn(Util.Lang lang){
+    public void setLangSearchedIn(Util.Lang lang) {
         langSearchedIn = lang;
     }
 

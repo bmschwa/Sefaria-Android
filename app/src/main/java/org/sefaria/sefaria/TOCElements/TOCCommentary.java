@@ -18,24 +18,24 @@ public class TOCCommentary extends LinearLayout implements TOCElement {
     private Book mainBook;
     private Util.Lang lang;
 
-    public TOCCommentary(Context context, Book commentary, Book mainBook, Util.Lang lang){
+    public TOCCommentary(Context context, Book commentary, Book mainBook, Util.Lang lang) {
         super(context);
         //Log.d("TOCCommentary", "TOCCommentary starting");
         inflate(context, R.layout.toc_commentary, this);
         this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, 1f));
         final int padding = 2;
-        this.setPadding(padding,padding,padding,padding);
+        this.setPadding(padding, padding, padding, padding);
 
         this.mainBook = mainBook;
         this.lang = lang;
         this.commentary = commentary;
         this.context = context;
-        if(commentary == null && mainBook == null) //it's only a dummy Commentary to take up space
+        if (commentary == null && mainBook == null) //it's only a dummy Commentary to take up space
             return;
         init(lang);
     }
 
-    private void init(Util.Lang lang){
+    private void init(Util.Lang lang) {
         content_root = (SefariaTextView) findViewById(R.id.content_root);
 
         setLang(lang);
@@ -45,7 +45,7 @@ public class TOCCommentary extends LinearLayout implements TOCElement {
     @Override
     public void setLang(Util.Lang lang) {
         String text = commentary.getCleanedCommentaryTitle(lang, mainBook);
-        content_root.setFont(lang,true,17);
+        content_root.setFont(lang, true, 17);
         content_root.setText(text);
     }
 
@@ -53,7 +53,7 @@ public class TOCCommentary extends LinearLayout implements TOCElement {
         @Override
         public void onClick(View v) {
             //go to segment page
-            SuperTextActivity.startNewTextActivityIntent(context,commentary,false);
+            SuperTextActivity.startNewTextActivityIntent(context, commentary, false);
 
         }
     };

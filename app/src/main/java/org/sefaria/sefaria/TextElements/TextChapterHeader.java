@@ -26,7 +26,7 @@ public class TextChapterHeader extends LinearLayout {
         super(context);
         enText = segment.getText(Util.Lang.EN);
         heText = segment.getText(Util.Lang.HE);
-        init(context,textSize);
+        init(context, textSize);
     }
 
     public TextChapterHeader(Context context, AttributeSet attrSet) {
@@ -36,8 +36,7 @@ public class TextChapterHeader extends LinearLayout {
         init(context, 0f);
     }
 
-    public TextChapterHeader(Context context, AttributeSet attrs, int defStyle)
-    {
+    public TextChapterHeader(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         enText = "Section";
         heText = "Section";
@@ -59,8 +58,7 @@ public class TextChapterHeader extends LinearLayout {
         tv.setFont(lang, false);
         if (lang == Util.Lang.HE) {
             tv.setText(heText);
-        }
-        else {
+        } else {
             tv.setText(enText);
         }
     }
@@ -69,9 +67,9 @@ public class TextChapterHeader extends LinearLayout {
         enText = segment.getText(Util.Lang.EN);
         heText = segment.getText(Util.Lang.HE);
         SefariaTextView reloadTv = (SefariaTextView) findViewById(R.id.reload_tv);
-        if(segment.getChapterHasTexts()){
+        if (segment.getChapterHasTexts()) {
             reloadTv.setVisibility(View.GONE);
-        }else{
+        } else {
             reloadTv.setVisibility(View.VISIBLE);
         }
         setLang(Settings.getMenuLang());
@@ -81,5 +79,7 @@ public class TextChapterHeader extends LinearLayout {
         tv.setTextSize(textSize);
     }
 
-    public float getTextSize() { return tv.getTextSize(); }
+    public float getTextSize() {
+        return tv.getTextSize();
+    }
 }

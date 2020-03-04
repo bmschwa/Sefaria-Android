@@ -14,24 +14,25 @@ import java.util.List;
  */
 public class Recents {
 
-    public Recents(){
+    public Recents() {
         ;
     }
-    static public List<MenuDirectRef> getRecentDirectMenu(Context context, boolean setLongClickPinning, boolean getAllRecents){
+
+    static public List<MenuDirectRef> getRecentDirectMenu(Context context, boolean setLongClickPinning, boolean getAllRecents) {
         int recentsCount = 3;
-        if(getAllRecents)
+        if (getAllRecents)
             recentsCount = 0;
         List<String> recentBooks = Settings.RecentTexts.getRecentTexts(recentsCount);
         List<MenuDirectRef> recents = new ArrayList<>();
-        for(String title: recentBooks){
+        for (String title : recentBooks) {
             try {
                 Book book = new Book(title);
                 Pair<String, String> pair = Settings.BookSettings.getSavedBookTitle(title);
                 MenuDirectRef menuDirectRef = new MenuDirectRef(context, pair.first, pair.second, null, book, null, null);
-                if(setLongClickPinning)
+                if (setLongClickPinning)
                     menuDirectRef.setLongClickPinning();
                 recents.add(menuDirectRef);
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

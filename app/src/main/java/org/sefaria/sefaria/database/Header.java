@@ -1,4 +1,5 @@
 package org.sefaria.sefaria.database;
+
 import org.sefaria.sefaria.Util;
 
 
@@ -14,17 +15,14 @@ import android.os.Parcelable;
 import android.util.Log;
 
 
-
 public class Header implements Parcelable {
 
-    public Header()
-    {
+    public Header() {
         displayNum = true;//1 is good default value
         displayLevelType = true; //1 is good default value
         heHeader = "";
         enHeader = "";
     }
-
 
 
     private static final String Kbid = "bid";
@@ -38,10 +36,7 @@ public class Header implements Parcelable {
     private static final String KdisplayLevelType = "displayLevelType";
 
 
-
-
     public static final String TABLE_HEADERS = "Headers";
-
 
 
     public int hid;
@@ -51,25 +46,25 @@ public class Header implements Parcelable {
     public int chapNum;
     public String enHeader;
     public String heHeader;
-    private int [] levels;
+    private int[] levels;
     public String enNumString;
     public String heNumString;
 
 
-    private void addFromCursor(Cursor cursor){
+    private void addFromCursor(Cursor cursor) {
         hid = cursor.getInt(0);
         bid = cursor.getInt(1);
         heHeader = cursor.getString(2);
-        levels = new int [6];
-        for(int i = 0; i<6; i++)
-            levels[i] = cursor.getInt(i +3);
+        levels = new int[6];
+        for (int i = 0; i < 6; i++)
+            levels[i] = cursor.getInt(i + 3);
         displayNum = (cursor.getInt(9) != 0);
         displayLevelType = (cursor.getInt(10) != 0);
         chapNum = levels[getNonZeroLevel(levels)];
         enHeader = cursor.getString(11);
-        if(enHeader.equals(""))
+        if (enHeader.equals(""))
             enHeader = heHeader;
-        if(heHeader.equals(""))
+        if (heHeader.equals(""))
             heHeader = enHeader;
         enNumString = String.valueOf(chapNum);
         heNumString = Util.int2heb(chapNum);
@@ -84,26 +79,25 @@ public class Header implements Parcelable {
      * @return {textLocationEn, textLocationHe, enchapNumTotalString, heChapNumTotalString}
      */
 
-    public static String [] getTextLocationString(int [] levels, Book book) {
+    public static String[] getTextLocationString(int[] levels, Book book) {
         String textLocationEn = "";
         String textLocationHe = "";
         String enChapNumTotal = "";
         String heChapNumTotal = "";
 
 
-        int[] tempLevels = Arrays.copyOfRange(levels, 0,book.textDepth);
+        int[] tempLevels = Arrays.copyOfRange(levels, 0, book.textDepth);
 
         ArrayList<Header> headers = Header.getAllSectionDepthsHeaders(book, tempLevels);
         boolean isFirst = true;
         for (Header head : headers) {
-            if (!isFirst){
+            if (!isFirst) {
                 textLocationEn = " " + textLocationEn;
                 textLocationHe = " " + textLocationHe;
                 enChapNumTotal = ":" + enChapNumTotal;
                 heChapNumTotal = ":" + heChapNumTotal;
 
-            }
-            else isFirst = false;
+            } else isFirst = false;
 
             textLocationEn = head.enHeader + textLocationEn;
             textLocationHe = head.heHeader + textLocationHe;
@@ -113,24 +107,25 @@ public class Header implements Parcelable {
             //else return new Pair<String, String>(textLocationEn, textLocationHe);//don't this needed line
         }
         heChapNumTotal = heChapNumTotal.replace(".:", ". ").replace("::", ": "); //fix weird daf thing
-        return new String [] {textLocationEn, textLocationHe, enChapNumTotal, heChapNumTotal};
+        return new String[]{textLocationEn, textLocationHe, enChapNumTotal, heChapNumTotal};
     }
 
 
     /**
      * will get the grid number in the right language and all converted if it's a daf
+     *
      * @param lang
      * @return
      */
-    public static String getNiceGridNum(Util.Lang lang, int num, boolean isDaf){
-        if(!isDaf){
-            if(Util.Lang.HE == lang)
+    public static String getNiceGridNum(Util.Lang lang, int num, boolean isDaf) {
+        if (!isDaf) {
+            if (Util.Lang.HE == lang)
                 return Util.int2heb(num);
             else
-                return ""+ num;
+                return "" + num;
 
-        }else{
-            if(Util.Lang.HE == lang)
+        } else {
+            if (Util.Lang.HE == lang)
                 return Header.num2heDaf(num);
             else
                 return Header.num2enDaf(num);
@@ -144,32 +139,32 @@ public class Header implements Parcelable {
      * @param levels (could be segment.levels) ex. {0, 2, 3} would return headers.size() == 2, with headers.get(0) reffering to the middle level (2), and headers.get(1) would reffer to the highest level (3)
      * @return empty list if there's a problem. And normally a list of headers for each nonZero level of levels (headers.get(0) is the lowest non zero level (ex. verse))
      */
-    private static ArrayList<Header> getAllSectionDepthsHeaders(Book book, int [] levels){
+    private static ArrayList<Header> getAllSectionDepthsHeaders(Book book, int[] levels) {
         SQLiteDatabase db = Database.getDB();
-        ArrayList <Header> headers = new ArrayList<Header> ();
-        ArrayList <Header> finalHeaders = new ArrayList<Header> ();
-        if(book.textDepth != levels.length)
+        ArrayList<Header> headers = new ArrayList<Header>();
+        ArrayList<Header> finalHeaders = new ArrayList<Header>();
+        if (book.textDepth != levels.length)
             return finalHeaders;
         int nonZeroLevel = getNonZeroLevel(levels);
-        for(int i = nonZeroLevel; i<levels.length; i++){
-            if(levels[i] == 0)
+        for (int i = nonZeroLevel; i < levels.length; i++) {
+            if (levels[i] == 0)
                 return finalHeaders;
         }
         int numOfrequestedLevels = levels.length - nonZeroLevel;
 
         String sql = "SELECT * FROM Headers WHERE bid = " + book.bid;
-        for(int  i = 0; i < levels.length; i++){
-            if(levels[i] ==  0)
+        for (int i = 0; i < levels.length; i++) {
+            if (levels[i] == 0)
                 ;//it's not completely defined
-            sql += " AND (level" + (i+1) + " = " + 0 + " OR " + "level" + (i+1) + " = " + levels[i] + ") ";
+            sql += " AND (level" + (i + 1) + " = " + 0 + " OR " + "level" + (i + 1) + " = " + levels[i] + ") ";
         }
         sql += " ORDER BY ";
-        for(int i = levels.length; i>0; i--){
+        for (int i = levels.length; i > 0; i--) {
             sql += " level" + i;
-            if(i>1)
+            if (i > 1)
                 sql += ", ";
         }
-        Log.d("header","1." + sql);
+        Log.d("header", "1." + sql);
         Cursor cursor = db.rawQuery(sql, null);
         if (cursor.moveToFirst()) {
             do {
@@ -179,46 +174,42 @@ public class Header implements Parcelable {
             } while (cursor.moveToNext());
         }
 
-        if(headers.size() == 0){
-            for(int i = nonZeroLevel; i< levels.length; i++){
-                finalHeaders.add(createHeader(book.sectionNamesL2B[i],  book.heSectionNamesL2B[i], levels[i]));
+        if (headers.size() == 0) {
+            for (int i = nonZeroLevel; i < levels.length; i++) {
+                finalHeaders.add(createHeader(book.sectionNamesL2B[i], book.heSectionNamesL2B[i], levels[i]));
             }
-        }
-        else if(headers.size() == levels.length){
-            for(int i = 0; i< levels.length; i++){
-                finalHeaders.add(completeHeader(headers.get(i), book.sectionNamesL2B[i],  book.heSectionNamesL2B[i]));
+        } else if (headers.size() == levels.length) {
+            for (int i = 0; i < levels.length; i++) {
+                finalHeaders.add(completeHeader(headers.get(i), book.sectionNamesL2B[i], book.heSectionNamesL2B[i]));
             }
-        }
-        else if(headers.size()< levels.length){//find the missing ones
+        } else if (headers.size() < levels.length) {//find the missing ones
             int headNum = 0;
 
-            for(int i = levels.length - 1; i>=0; i--){
-                if(headNum + 1 > headers.size()){
-                    if(headNum + 1 > numOfrequestedLevels){
+            for (int i = levels.length - 1; i >= 0; i--) {
+                if (headNum + 1 > headers.size()) {
+                    if (headNum + 1 > numOfrequestedLevels) {
                         break;
                     }
-                    finalHeaders.add(createHeader(book.sectionNamesL2B[i],  book.heSectionNamesL2B[i], levels[i]));
+                    finalHeaders.add(createHeader(book.sectionNamesL2B[i], book.heSectionNamesL2B[i], levels[i]));
                     headNum++;
                     continue;
                 }
                 int nonZero = getNonZeroLevel(headers.get(headNum).levels);
-                if(nonZero == i){
-                    finalHeaders.add(completeHeader(headers.get(headNum++), book.sectionNamesL2B[i],  book.heSectionNamesL2B[i]));
-                }
-                else if(nonZero < i){
-                    finalHeaders.add(createHeader(book.sectionNamesL2B[i],  book.heSectionNamesL2B[i], levels[i]));
+                if (nonZero == i) {
+                    finalHeaders.add(completeHeader(headers.get(headNum++), book.sectionNamesL2B[i], book.heSectionNamesL2B[i]));
+                } else if (nonZero < i) {
+                    finalHeaders.add(createHeader(book.sectionNamesL2B[i], book.heSectionNamesL2B[i], levels[i]));
                     headNum++;
-                }else if(nonZero > i){//problem
+                } else if (nonZero > i) {//problem
                     Log.e("sql_headers", "weird list");
-                    return  new ArrayList<Header> ();
+                    return new ArrayList<Header>();
 
                 }
 
             }
             ///this is a backwards loop, so in it, b/f returning you want to flip it
             Collections.reverse(finalHeaders);
-        }
-        else if(headers.size()> levels.length){//that's a problem
+        } else if (headers.size() > levels.length) {//that's a problem
             Log.e("sql_headers", "List too long");
             return finalHeaders;
             //finalHeaders = headers;
@@ -228,38 +219,38 @@ public class Header implements Parcelable {
         return finalHeaders;
     }
 
-    private static int num2DafNum(int num){
-        return (num+1)/2;
+    private static int num2DafNum(int num) {
+        return (num + 1) / 2;
     }
 
-    public static String num2enDaf(int num){
+    public static String num2enDaf(int num) {
         String daf = String.valueOf(num2DafNum(num));
-        if(num % 2 == 1)
+        if (num % 2 == 1)
             daf += "a";
         else
             daf += "b";
         return daf;
     }
 
-    public static String num2heDaf(int num){
+    public static String num2heDaf(int num) {
         String daf = Util.int2heb(num2DafNum(num));
-        if(num % 2 == 1)
+        if (num % 2 == 1)
             daf += ".";//"\u05f4\u05d0";
         else
             daf += ":";//"\u05f4\u05d1";
         return daf;
     }
 
-    private static Header completeHeader(Header tempHeader, String sectionName, String heSectionName){
+    private static Header completeHeader(Header tempHeader, String sectionName, String heSectionName) {
         String tempenHeader = "";
         String tempheHeader = "";
-        if(tempHeader.displayLevelType){
+        if (tempHeader.displayLevelType) {
             tempenHeader += sectionName;
             tempheHeader += heSectionName;
         }
-        if(tempHeader.displayNum){
+        if (tempHeader.displayNum) {
             tempenHeader += " " + tempHeader.chapNum;
-            tempheHeader +=  " " +  Util.int2heb(tempHeader.chapNum);
+            tempheHeader += " " + Util.int2heb(tempHeader.chapNum);
         }
 
         tempHeader.heHeader = tempheHeader + " " + tempHeader.heHeader;
@@ -267,21 +258,21 @@ public class Header implements Parcelable {
         return tempHeader;
     }
 
-    private static Header createHeader(String sectionName, String heSectionName, int chapNum){
+    private static Header createHeader(String sectionName, String heSectionName, int chapNum) {
         Header tempHeader = new Header();
-        if(sectionName.equals("Daf")){
+        if (sectionName.equals("Daf")) {
             tempHeader.hid = 0;//there was no header for this.
             tempHeader.enNumString = num2enDaf(chapNum);
             tempHeader.heNumString = num2heDaf(chapNum);
-            tempHeader.enHeader = sectionName + " " +  tempHeader.enNumString;
+            tempHeader.enHeader = sectionName + " " + tempHeader.enNumString;
             tempHeader.heHeader = heSectionName + " " + tempHeader.heNumString;
             tempHeader.chapNum = chapNum;
-        }else {
+        } else {
 
             tempHeader.hid = 0;//there was no header for this.
             tempHeader.enNumString = String.valueOf(chapNum);
             tempHeader.heNumString = Util.int2heb(chapNum);
-            tempHeader.enHeader = sectionName + " " +  tempHeader.enNumString;
+            tempHeader.enHeader = sectionName + " " + tempHeader.enNumString;
             tempHeader.heHeader = heSectionName + " " + tempHeader.heNumString;
             tempHeader.chapNum = chapNum;
 
@@ -330,7 +321,7 @@ public class Header implements Parcelable {
         ArrayList<Header> chapList = new ArrayList<Header>();
 
 
-        Cursor cursor = db.rawQuery("SELECT DISTINCT " + "_id, heHeader, enHeader," + KdisplayNum + ", " + KdisplayLevelType + ", level" + getNonZeroLevel(levels) + " FROM "+ TABLE_HEADERS +" " + fullWhere(bid, levels) + " ORDER BY " + orderBy(bid, levels), null);
+        Cursor cursor = db.rawQuery("SELECT DISTINCT " + "_id, heHeader, enHeader," + KdisplayNum + ", " + KdisplayLevelType + ", level" + getNonZeroLevel(levels) + " FROM " + TABLE_HEADERS + " " + fullWhere(bid, levels) + " ORDER BY " + orderBy(bid, levels), null);
 
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
@@ -339,9 +330,9 @@ public class Header implements Parcelable {
                 header.hid = cursor.getInt(0);
                 header.heHeader = cursor.getString(1);
                 header.enHeader = cursor.getString(2);
-                if(header.enHeader.equals(""))
+                if (header.enHeader.equals(""))
                     header.enHeader = header.heHeader;
-                if(header.heHeader.equals(""))
+                if (header.heHeader.equals(""))
                     header.heHeader = header.enHeader;
                 header.displayNum = (cursor.getInt(3) != 0);
                 header.displayLevelType = (cursor.getInt(4) != 0);
@@ -357,32 +348,33 @@ public class Header implements Parcelable {
 
     /**
      * zero indexed
+     *
      * @param levels
      * @return
      */
-    private static int getNonZeroLevel(int[] levels){
+    private static int getNonZeroLevel(int[] levels) {
         int nonZeroLevel;
-        for(nonZeroLevel = 0; nonZeroLevel < levels.length; nonZeroLevel++){
-            if(levels[nonZeroLevel] != 0)
+        for (nonZeroLevel = 0; nonZeroLevel < levels.length; nonZeroLevel++) {
+            if (levels[nonZeroLevel] != 0)
                 return nonZeroLevel;
         }
         return nonZeroLevel;
     }
 
-    private static String fullWhere(int bid, int[] levels){
-        String fullWhere =  " WHERE " + Kbid + "= " + String.valueOf(bid);
-        for(int i = 0; i < levels.length; i++){
-            if(!(levels[i] == 0)){
-                fullWhere +=  " AND level" + String.valueOf(i + 1) + "= " + String.valueOf(levels[i]);
+    private static String fullWhere(int bid, int[] levels) {
+        String fullWhere = " WHERE " + Kbid + "= " + String.valueOf(bid);
+        for (int i = 0; i < levels.length; i++) {
+            if (!(levels[i] == 0)) {
+                fullWhere += " AND level" + String.valueOf(i + 1) + "= " + String.valueOf(levels[i]);
             }
         }
         return fullWhere;
     }
 
-    private static String orderBy(int bid, int[] levels){
+    private static String orderBy(int bid, int[] levels) {
         String orderBy = Klevel1;
-        for(int i = 0; i < levels.length - 2; i++){
-            orderBy = "level"+ String.valueOf(i + 2) + ", " + orderBy;
+        for (int i = 0; i < levels.length - 2; i++) {
+            orderBy = "level" + String.valueOf(i + 2) + ", " + orderBy;
         }
         return orderBy;
     }
@@ -467,8 +459,8 @@ public class Header implements Parcelable {
         }
     */
     @Override
-    public String  toString(){
-        return  "hid: " + hid + " " + "heHeader: " + heHeader + "enHeader: " + enHeader + " displayNum: " + displayNum
+    public String toString() {
+        return "hid: " + hid + " " + "heHeader: " + heHeader + "enHeader: " + enHeader + " displayNum: " + displayNum
                 + " displayLevelType: " + displayLevelType + " chapNum: " + String.valueOf(chapNum)
                 + " enNumString: " + enNumString + " heNumString: " + heNumString
                 ;
@@ -508,7 +500,6 @@ public class Header implements Parcelable {
         dest.writeString(heNumString);
 
 
-
     }
 
     private Header(Parcel in) {
@@ -516,7 +507,7 @@ public class Header implements Parcelable {
         bid = in.readInt();
         heHeader = in.readString();
         enHeader = in.readString();
-        displayNum =  in.readInt() != 0;
+        displayNum = in.readInt() != 0;
         displayLevelType = in.readInt() != 0;
         chapNum = in.readInt();
         enHeader = in.readString();

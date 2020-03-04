@@ -17,12 +17,12 @@ import org.sefaria.sefaria.Settings;
 
 public class Link {//implements Parcelable {
 
-    public Link(Cursor cursor){
+    public Link(Cursor cursor) {
         lid = cursor.getInt(0);
         connType = cursor.getString(1);
         bid = cursor.getInt(2);
         final int LEVELS_START_NUM = 3;
-        for(int i = 0;i<NUM_LEVELS;i++) {
+        for (int i = 0; i < NUM_LEVELS; i++) {
             levels[i] = cursor.getInt(i + LEVELS_START_NUM);
         }
     }
@@ -31,28 +31,27 @@ public class Link {//implements Parcelable {
     private String connType;
     public int bid;
     private final static int NUM_LEVELS = 4;
-    public int [] levels = new int [NUM_LEVELS];
+    public int[] levels = new int[NUM_LEVELS];
 
     @Override
-    public String toString(){
-        String str =  String.valueOf(lid) + " " + connType + " bid: " + String.valueOf(bid);
-        for(int i=0;i<NUM_LEVELS;i++){
-            str += ","  + String.valueOf(levels[i]);
+    public String toString() {
+        String str = String.valueOf(lid) + " " + connType + " bid: " + String.valueOf(bid);
+        for (int i = 0; i < NUM_LEVELS; i++) {
+            str += "," + String.valueOf(levels[i]);
         }
         return str;
     }
 
     /**
-     *
      * @param segment
      * @param linkFilter null if no filter or linkCount containing anything you want included in the filter (including LinkFilter linkfiler's children)
      * @return List<Segment> for texts links to the input segment
      */
-    public static List<Segment> getLinkedTexts(Segment segment, LinkFilter linkFilter) throws API.APIException, Book.BookNotFoundException  {
+    public static List<Segment> getLinkedTexts(Segment segment, LinkFilter linkFilter) throws API.APIException, Book.BookNotFoundException {
         List<Segment> linkList;
-        if(segment.tid == 0 || Settings.getUseAPI()){ //tid might be 0 if it was gotten using API (So for example with alternate segment versions)
-            linkList = getLinkedTextsFromAPI(segment,linkFilter);
-        }else{
+        if (segment.tid == 0 || Settings.getUseAPI()) { //tid might be 0 if it was gotten using API (So for example with alternate segment versions)
+            linkList = getLinkedTextsFromAPI(segment, linkFilter);
+        } else {
             linkList = getLinkedTextsFromDB(segment, linkFilter);
         }
         return linkList;
@@ -69,13 +68,13 @@ public class Link {//implements Parcelable {
         } catch (Book.BookNotFoundException e) {
             return segments;
         }
-        if(data.length() == 0)
+        if (data.length() == 0)
             return segments;
         List<Segment> commentaries = new ArrayList<>();
         try {
             JSONArray linksArray = new JSONArray(data);
             //Log.d("api", "jsonData:" + jsonData.toString());
-            for(int i=0;i<linksArray.length();i++){
+            for (int i = 0; i < linksArray.length(); i++) {
                 try {
                     JSONObject jsonLink = linksArray.getJSONObject(i);
                     String enTitle = jsonLink.getString("index_title");
@@ -84,30 +83,30 @@ public class Link {//implements Parcelable {
                     if (linkFilter.depth_type == LinkFilter.DEPTH_TYPE.ALL ||
                             (linkFilter.depth_type == LinkFilter.DEPTH_TYPE.CAT && category.equals(linkFilter.enTitle)) ||
                             (linkFilter.depth_type == LinkFilter.DEPTH_TYPE.BOOK && enTitle.equals(linkFilter.enTitle))
-                            ) {
+                    ) {
 
                         // deal with section links / range links correctly. these come back as
                         String englishText = getLinkTextFromField(jsonLink, "text");
                         String hebrewText = getLinkTextFromField(jsonLink, "he");
-                        
+
                         Segment tempSegment = new Segment(englishText, hebrewText, Book.getBid(enTitle), ref);
                         if (category.equals("Commentary"))
                             commentaries.add(tempSegment);
                         else
                             segments.add(tempSegment);
                     }
-                }catch (Exception e1){
+                } catch (Exception e1) {
                     e1.printStackTrace();
                 }
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        Collections.sort(commentaries,compareTexts);
+        Collections.sort(commentaries, compareTexts);
         Collections.sort(segments, compareTexts);
-        segments.addAll(0,commentaries);
+        segments.addAll(0, commentaries);
 
         return segments;
     }
@@ -138,14 +137,14 @@ public class Link {//implements Parcelable {
         }
     };
 
-    private static String removeEmpty(String str){
-        if(str.equals("[]"))
+    private static String removeEmpty(String str) {
+        if (str.equals("[]"))
             return "";
         else
             return str;
     }
 
-    public static String connTypeCheck(String tableAlias, boolean equals){
+    public static String connTypeCheck(String tableAlias, boolean equals) {
         return " AND " + tableAlias + ".connType " + (equals ? "=" : "!=") + "'co' ";
     }
 
@@ -157,33 +156,33 @@ public class Link {//implements Parcelable {
         List<String> args = new ArrayList<>();
         String connType1 = "", connType2 = "";
         StringBuilder endOfSql = new StringBuilder();
-        if(linkFilter.depth_type == LinkFilter.DEPTH_TYPE.CAT){
-            if(linkFilter.enTitle.equals(LinkFilter.COMMENTARY)){
-                if(Database.isNewCommentaryVersionWithConnType()){
+        if (linkFilter.depth_type == LinkFilter.DEPTH_TYPE.CAT) {
+            if (linkFilter.enTitle.equals(LinkFilter.COMMENTARY)) {
+                if (Database.isNewCommentaryVersionWithConnType()) {
                     connType1 = connTypeCheck("L1", true);
                     connType2 = connTypeCheck("L2", true);
                 }
-                if(Database.isNewCommentaryVersion()){
+                if (Database.isNewCommentaryVersion()) {
                     endOfSql.append(" AND B.commentsOnMultiple like '%(" + segment.bid + ")%'");
-                }else {
+                } else {
                     endOfSql.append(" AND B.commentsOn = " + segment.bid);
                 }
-            }else{
+            } else {
                 String category;
-                if(linkFilter.enTitle.equals(LinkFilter.QUOTING_COMMENTARY)) {
+                if (linkFilter.enTitle.equals(LinkFilter.QUOTING_COMMENTARY)) {
                     //don't include the commentary that is directly for this book (like "Rashi on Genesis" for "Genesis")
-                    if(Database.isNewCommentaryVersionWithConnType()){
+                    if (Database.isNewCommentaryVersionWithConnType()) {
                         connType1 = connTypeCheck("L1", false);
                         connType2 = connTypeCheck("L2", false);
                     }
-                    if(Database.isNewCommentaryVersion()){
+                    if (Database.isNewCommentaryVersion()) {
                         endOfSql.append(" AND B.commentsOnMultiple not like '%(" + segment.bid + ")%'");
-                    }else {
+                    } else {
                         endOfSql.append(" AND B.commentsOn <> " + segment.bid);
                     }
                     //the category in the database is simply "Commentary"
                     endOfSql.append(" AND B.categories like '[\"%\",\"Commentary\",%' ");
-                }else {
+                } else {
 
                     category = linkFilter.enTitle;
                     // I think || line concat strings in the sql statement
@@ -194,13 +193,13 @@ public class Link {//implements Parcelable {
                 //get the string for categories start with the selected category
                 //if(Build.VERSION.SDK_INT >= 21) sql += " AND B.categories like printf('%s%s%s','[\"',?,'%') "; else
             }
-        }else if(linkFilter.depth_type == LinkFilter.DEPTH_TYPE.BOOK){
+        } else if (linkFilter.depth_type == LinkFilter.DEPTH_TYPE.BOOK) {
             endOfSql.append(" AND B.title = ?");
             args.add(linkFilter.enTitle);
         }
 
         ///more more more
-        if(linkFilter.depth_type == LinkFilter.DEPTH_TYPE.ALL) {
+        if (linkFilter.depth_type == LinkFilter.DEPTH_TYPE.ALL) {
             if (Database.isNewCommentaryVersion()) {
                 endOfSql.append(" ORDER BY (case when B.commentsOnMultiple like '%(" + segment.bid + ")%' then 0 else 1 end), T.bid");
             } else {
@@ -216,7 +215,7 @@ public class Link {//implements Parcelable {
                 + " SELECT L2.tid1 FROM Links_small L2 WHERE L2.tid2 = " + segment.tid + connType2
                 + ") " + endOfSql.toString();
 
-        String [] argsArray = args.toArray((new String [args.size()]));
+        String[] argsArray = args.toArray((new String[args.size()]));
         Cursor cursor = db.rawQuery(sql, argsArray);
         // Populate list of texts that are linked
         if (cursor.moveToFirst()) {

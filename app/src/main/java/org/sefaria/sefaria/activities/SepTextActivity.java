@@ -52,7 +52,7 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
     @Override
     protected void onCreate(Bundle in) {
         super.onCreate(in);
-        if(!goodOnCreate){
+        if (!goodOnCreate) {
             finish();
             return;
         }
@@ -65,7 +65,7 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
     protected void init() {
         super.init();
         listView = (TextListView) findViewById(R.id.listview);
-        sepTextAdapter = new SepTextAdapter(this,R.layout.adapter_text_mono,new ArrayList<Segment>());
+        sepTextAdapter = new SepTextAdapter(this, R.layout.adapter_text_mono, new ArrayList<Segment>());
 
 
         listView.setAdapter(sepTextAdapter);
@@ -82,9 +82,8 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
         });
 
 
-        AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION,null);
+        AsyncLoadSection als = new AsyncLoadSection(TextEnums.NEXT_SECTION, null);
         als.preExecute();
-
 
 
         registerForContextMenu(listView);
@@ -94,7 +93,7 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
     @Override
     protected void onResume() {
         super.onResume();
-        if(!veryFirstTime) {
+        if (!veryFirstTime) {
             menuLang = Settings.getMenuLang();
             sepTextAdapter.notifyDataSetChanged();
         }
@@ -117,7 +116,7 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
         Segment segment = sepTextAdapter.getItem(info.position);
         //it sets the title of the menu to loc string
         String header;
-        if(segment.isChapter())
+        if (segment.isChapter())
             header = segment.getText(getMenuLang());
         else
             header = segment.getLocationString(getMenuLang());
@@ -125,7 +124,7 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
         //menu.setHeaderIcon(something.getIcon());
         int spot = 0;
         menu.add(0, v.getId(), spot++, CONTEXT_MENU_COPY_TITLE);
-        if(!segment.isChapter()) {
+        if (!segment.isChapter()) {
             menu.add(0, v.getId(), spot++, CONTEXT_MENU_SEND_CORRECTION);
             menu.add(0, v.getId(), spot++, CONTEXT_MENU_SHARE);
             menu.add(0, v.getId(), spot++, CONTEXT_MENU_VISIT);
@@ -148,15 +147,15 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
 
         if (title == CONTEXT_MENU_COPY_TITLE) {
             copyText(segment);
-        } else  if (title == CONTEXT_MENU_SEND_CORRECTION){
+        } else if (title == CONTEXT_MENU_SEND_CORRECTION) {
             sendCorrection(segment);
-        } else  if (title == CONTEXT_MENU_SHARE){
+        } else if (title == CONTEXT_MENU_SHARE) {
             share(segment);
-        } else  if (title == CONTEXT_MENU_VISIT){
+        } else if (title == CONTEXT_MENU_VISIT) {
             visit(segment);
-        } else if(title == CONTEXT_MENU_PIN){
+        } else if (title == CONTEXT_MENU_PIN) {
             pin(segment);
-        }else if(title == CONTEXT_MENU_SHORTCUT){
+        } else if (title == CONTEXT_MENU_SHORTCUT) {
             createShortcut(segment);
         }
 
@@ -165,27 +164,26 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
     }
 
 
-
-    private void pin(Segment segment){
+    private void pin(Segment segment) {
         Settings.RecentTexts.addBookmark(segment);
     }
 
-    private void visit(Segment segment){
-        try{
+    private void visit(Segment segment) {
+        try {
             String url = segment.getURL(true);
-            if(url.length() <1){
-                Toast.makeText(SepTextActivity.this,"Unable to go to site",Toast.LENGTH_SHORT).show();
+            if (url.length() < 1) {
+                Toast.makeText(SepTextActivity.this, "Unable to go to site", Toast.LENGTH_SHORT).show();
                 return;
             }
             MyApp.openURLInBrowser(this, url);
-        }catch (Exception e){
+        } catch (Exception e) {
             Log.e("SepTextActivity", e.getMessage());
-            Toast.makeText(SepTextActivity.this,"Unable to go to site",Toast.LENGTH_SHORT).show();
+            Toast.makeText(SepTextActivity.this, "Unable to go to site", Toast.LENGTH_SHORT).show();
             GoogleTracker.sendException(e);
         }
     }
 
-    private void share(Segment segment){
+    private void share(Segment segment) {
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         String str = null;
@@ -194,7 +192,7 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
         } catch (Book.BookNotFoundException e) {
             e.printStackTrace();
         }
-        if(str == null)
+        if (str == null)
             str = "";
 
         String plain_str = str + Html.fromHtml(segment.getText(textLang));
@@ -202,35 +200,35 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
 
         sendIntent.putExtra(Intent.EXTRA_TEXT, plain_str);
 
-        if(MyApp.validSDKVersion(16)) {
+        if (MyApp.validSDKVersion(16)) {
             sendIntent.putExtra(Intent.EXTRA_HTML_TEXT, html_str);
         }
         sendIntent.setType("text/plain");
         startActivity(Intent.createChooser(sendIntent, MyApp.getRString(R.string.send_to)));
     }
 
-    private void sendCorrection(Segment segment){
-        DialogManager2.showDialog(this,DialogManager2.DialogPreset.HOW_TO_REPORT_CORRECTIONS, segment);
+    private void sendCorrection(Segment segment) {
+        DialogManager2.showDialog(this, DialogManager2.DialogPreset.HOW_TO_REPORT_CORRECTIONS, segment);
     }
 
-    private void copyText(Segment segment){
+    private void copyText(Segment segment) {
         // Gets a handle to the clipboard service.
         ClipboardManager clipboard = (ClipboardManager)
                 getSystemService(Context.CLIPBOARD_SERVICE);
         // Creates a new segment clip to put on the clipboard
         String copiedText;
-        if(!segment.isChapter()) {
+        if (!segment.isChapter()) {
             copiedText = Html.fromHtml(segment.getText(textLang)).toString();
-        }else{
+        } else {
             try {
                 List<Segment> list = segment.parentNode.getTexts();
                 StringBuilder wholeChap = new StringBuilder();
                 String url = null;
-                for(Segment subSegment :list){
-                    if(url == null) {
-                        try{
+                for (Segment subSegment : list) {
+                    if (url == null) {
+                        try {
                             url = subSegment.getURL(true);
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             url = "";
                         }
                     }
@@ -252,11 +250,10 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
     protected void setTextLang(Util.Lang textLang) {
 
 
-
         this.textLang = textLang;
 
         if (textLang != Util.Lang.BI && isCts && canBeCts(book)) {
-            setIsCts(isCts,true); //force a restart so that your iscts setting is applied
+            setIsCts(isCts, true); //force a restart so that your iscts setting is applied
         }
 
         sepTextAdapter.notifyDataSetChanged();
@@ -306,7 +303,7 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
     public void onScroll(AbsListView lw, final int firstVisibleItem,
                          final int visibleItemCount, final int totalItemCount) {
 
-        switch(lw.getId()) {
+        switch (lw.getId()) {
             case R.id.listview:
                 if (!isLoadingSection && !isLoadingInit) {
                     int lastItem = firstVisibleItem + visibleItemCount;
@@ -375,7 +372,7 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
                 return;
             }
 
-            if(getFindOnPageIsOpen()){
+            if (getFindOnPageIsOpen()) {
                 findOnPageClose();
             }
 
@@ -388,7 +385,7 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
             } else {
                 sepTextAdapter.highlightIncomingText(null);
                 if (view.getTop() > 0) //don't auto-scroll if the segment is super long.
-                    listView.smoothScrollToPositionFromTop(position,SuperTextActivity.SEGMENT_SELECTOR_LINE_FROM_TOP,SuperTextActivity.LINK_FRAG_ANIM_TIME);
+                    listView.smoothScrollToPositionFromTop(position, SuperTextActivity.SEGMENT_SELECTOR_LINE_FROM_TOP, SuperTextActivity.LINK_FRAG_ANIM_TIME);
                 linkFragment.setClicked(true);
                 linkFragment.updateFragment(sepTextAdapter.getItem(position));
                 //linkRoot.setVisibility(View.VISIBLE);
@@ -405,8 +402,7 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
     }
 
 
-
-    private class AsyncLoadSection extends AsyncTask<Void,Void,List<Segment>> {
+    private class AsyncLoadSection extends AsyncTask<Void, Void, List<Segment>> {
 
         private TextEnums dir;
         private Segment loaderSegment;
@@ -414,11 +410,10 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
         private LoadSectionResult loadSectionResult;
 
         /**
-         *
-         * @param dir - direction in which you want to load a section (either prev or next)
+         * @param dir             - direction in which you want to load a section (either prev or next)
          * @param catalystSegment - the Segment which caused this loading to happen. Important, in case this segment has already failed to generate any new content, meaning that it's either the beginning or end of a book
          */
-        public AsyncLoadSection (TextEnums dir, Segment catalystSegment) {
+        public AsyncLoadSection(TextEnums dir, Segment catalystSegment) {
             this.dir = dir;
             this.catalystSegment = catalystSegment;
         }
@@ -476,13 +471,13 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
             //if (textsList.size() == 0) return;//removed this line so that when it doesn't find segment it continues to look for the next item for segment
 
             Segment sectionHeader = getSectionHeaderText(dir);
-            if(loadSectionResult == LoadSectionResult.API_EXCEPTION) {
+            if (loadSectionResult == LoadSectionResult.API_EXCEPTION) {
                 sectionHeader.setChapterHasTexts(false);
             }
             if (dir == TextEnums.NEXT_SECTION) {
                 //Log.d("SepTextActivity","ENDING NEXT");
                 sepTextAdapter.remove(loaderSegment);
-                if(sectionHeader.getText(Util.Lang.EN).length() > 0 || sectionHeader.getText(Util.Lang.HE).length() > 0)
+                if (sectionHeader.getText(Util.Lang.EN).length() > 0 || sectionHeader.getText(Util.Lang.HE).length() > 0)
                     sepTextAdapter.add(sectionHeader);
                 sepTextAdapter.addAll(textsList);
 
@@ -492,22 +487,21 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
                 }
 
 
-
                 scrolledDownTimes++;
-                if(openedNewBookTime >0 && !reportedNewBookScroll && scrolledDownTimes==2 && (System.currentTimeMillis() - openedNewBookTime < 10000)){
+                if (openedNewBookTime > 0 && !reportedNewBookScroll && scrolledDownTimes == 2 && (System.currentTimeMillis() - openedNewBookTime < 10000)) {
                     reportedNewBookScroll = true;
                     String category;
-                    if(reportedNewBookTOC || reportedNewBookBack)
+                    if (reportedNewBookTOC || reportedNewBookBack)
                         category = GoogleTracker.CATEGORY_OPEN_NEW_BOOK_ACTION_2;
                     else
                         category = GoogleTracker.CATEGORY_OPEN_NEW_BOOK_ACTION;
-                    GoogleTracker.sendEvent(category,"Scrolled down",scrolledDownTimes/openedNewBookTime);
+                    GoogleTracker.sendEvent(category, "Scrolled down", scrolledDownTimes / openedNewBookTime);
                 }
             } else /*if (dir == TextEnums.PREV_SECTION)*/ {
                 //Log.d("SepTextActivity","ENDING PREV");
                 sepTextAdapter.addAll(0, textsList);
                 sepTextAdapter.add(0, sectionHeader);
-                listView.setSelection(textsList.size()+1);
+                listView.setSelection(textsList.size() + 1);
 
             }
 
@@ -516,9 +510,6 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
             isLoadingInit = false;
 
         }
-
-
-
 
 
     }
@@ -532,7 +523,7 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         lp.addRule(RelativeLayout.BELOW, R.id.actionbarRoot);
-        lp.addRule(RelativeLayout.ABOVE,R.id.linkRoot);
+        lp.addRule(RelativeLayout.ABOVE, R.id.linkRoot);
 
         listView.setLayoutParams(lp);
 
@@ -543,7 +534,7 @@ public class SepTextActivity extends SuperTextActivity implements AbsListView.On
     protected void onStartLinkFragClose() {
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        lp.addRule(RelativeLayout.BELOW,R.id.actionbarRoot);
+        lp.addRule(RelativeLayout.BELOW, R.id.actionbarRoot);
         //lp.addRule(RelativeLayout.ABOVE,R.id.linkRoot);
 
         listView.setLayoutParams(lp);

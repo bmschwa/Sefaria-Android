@@ -20,8 +20,19 @@ public class SearchResultContainer {
         this.allFilters = allFilters;
     }
 
-    public List<Segment> getResults() { return results; }
-    public int getNumResults() { return numResults; }
-    public JSONArray getAllFilters() { return allFilters; }
-    public void setAllFilters(JSONArray allFilters) { this.allFilters = allFilters; }
+    public List<Segment> getResults() {
+        return results;
+    }
+
+    public int getNumResults() {
+        return numResults;
+    }
+
+    public JSONArray getAllFilters() {
+        return allFilters;
+    }
+
+    public void setAllFilters(JSONArray allFilters) {
+        this.allFilters = allFilters;
+    }
 }

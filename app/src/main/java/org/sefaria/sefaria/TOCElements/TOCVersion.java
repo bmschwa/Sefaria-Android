@@ -12,7 +12,6 @@ public class TOCVersion {
     private boolean isDefaultVersion;
 
     /**
-     *
      * @param dbString - string of the form (lang)/(versionTitle)
      */
     public TOCVersion(String dbString) {
@@ -26,7 +25,7 @@ public class TOCVersion {
                 this.versionLang = null;
                 this.isDefaultVersion = true;
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             this.versionTitle = null;
             this.versionLang = null;
             this.isDefaultVersion = true;
@@ -52,9 +51,18 @@ public class TOCVersion {
 
     }
 
-    public String getVersionTitle() {return versionTitle;}
-    public String getVersionLang() {return versionLang;}
-    public boolean isDefaultVersion() { return this.isDefaultVersion; }
+    public String getVersionTitle() {
+        return versionTitle;
+    }
+
+    public String getVersionLang() {
+        return versionLang;
+    }
+
+    public boolean isDefaultVersion() {
+        return this.isDefaultVersion;
+    }
+
     public String getPrettyString() {
         if (isDefaultVersion)
             return DEFAULT_TEXT_VERSION;
@@ -64,6 +72,7 @@ public class TOCVersion {
         else
             return getVersionTitle();
     }
+
     public String getAPIString() {
         if (isDefaultVersion || getVersionLang() == null)
             return "";

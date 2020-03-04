@@ -20,6 +20,7 @@ public class SplashScreenActivity extends AppCompatActivity {
 
     static final private long MIN_SPLASH_TIME = 200;
     static private long startTime = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,7 +33,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         MyApp.handleIncomingURL(this, intent);
     }
 
-    private class StartUp extends AsyncTask<Void,Void,Void>{
+    private class StartUp extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected void onPreExecute() {
@@ -62,9 +63,9 @@ public class SplashScreenActivity extends AppCompatActivity {
             } catch (Exception e) {
                 book = null;
             }
-            if(MyApp.handleIncomingURL(SplashScreenActivity.this, getIntent()))
+            if (MyApp.handleIncomingURL(SplashScreenActivity.this, getIntent()))
                 return;
-            SuperTextActivity.startNewTextActivityIntent(SplashScreenActivity.this,book,false);
+            SuperTextActivity.startNewTextActivityIntent(SplashScreenActivity.this, book, false);
             SplashScreenActivity.this.finish();
         }
     }

@@ -26,20 +26,22 @@ public class MenuSubtitle extends MenuElement {
             tv.setLetterSpacing(0.1f);
         }
 
-        int pad = (int)Util.dpToPixels(25);
+        int pad = (int) Util.dpToPixels(25);
         if (isFirst) {
-            tv.setPadding(0,0,0,pad);
+            tv.setPadding(0, 0, 0, pad);
         } else {
-            tv.setPadding(0,pad,0,pad);
+            tv.setPadding(0, pad, 0, pad);
         }
 
         setLang(lang);
     }
 
-    public MenuNode getNode() { return node; }
+    public MenuNode getNode() {
+        return node;
+    }
 
     public void setLang(Util.Lang lang) {
         tv.setText(node.getPrettyTitle(lang));
-        tv.setFont(lang,false,17);
+        tv.setFont(lang, false, 17);
     }
 }

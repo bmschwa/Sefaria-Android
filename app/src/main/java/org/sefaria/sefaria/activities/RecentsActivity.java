@@ -39,7 +39,7 @@ public class RecentsActivity extends AppCompatActivity {
         Util.Lang menuLang = Settings.getMenuLang();
         setTitle("Recently Viewed");
         //this specifically comes before menugrid, b/c in tabs it menugrid does funny stuff to currnode
-        customActionbar = new CustomActionbar(this,new MenuNode(MyApp.getRString(R.string.recently_viewed),MyApp.getRString(R.string.recently_viewed),null),Settings.getSystemLang(),null,null,null,null,null,null,backClick,menuClick,R.color.system,true,true);
+        customActionbar = new CustomActionbar(this, new MenuNode(MyApp.getRString(R.string.recently_viewed), MyApp.getRString(R.string.recently_viewed), null), Settings.getSystemLang(), null, null, null, null, null, null, backClick, menuClick, R.color.system, true, true);
         customActionbar.setMenuBtnLang(menuLang);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(customActionbar);
@@ -50,8 +50,8 @@ public class RecentsActivity extends AppCompatActivity {
         root.addView(menuDirectRefsGrid);
     }
 
-    private void setLang(Util.Lang lang){
-        if(lang == Util.Lang.BI) {
+    private void setLang(Util.Lang lang) {
+        if (lang == Util.Lang.BI) {
             lang = Util.Lang.EN;
         }
         menuDirectRefsGrid.setLang(lang);
@@ -59,28 +59,29 @@ public class RecentsActivity extends AppCompatActivity {
     }
 
     private boolean veryFirstTime = true;
+
     @Override
     protected void onResume() {
         super.onResume();
 
-        if(oldTheme != Settings.getTheme()){
+        if (oldTheme != Settings.getTheme()) {
             restartActivity();
             return;
         }
 
         GoogleTracker.sendScreen("RecentsActivity");
-        if(!veryFirstTime) {
+        if (!veryFirstTime) {
             //in case the list has changed.
             // say, for example, you went to a segment so now that should be on top (and maybe it will have a different perek in it's name)
-            menuDirectRefsGrid.setNewList(Recents.getRecentDirectMenu(this,true,true));
-        }else
+            menuDirectRefsGrid.setNewList(Recents.getRecentDirectMenu(this, true, true));
+        } else
             veryFirstTime = false;
 
         DialogNoahSnackbar.checkCurrentDialog(this, (ViewGroup) this.findViewById(R.id.dialogNoahSnackbarRoot));
     }
 
-    private void restartActivity(){
-        Intent intent = new Intent(this,MenuActivity.class);
+    private void restartActivity() {
+        Intent intent = new Intent(this, MenuActivity.class);
         //intent.putExtra("menuState",menuState);
         startActivity(intent);
         finish();

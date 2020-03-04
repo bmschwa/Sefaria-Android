@@ -11,7 +11,6 @@ import org.sefaria.sefaria.layouts.SefariaTextView;
 
 
 /**
- *
  * Controls the tabs seen in TOC page
  */
 public class TOCTab extends LinearLayout implements TOCElement {
@@ -38,10 +37,11 @@ public class TOCTab extends LinearLayout implements TOCElement {
 
     /**
      * this constructor is for commentaries only
+     *
      * @param context
      * @param lang
      */
-    public TOCTab(Context context,  Util.Lang lang) {
+    public TOCTab(Context context, Util.Lang lang) {
         super(context);
         inflate(context, R.layout.menu_tab, this);
         this.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT));
@@ -54,20 +54,21 @@ public class TOCTab extends LinearLayout implements TOCElement {
     }
 
 
-
-    public Node getNode() { return node; }
+    public Node getNode() {
+        return node;
+    }
 
 
     public void setLang(Util.Lang lang) {
         this.lang = lang;
-        tv.setFont(lang,false,15);
+        tv.setFont(lang, false, 15);
         String newTvText;
         if (lang == Util.Lang.HE) {
-            newTvText = "מפרשים" ;//Mifarshim //
+            newTvText = "מפרשים";//Mifarshim //
         } else {
             newTvText = "Commentary";
         }
-        if(node != null)//It's a regular TOC tab
+        if (node != null)//It's a regular TOC tab
             newTvText = node.getTabName(lang);
         //else it will use one of the "Commentary"s
         tv.setText(newTvText);
@@ -77,15 +78,18 @@ public class TOCTab extends LinearLayout implements TOCElement {
     public void setActive(boolean isActive) {
         this.isActive = isActive;
         if (isActive) {
-            tv.setTextColor(Util.getColor(context,R.attr.text_color_main));
+            tv.setTextColor(Util.getColor(context, R.attr.text_color_main));
         } else {
-            tv.setTextColor(Util.getColor(context,R.attr.text_color_english));
+            tv.setTextColor(Util.getColor(context, R.attr.text_color_english));
         }
     }
 
-    public boolean getActive(){
+    public boolean getActive() {
         return isActive;
     }
-    public Util.Lang getLang() { return lang; }
+
+    public Util.Lang getLang() {
+        return lang;
+    }
 
 }

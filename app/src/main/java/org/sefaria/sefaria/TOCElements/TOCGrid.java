@@ -43,7 +43,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
 public class TOCGrid extends LinearLayout {
 
 
@@ -70,7 +69,6 @@ public class TOCGrid extends LinearLayout {
     private double regularColumnCount = 0.0;
 
 
-
     public TOCGrid(Context context, Book book, List<Node> tocRoots, boolean limitGridSize, Util.Lang lang, String pathDefiningNode) {
         super(context);
         this.tocNodesRoots = tocRoots;
@@ -87,10 +85,9 @@ public class TOCGrid extends LinearLayout {
         this.setOrientation(LinearLayout.VERTICAL);
 
         int sidePadding = Math.round(Util.dpToPixels(context.getResources().getDimension(R.dimen.main_margin_lr)));
-        this.setPadding(sidePadding/2, 10, sidePadding/2, 100);
+        this.setPadding(sidePadding / 2, 10, sidePadding / 2, 100);
         this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
         this.flippedForHe = false;
-
 
 
         this.overflowButtonList = new ArrayList<>();
@@ -98,7 +95,7 @@ public class TOCGrid extends LinearLayout {
         this.hasTabs = true;//lets assume for now... either with enough roots or with commentary
         int positionNum = 0;
 
-        if(book.isTalmudBavli()) {
+        if (book.isTalmudBavli()) {
             SefariaTextView williamDTalumd = MenuGrid.getWilliamDTalumd(context, 45, 65);
             this.addView(williamDTalumd, positionNum++);
         }
@@ -110,7 +107,7 @@ public class TOCGrid extends LinearLayout {
 
         bookTitleView.setGravity(Gravity.CENTER);
         final int bookTitlepaddding = 10;
-        bookTitleView.setPadding(0, 2*bookTitlepaddding, 0, bookTitlepaddding/2);
+        bookTitleView.setPadding(0, 2 * bookTitlepaddding, 0, bookTitlepaddding / 2);
         this.addView(bookTitleView, positionNum++);
 
         AutoResizeTextView bookCategoryView = new AutoResizeTextView(context);
@@ -124,30 +121,26 @@ public class TOCGrid extends LinearLayout {
         this.addView(bookCategoryView, positionNum++);
 
 
-
-
         currSectionTitleView = new AutoResizeTextView(context);
         currSectionTitleView.setTextColor(getResources().getColor(R.color.toc_curr_chap));
         currSectionTitleView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         currSectionTitleView.setGravity(Gravity.CENTER);
         this.addView(currSectionTitleView, positionNum++);
 
-        if(book.isTalmudBavli()) {
+        if (book.isTalmudBavli()) {
             View bookVersionInfo = LayoutInflater.from(context).inflate(R.layout.book_version_info, null);
             this.addView(bookVersionInfo, positionNum++);
         }
 
         View dummySpace = new View(context);
-        dummySpace.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,Math.round(Util.dpToPixels(20))));
+        dummySpace.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Math.round(Util.dpToPixels(20))));
         this.addView(dummySpace, positionNum++);
 
         //Alt versions dropdown menu
-        versionsDropdown = new Spinner(context,Spinner.MODE_DROPDOWN);
+        versionsDropdown = new Spinner(context, Spinner.MODE_DROPDOWN);
         //versionsDropdown.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         //versionsDropdown.setGravity(Gravity.CENTER);
         this.addView(versionsDropdown, positionNum++);
-
-
 
 
         int defaultTab = setCurrSectionText();
@@ -155,7 +148,7 @@ public class TOCGrid extends LinearLayout {
         //ADD GREY DIVIDER
         View divider = new View(context);
         LinearLayout.LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, 1);
-        lp.setMargins(0,Math.round(Util.dpToPixels(30)), 0,Math.round(Util.dpToPixels(20)));
+        lp.setMargins(0, Math.round(Util.dpToPixels(30)), 0, Math.round(Util.dpToPixels(20)));
         divider.setLayoutParams(lp);
         divider.setBackgroundColor(Color.parseColor("#CCCCCC"));
         this.addView(divider, positionNum++);
@@ -195,24 +188,22 @@ public class TOCGrid extends LinearLayout {
     */
 
 
-    private double getRegularColumnCount(){
-        if(regularColumnCount == 0.0){
+    private double getRegularColumnCount() {
+        if (regularColumnCount == 0.0) {
             Point size = MyApp.getScreenSize();
-            regularColumnCount = (size.x)/48.0;
-            if(regularColumnCount < 1.0)
+            regularColumnCount = (size.x) / 48.0;
+            if (regularColumnCount < 1.0)
                 regularColumnCount = 1.0;
         }
         return regularColumnCount;
     }
 
-    public void addNumGrid(List<Node> gridNodes,LinearLayout linearLayoutRoot, int depth) {
+    public void addNumGrid(List<Node> gridNodes, LinearLayout linearLayoutRoot, int depth) {
         //List<Integer> chaps = node.getChaps();
-        if (gridNodes.size() == 0){
-            Log.e("Node","Node.addNumGrid() never should have been called with 0 items");
+        if (gridNodes.size() == 0) {
+            Log.e("Node", "Node.addNumGrid() never should have been called with 0 items");
             return;
         }
-
-
 
 
         GridLayout gl = new GridLayout(context);
@@ -230,9 +221,9 @@ public class TOCGrid extends LinearLayout {
         }
 
         double numColumns = getRegularColumnCount();
-        if(depth > 0) depth--;
-        numColumns -= (int) (depth*1);
-        if(numColumns <1) numColumns = 1.0;
+        if (depth > 0) depth--;
+        numColumns -= (int) (depth * 1);
+        if (numColumns < 1) numColumns = 1.0;
 
         gl.setColumnCount((int) numColumns);
         gl.setRowCount((int) Math.ceil(gridNodes.size() / numColumns));
@@ -266,17 +257,17 @@ public class TOCGrid extends LinearLayout {
 
 
     }*/
-}
+    }
 
 
-    private void freshGridRoot(){
-        if(gridRoot != null){
+    private void freshGridRoot() {
+        if (gridRoot != null) {
             gridRoot.removeAllViews();
         }
     }
 
     private void activateTab(int num) {
-        if(num >= TocTabList.size()){
+        if (num >= TocTabList.size()) {
             num = 0;
         }
         TOCTab tocTab = TocTabList.get(num);
@@ -287,30 +278,30 @@ public class TOCGrid extends LinearLayout {
         for (TOCTab tempTocTab : TocTabList) {
             tempTocTab.setActive(false);
         }
-        Log.d("TOCGrid","activating tab");
+        Log.d("TOCGrid", "activating tab");
         tocTab.setActive(true);
 
         freshGridRoot();
         Node root = tocTab.getNode();
-        if(root != null) {
+        if (root != null) {
             displayTree(root, gridRoot, false);
-        }else{
+        } else {
             List<Book> commentaries = book.getAllCommentaries();
             displayCommentaries(commentaries, gridRoot);
 
         }
     }
 
-    private void displayCommentaries(List<Book> commentaries, LinearLayout linearLayout){
+    private void displayCommentaries(List<Book> commentaries, LinearLayout linearLayout) {
         LinearLayout rowLinearLayout = null;
         final int columnNum = 2;
-        for(int i =0;i<commentaries.size();i++){
-            if((i%columnNum) == 0){
+        for (int i = 0; i < commentaries.size(); i++) {
+            if ((i % columnNum) == 0) {
                 rowLinearLayout = new LinearLayout(context);
                 rowLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
                 //final int padding = 4;
                 //rowLinearLayout.setPadding(padding,padding,padding,padding);
-                if(lang == Util.Lang.HE)
+                if (lang == Util.Lang.HE)
                     rowLinearLayout.setGravity(Gravity.RIGHT);
                 else
                     rowLinearLayout.setGravity(Gravity.LEFT);
@@ -318,11 +309,11 @@ public class TOCGrid extends LinearLayout {
                 rowLinearLayout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
                 linearLayout.addView(rowLinearLayout);
             }
-            TOCCommentary tocCommentary = new TOCCommentary(context,commentaries.get(i),book,lang);
+            TOCCommentary tocCommentary = new TOCCommentary(context, commentaries.get(i), book, lang);
             rowLinearLayout.addView(tocCommentary);
         }
-        if(commentaries.size() %columnNum != 0){ //odd number of
-            TOCCommentary tocCommentary = new TOCCommentary(context,null,null,Util.Lang.EN);
+        if (commentaries.size() % columnNum != 0) { //odd number of
+            TOCCommentary tocCommentary = new TOCCommentary(context, null, null, Util.Lang.EN);
             tocCommentary.setVisibility(INVISIBLE);
             rowLinearLayout.addView(tocCommentary);
         }
@@ -331,12 +322,11 @@ public class TOCGrid extends LinearLayout {
     }
 
 
-
-    private void displayTree(Node node, LinearLayout linearLayout){
+    private void displayTree(Node node, LinearLayout linearLayout) {
         displayTree(node, linearLayout, true);
     }
 
-    private void displayTree(Node node, LinearLayout linearLayout, boolean displayLevel){
+    private void displayTree(Node node, LinearLayout linearLayout, boolean displayLevel) {
         TOCSectionName tocSectionName = new TOCSectionName(context, node, lang, displayLevel);
         linearLayout.addView(tocSectionName);
 
@@ -349,14 +339,14 @@ public class TOCGrid extends LinearLayout {
         List<Node> gridNodes = new ArrayList<>();
         for (int i = 0; i < node.getChildren().size(); i++) {
             Node child = node.getChildren().get(i);
-            if(!child.isGridItem()) {
+            if (!child.isGridItem()) {
                 if (gridNodes.size() > 0) {
                     //There's some gridsNodes that haven't been displayed yet
-                    addNumGrid(gridNodes, tocSectionName.getChildrenView(),node.getDepth());
+                    addNumGrid(gridNodes, tocSectionName.getChildrenView(), node.getDepth());
                     gridNodes = new ArrayList<>();
                 }
                 displayTree(child, tocSectionName.getChildrenView());
-            }else{
+            } else {
                 gridNodes.add(child);
             }
         }
@@ -365,7 +355,7 @@ public class TOCGrid extends LinearLayout {
             tocSectionName.setSubGravity(Gravity.CENTER);//this will make it that the gridItems will be centered on the page (say for all chaps in Genesis, but other things will be left or right
             addNumGrid(gridNodes, tocSectionName.getChildrenView(), node.getDepth());
         }
-        if(displayLevel && node.getDepth()>=2){
+        if (displayLevel && node.getDepth() >= 2) {
             tocSectionName.setDisplayingChildren(false);
         }
 
@@ -376,23 +366,23 @@ public class TOCGrid extends LinearLayout {
         LinearLayout tabs = new LinearLayout(context);
         tabs.setOrientation(LinearLayout.HORIZONTAL);
         tabs.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-        tabs.setPadding(0,0,0,30);
+        tabs.setPadding(0, 0, 0, 30);
 
         tabs.setGravity(Gravity.CENTER);
 
 
         //Log.d("TOC", "nodeList.size(): " + nodeList.size());
         int numberOfTabs = nodeList.size();
-        if(book.getAllCommentaries().size()>0)
+        if (book.getAllCommentaries().size() > 0)
             numberOfTabs++;
-        for (int i=0;i<numberOfTabs;i++) {
+        for (int i = 0; i < numberOfTabs; i++) {
             //ns comment from menu
             //although generally this isn't necessary b/c the nodes come from menuState.getSections
             //this is used when rebuilding after memory dump and nodes come from setHasTabs()
             //
 
 
-            if(i > 0) { //skip adding the | (line) for the first item
+            if (i > 0) { //skip adding the | (line) for the first item
                 LayoutInflater inflater = (LayoutInflater)
                         context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 
@@ -400,10 +390,10 @@ public class TOCGrid extends LinearLayout {
             }
 
             TOCTab tocTab;
-            if(i<nodeList.size()){
+            if (i < nodeList.size()) {
                 Node node = nodeList.get(i);
                 tocTab = new TOCTab(context, node, lang);
-            }else {
+            } else {
                 tocTab = new TOCTab(context, lang);//for the last one it's just commentary tab
             }
             tocTab.setOnClickListener(tabButtonClick);
@@ -415,7 +405,6 @@ public class TOCGrid extends LinearLayout {
         //if(numberOfTabs == 1) tabs.setVisibility(View.INVISIBLE);//removed so that people know what the structure is a bit better (seeing siman)
         return tabs;
     }
-
 
 
     public void setLang(Util.Lang lang) {
@@ -438,7 +427,7 @@ public class TOCGrid extends LinearLayout {
             flipViews();
         }
         for (TOCTab tempTocTab : TocTabList) {
-            if(tempTocTab.getActive()){
+            if (tempTocTab.getActive()) {
                 activateTab(tempTocTab);
             }
             tempTocTab.setLang(lang);
@@ -457,13 +446,13 @@ public class TOCGrid extends LinearLayout {
         }
     }
 
-    private void addAlternateTextVersions(Node node){
+    private void addAlternateTextVersions(Node node) {
         if (Downloader.getNetworkStatus() == Downloader.ConnectionType.NONE) { //if there's no internet don't even try to display the versions// otherwise it might use cache and get confusing
             versionsDropdown.setVisibility(View.GONE);
             return;
         }
 
-        if(Build.VERSION.SDK_INT >= 23) {
+        if (Build.VERSION.SDK_INT >= 23) {
             versionsDropdown.setBackground(MyApp.getContext().getDrawable(R.drawable.alternate_version_dropdown_spinner));
         }
         try {
@@ -488,7 +477,7 @@ public class TOCGrid extends LinearLayout {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     if (position == 0) {
-                        if(Build.VERSION.SDK_INT >= 23) {
+                        if (Build.VERSION.SDK_INT >= 23) {
                             TypedValue typedValue = new TypedValue();
                             Resources.Theme theme = context.getTheme();
                             theme.resolveAttribute(R.attr.text_color_english, typedValue, true);
@@ -535,9 +524,9 @@ public class TOCGrid extends LinearLayout {
 
             addAlternateTextVersions(node);
 
-        }catch(Node.InvalidPathException e){
+        } catch (Node.InvalidPathException e) {
             currSectionTitleView.setHeight(0);
-        }catch(API.APIException e){
+        } catch (API.APIException e) {
             Toast.makeText(context, MyApp.getRString(R.string.problem_internet), Toast.LENGTH_SHORT).show();
         }
 
@@ -545,7 +534,9 @@ public class TOCGrid extends LinearLayout {
     }
 
 
-    public Util.Lang getLang() { return lang; }
+    public Util.Lang getLang() {
+        return lang;
+    }
 
 
     /*
@@ -581,14 +572,14 @@ public class TOCGrid extends LinearLayout {
                 //jh
                 //context.startActivity(intent);
 
-            }else {
+            } else {
                 intent = new Intent(context, MenuActivity.class);
                 //intent.putExtra("menuState", newMenuState);
                 intent.putExtra("hasSectionBack", mb.getSectionNode() != null);
                 intent.putExtra("hasTabBack", hasTabs);
 
 
-                ((Activity)context).startActivityForResult(intent, 0);
+                ((Activity) context).startActivityForResult(intent, 0);
             }
 
 

@@ -23,32 +23,32 @@ public class SefariaTextView extends TextView {
         super(context);
     }
 
-    public SefariaTextView (final Context context,final AttributeSet attrs,final int defStyle) {
+    public SefariaTextView(final Context context, final AttributeSet attrs, final int defStyle) {
         super(context, attrs, defStyle);
     }
 
     public SefariaTextView(Context context, AttributeSet attributeSet) {
-        super(context,attributeSet);
+        super(context, attributeSet);
         boolean isSerif = false;
         Util.Lang lang = Util.Lang.EN;
 
         TypedArray a = context.obtainStyledAttributes(attributeSet, R.styleable.SefariaTextView);
         final int N = a.getIndexCount();
         Integer style = null;
-        for(int i = 0; i < N; i++){
+        for (int i = 0; i < N; i++) {
             int attr = a.getIndex(i);
-            switch(attr){
+            switch (attr) {
                 case R.styleable.SefariaTextView_isSerif:
-                    isSerif = a.getBoolean(attr,false);
+                    isSerif = a.getBoolean(attr, false);
                     break;
                 case R.styleable.SefariaTextView_lang:
-                    int langInt = a.getInt(attr,0); //Default to english
+                    int langInt = a.getInt(attr, 0); //Default to english
                     if (langInt == 0) lang = Util.Lang.EN;
                     else if (langInt == 1) lang = Util.Lang.HE;
-                    else if(langInt == 2) lang = Settings.getSystemLang();
+                    else if (langInt == 2) lang = Settings.getSystemLang();
                     break;
                 case R.styleable.SefariaTextView_isItalic:
-                    if(a.getBoolean(attr,false))
+                    if (a.getBoolean(attr, false))
                         style = Typeface.ITALIC;
                     break;
 
@@ -56,7 +56,7 @@ public class SefariaTextView extends TextView {
         }
         a.recycle();
 
-        if(lang == Util.Lang.HE) {
+        if (lang == Util.Lang.HE) {
             //don't do italics when it's Hebrew b/c it's weird.
             // Honestly this b/c of william D Talmud and if there's something else that needs it we can chaneg this
             style = null;
@@ -65,14 +65,12 @@ public class SefariaTextView extends TextView {
     }
 
 
-
     public void setFont(Util.Lang lang, boolean isSerif) {
         setFont(lang, isSerif, -1);
     }
 
     /**
-     *
-     * @param lang choose font based on language of segment
+     * @param lang     choose font based on language of segment
      * @param isSerif
      * @param textSize -1 means keep the textSize the same. else, set to that value in SP
      */
@@ -91,10 +89,9 @@ public class SefariaTextView extends TextView {
      * @param textSize
      */
     /**
-     *
-     * @param lang choose font based on language of segment
+     * @param lang       choose font based on language of segment
      * @param isSerif
-     * @param textSize -1 means keep the textSize the same
+     * @param textSize   -1 means keep the textSize the same
      * @param typedValue can use TypedValue.COMPLEX_UNIT_PX if the number is in pixels. Useful when using getResources().getDimension() which converts to pixels
      */
     public void setFont(Util.Lang lang, boolean isSerif, float textSize, int typedValue, Integer style) {
@@ -105,7 +102,7 @@ public class SefariaTextView extends TextView {
 
 
             if (textSize != -1) {
-                setTextSize(typedValue,textSize);
+                setTextSize(typedValue, textSize);
             }
             //setLineSpacing(0,1f);
         } else {
@@ -113,14 +110,14 @@ public class SefariaTextView extends TextView {
             else font = MyApp.Font.OPEN_SANS_EN;  //B/W MONTSERRAT and OPEN_SANS_EN
 
             if (textSize != -1) {
-                setTextSize(typedValue,textSize*0.85f);
+                setTextSize(typedValue, textSize * 0.85f);
                 //Log.d("seftv", "getTextSize() = " + getTextSize() + " rounded = " + Math.round(getTextSize()*0.9));
             }
             //setLineSpacing(0, 1.3f);
         }
-        if (style != null){
+        if (style != null) {
             setTypeface(MyApp.getFont(font), style);
-        }else{
+        } else {
             setTypeface(MyApp.getFont(font));
         }
 

@@ -12,12 +12,12 @@ import java.util.List;
 /**
  * Created by nss on 2/9/16.
  */
-public class LinkMonoTextHolder extends LinkTextHolder{
+public class LinkMonoTextHolder extends LinkTextHolder {
 
     public SefariaTextView monoTv;
 
     public LinkMonoTextHolder(View v, List<Segment> itemList, SuperTextActivity activity) {
-        super(v,itemList,activity);
+        super(v, itemList, activity);
         monoTv = (SefariaTextView) v.findViewById(R.id.monoTv);
     }
 }

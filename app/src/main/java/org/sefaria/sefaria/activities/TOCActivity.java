@@ -37,21 +37,20 @@ public class TOCActivity extends AppCompatActivity {
     private int oldTheme = Settings.getTheme();
 
 
-    public static Intent getStartTOCActivityIntent(Context context, Book book, Node currNode, String pathDefiningNode){
+    public static Intent getStartTOCActivityIntent(Context context, Book book, Node currNode, String pathDefiningNode) {
         Intent intent = new Intent(context, TOCActivity.class);
         intent.putExtra("currBook", book);
-        if(pathDefiningNode != null){
+        if (pathDefiningNode != null) {
             intent.putExtra("pathDefiningNode", pathDefiningNode);
-        }
-        else if(currNode != null) {
+        } else if (currNode != null) {
             pathDefiningNode = currNode.makePathDefiningNode();
             intent.putExtra("pathDefiningNode", pathDefiningNode);
         }
         return intent;
     }
 
-    public static Intent getStartTOCActivityIntent(Context context, Book book, Node currNode){
-        return getStartTOCActivityIntent(context,book,currNode,null);
+    public static Intent getStartTOCActivityIntent(Context context, Book book, Node currNode) {
+        return getStartTOCActivityIntent(context, book, currNode, null);
     }
 
     @Override
@@ -61,11 +60,11 @@ public class TOCActivity extends AppCompatActivity {
         setContentView(R.layout.activity_toc);
         cameInFromBackPress = false;
 
-        if(savedInstanceState == null){//it's coming from a saved to ram state
+        if (savedInstanceState == null) {//it's coming from a saved to ram state
             Intent intent = getIntent();
             book = intent.getParcelableExtra("currBook");
             pathDefiningNode = intent.getStringExtra("pathDefiningNode");
-        }else{
+        } else {
             book = savedInstanceState.getParcelable("currBook");
             pathDefiningNode = savedInstanceState.getString("pathDefiningNode");
             //String bookTitle = savedInstanceState.getString("bookTitle");
@@ -75,18 +74,18 @@ public class TOCActivity extends AppCompatActivity {
         context = this;
 
 
-        MenuNode titleNode = new MenuNode("Table of Contents","תוכן העניינים",null);
+        MenuNode titleNode = new MenuNode("Table of Contents", "תוכן העניינים", null);
         int catColor = book.getCatColor();
         //this would make it that when coming straight to TOC from Menu, it's a back icon instead of close, but we removed the back functionality, so it's currently not going to work
-        if(pathDefiningNode == null || cameInFromBackPress) {
+        if (pathDefiningNode == null || cameInFromBackPress) {
             closeClick = null;
-        }else{
+        } else {
             backClick = null;
         }
         homeClick = null;
         //pathDefiningNode = null;//this is so that when back is pressed (and not coming back from bundle.. TOTDO has to be dealt with) it will act differently
 
-        customActionbar = new CustomActionbar(this, titleNode, Settings.getSystemLang(),homeClick,null,closeClick,null,null,null,backClick,langClick,catColor,false,false);
+        customActionbar = new CustomActionbar(this, titleNode, Settings.getSystemLang(), homeClick, null, closeClick, null, null, null, backClick, langClick, catColor, false, false);
         customActionbar.setMenuBtnLang(lang);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(customActionbar);
@@ -103,7 +102,7 @@ public class TOCActivity extends AppCompatActivity {
 
         //List<Book> commentaries = book.getAllCommentaries();
         ScrollView tocRoot = (ScrollView) findViewById(R.id.toc_root);
-        tocGrid = new TOCGrid(TOCActivity.this,book, tocNodesRoots,false,lang,pathDefiningNode);
+        tocGrid = new TOCGrid(TOCActivity.this, book, tocNodesRoots, false, lang, pathDefiningNode);
         tocRoot.addView(tocGrid);
 
     }
@@ -111,9 +110,9 @@ public class TOCActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(Settings.getTheme() != oldTheme){
+        if (Settings.getTheme() != oldTheme) {
             finish();
-            startActivity(getStartTOCActivityIntent(this,book,null,pathDefiningNode));
+            startActivity(getStartTOCActivityIntent(this, book, null, pathDefiningNode));
             return;
         }
         Huffman.makeTree(true);
@@ -122,7 +121,6 @@ public class TOCActivity extends AppCompatActivity {
 
         DialogNoahSnackbar.checkCurrentDialog(this, (ViewGroup) this.findViewById(R.id.dialogNoahSnackbarRoot));
     }
-
 
 
     @Override
@@ -139,11 +137,11 @@ public class TOCActivity extends AppCompatActivity {
      * @param node
      * @param lang
      */
-    public static void gotoTextActivity(Context context,Node node,Util.Lang lang){
+    public static void gotoTextActivity(Context context, Node node, Util.Lang lang) {
         Node.saveNode(node);
 
         Book book;
-        try{
+        try {
             book = node.getBook();
         } catch (Book.BookNotFoundException e) {
             book = null;
@@ -162,9 +160,9 @@ public class TOCActivity extends AppCompatActivity {
         }
         intent.putExtra("nodeHash", node.hashCode());
         intent.putExtra("lang", lang);
-        if(((TOCActivity) context).pathDefiningNode != null && ((TOCActivity) context).pathDefiningNode.length() >0 && !((TOCActivity) context).cameInFromBackPress)//it will only do this if a SectionAct was already opened
+        if (((TOCActivity) context).pathDefiningNode != null && ((TOCActivity) context).pathDefiningNode.length() > 0 && !((TOCActivity) context).cameInFromBackPress)//it will only do this if a SectionAct was already opened
             ;//intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);//This will make it return back to TextAct
-            // I turned this off to simplify the stack a reduce weird back bugs. Such as Segment ->TOC ->TextPage on button press -> Backpress brings you to TOC -> button press tries to renew a textAct that already was killed (so it would just bring up a random one form the past and mess things up.
+        // I turned this off to simplify the stack a reduce weird back bugs. Such as Segment ->TOC ->TextPage on button press -> Backpress brings you to TOC -> button press tries to renew a textAct that already was killed (so it would just bring up a random one form the past and mess things up.
 
         //This don't need request b/c I'm no longer doing the REORDERING
         //((TOCActivity) context).startActivityForResult(intent, TOCActivity.COMING_BACK_TO_TOC_REQUEST_CODE); //using result so that we can know if someone presses back to come back fromo TextAct (instead of reopening the TOC).

@@ -16,7 +16,7 @@ public class Section {
     }
 
     public Section(List<Segment> segmentList, Segment headerSegment) {
-        this(segmentList, headerSegment,false);
+        this(segmentList, headerSegment, false);
     }
 
     public Section(List<Segment> segmentList, Segment headerSegment, boolean isLoader) {
@@ -25,7 +25,15 @@ public class Section {
         this.isLoader = isLoader;
     }
 
-    public List<Segment> getSegmentList() { return segmentList; }
-    public Segment getHeaderSegment() { return headerSegment; }
-    public boolean getIsLoader() { return isLoader;}
+    public List<Segment> getSegmentList() {
+        return segmentList;
+    }
+
+    public Segment getHeaderSegment() {
+        return headerSegment;
+    }
+
+    public boolean getIsLoader() {
+        return isLoader;
+    }
 }

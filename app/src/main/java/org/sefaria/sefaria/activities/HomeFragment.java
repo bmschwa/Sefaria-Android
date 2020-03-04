@@ -78,14 +78,14 @@ public class HomeFragment extends android.support.v4.app.Fragment {
 
 
         //just extra spacing for the bottom
-        homeRoot.addView(createTypeTitle("",false));
+        homeRoot.addView(createTypeTitle("", false));
 
 
         LinearLayout abRoot = (LinearLayout) view.findViewById(R.id.actionbarRoot);
         //CustomActionbar cab = new CustomActionbar(activity,new MenuNode("Sefaria","ספאריה",null),
         //        Settings.getSystemLang(),null,null,closeClick,searchClick,null,menuClick,null,-1);
         //abRoot.addView(cab);
-        homeActionbar = new HomeActionbar(getContext(),Settings.getMenuLang(),searchClick,langClick);
+        homeActionbar = new HomeActionbar(getContext(), Settings.getMenuLang(), searchClick, langClick);
         abRoot.addView(homeActionbar);
 
         //set letter spacing
@@ -102,8 +102,6 @@ public class HomeFragment extends android.support.v4.app.Fragment {
             supportTV.setLetterSpacing(0.1f);
             donateTV.setLetterSpacing(0.1f);
         }
-
-
 
 
         return view;
@@ -132,11 +130,11 @@ public class HomeFragment extends android.support.v4.app.Fragment {
 
     }
 
-    public void onHomeFragClose(){
+    public void onHomeFragClose() {
         menuGrid.closeMoreClick();
     }
 
-    public void onHomeFragOpen(){
+    public void onHomeFragOpen() {
         addRecentTexts(ThisView);
     }
 
@@ -158,23 +156,22 @@ public class HomeFragment extends android.support.v4.app.Fragment {
     }*/
 
 
-    private void addRecentTexts(View view){
-        Log.d("homeFrag","adding recent Texts");
+    private void addRecentTexts(View view) {
+        Log.d("homeFrag", "adding recent Texts");
         //Recent Texts
 
-        if(recentRoot == null) {
+        if (recentRoot == null) {
             recentRoot = (LinearLayout) view.findViewById(R.id.recentRoot);
-        }
-        else{
+        } else {
             recentRoot.removeAllViews();
         }
         final int columNum = 1;
-        List<MenuDirectRef> recents = Recents.getRecentDirectMenu(getContext(),true, false);
+        List<MenuDirectRef> recents = Recents.getRecentDirectMenu(getContext(), true, false);
         recentTexts = new ArrayList<>();
-        if(recents.size()>0) {
+        if (recents.size() > 0) {
             LinearLayout recentRow = null;
-            for (int i=0;i<recents.size();i++){
-                if(i%columNum  == 0){
+            for (int i = 0; i < recents.size(); i++) {
+                if (i % columNum == 0) {
                     recentRow = new LinearLayout(getContext());
                     recentRow.setOrientation(LinearLayout.HORIZONTAL);
                     recentRow.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
@@ -191,53 +188,51 @@ public class HomeFragment extends android.support.v4.app.Fragment {
     }
 
 
-
-
-    private void addMenuGrid(View view){
+    private void addMenuGrid(View view) {
         //Menu grid
         Util.Lang menuLang = Settings.getMenuLang();
-        menuGrid = new MenuGrid(getContext(),NUM_COLUMNS, menuState,LIMIT_GRID_SIZE,menuLang);
+        menuGrid = new MenuGrid(getContext(), NUM_COLUMNS, menuState, LIMIT_GRID_SIZE, menuLang);
         LinearLayout gridRoot = (LinearLayout) view.findViewById(R.id.gridRoot);
         gridRoot.addView(menuGrid);
     }
 
-    public void setLang(Util.Lang lang){
-        if(lang == Util.Lang.BI) {
+    public void setLang(Util.Lang lang) {
+        if (lang == Util.Lang.BI) {
             lang = Util.Lang.EN;
         }
         menuState.setLang(lang);
         menuGrid.setLang(lang);
         homeActionbar.setLang(lang);
         //not setting cab, b/c it should stay as the SystemLang
-        for(MenuDirectRef menuDirectRef:dailyLearnings)
+        for (MenuDirectRef menuDirectRef : dailyLearnings)
             menuDirectRef.setLang(lang);
 
-        for(MenuDirectRef menuDirectRef:recentTexts){
+        for (MenuDirectRef menuDirectRef : recentTexts) {
             menuDirectRef.setLang(lang);
         }
 
     }
 
-    private void addCalendar(View view){
+    private void addCalendar(View view) {
         //Calendar
         LinearLayout calendarRoot = (LinearLayout) view.findViewById(R.id.calendarRoot);
         dailyLearnings = DailyLearning.getDailyLearnings(getContext());
-        for(MenuDirectRef menuDirectRef: dailyLearnings) {
+        for (MenuDirectRef menuDirectRef : dailyLearnings) {
             calendarRoot.addView(menuDirectRef);
         }
     }
 
-    private TextView createTypeTitle(String title, boolean isSerif){
+    private TextView createTypeTitle(String title, boolean isSerif) {
         SefariaTextView textView = new SefariaTextView(getContext());
         textView.setText(title);
-        final int paddingSide= 3;
+        final int paddingSide = 3;
         final int paddingTop = 20;
         textView.setPadding(paddingSide, paddingTop * 2, paddingSide, paddingTop);
         textView.setTextSize(20);
         textView.setFont(Util.Lang.EN, isSerif); //TODO change with system lang
         textView.setTextColor(Util.getColor(getContext(), R.attr.text_color_english));
         textView.setGravity(Gravity.CENTER);
-        if (! isSerif && Build.VERSION.SDK_INT > 14) {
+        if (!isSerif && Build.VERSION.SDK_INT > 14) {
             textView.setAllCaps(true);
         }
 
@@ -245,12 +240,11 @@ public class HomeFragment extends android.support.v4.app.Fragment {
     }
 
 
-
     View.OnClickListener searchClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
 
-            Intent intent = new Intent(getContext(),SearchActivity.class);
+            Intent intent = new Intent(getContext(), SearchActivity.class);
             startActivity(intent);
         }
     };

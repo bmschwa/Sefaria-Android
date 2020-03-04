@@ -38,7 +38,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
         //main shows all linkcounts
         //cat shows all links relevant to one cat - only on one segment
         //book shows all links relevant to one book - on whole section
-        MAIN,CAT,BOOK
+        MAIN, CAT, BOOK
     }
 
     public static String ARG_CURR_SECTION = "currSection";
@@ -109,12 +109,12 @@ public class LinkFragment extends android.support.v4.app.Fragment {
 
         LinearLayout linkSelectorBarRoot = (LinearLayout) view.findViewById(R.id.link_selector_bar_root);
         linkSelectorBarTitle = (SefariaTextView) view.findViewById(R.id.link_selector_bar_title);
-        linkSelectorBarTitle.setFont(activity.getMenuLang(),false);
+        linkSelectorBarTitle.setFont(activity.getMenuLang(), false);
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             linkSelectorBarTitle.setLetterSpacing(0.1f);
         }
 
-        linkSelectorBar = new LinkSelectorBar(activity,linkSelectorBarButtonClick,linkSelectorBackClick);
+        linkSelectorBar = new LinkSelectorBar(activity, linkSelectorBarButtonClick, linkSelectorBackClick);
         linkSelectorBarRoot.addView(linkSelectorBar);
 
         //updateFragment((Segment) getArguments().getParcelable(ARG_CURR_SECTION), view);
@@ -143,11 +143,13 @@ public class LinkFragment extends android.support.v4.app.Fragment {
         mListener = null;
     }
 
-    public State getCurrState() { return currState; }
+    public State getCurrState() {
+        return currState;
+    }
 
 
     //linkCount only necessary when going to CAT or BOOK state
-    public void gotoState(State state,View view,LinkFilter linkCount) {
+    public void gotoState(State state, View view, LinkFilter linkCount) {
         currState = state;
         View linkBackButton = view.findViewById(R.id.link_back_btn);
         View colorBar = view.findViewById(R.id.main_color_bar);
@@ -162,18 +164,18 @@ public class LinkFragment extends android.support.v4.app.Fragment {
 
             linkBackButton.setVisibility(View.INVISIBLE);
             noLinksTV.setVisibility(View.GONE);
-            GridLayoutManager gridLayoutManager = new GridLayoutManager(activity,2);
+            GridLayoutManager gridLayoutManager = new GridLayoutManager(activity, 2);
             gridLayoutManager.setSpanSizeLookup(onSpanSizeLookup);
 
-            linkMainAdapter = new LinkMainAdapter(activity,new ArrayList<LinkFilter>(),activity.getBook(),this);
+            linkMainAdapter = new LinkMainAdapter(activity, new ArrayList<LinkFilter>(), activity.getBook(), this);
 
             linkRecycler.setLayoutManager(gridLayoutManager);
             linkRecycler.setAdapter(linkMainAdapter);
 
             //add margins
             FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            int sideMargin = (int) getContext().getResources().getDimension(R.dimen.main_margin_lr) ;
-            lp.setMargins(sideMargin,0,sideMargin,0);
+            int sideMargin = (int) getContext().getResources().getDimension(R.dimen.main_margin_lr);
+            lp.setMargins(sideMargin, 0, sideMargin, 0);
             linkRecycler.setLayoutParams(lp);
 
             updateFragment(segment);
@@ -184,7 +186,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
             linkSelectorBarTitle.setVisibility(View.VISIBLE);
 
         } else { //CAT and BOOK are very similar
-            view.setBackgroundColor(Util.getColor(activity,R.attr.text_bg));
+            view.setBackgroundColor(Util.getColor(activity, R.attr.text_bg));
 
             //update linkSelectorQueue
             linkSelectorBarTitle.setVisibility(View.GONE);
@@ -194,7 +196,8 @@ public class LinkFragment extends android.support.v4.app.Fragment {
 
 
             String cat;
-            if (linkCount.getDepthType() == LinkFilter.DEPTH_TYPE.BOOK) cat = linkCount.getCategory();
+            if (linkCount.getDepthType() == LinkFilter.DEPTH_TYPE.BOOK)
+                cat = linkCount.getCategory();
             else cat = linkCount.getRealTitle(Util.Lang.EN); //CAT
 
             colorBar.setVisibility(View.VISIBLE);
@@ -205,14 +208,14 @@ public class LinkFragment extends android.support.v4.app.Fragment {
             //linkSelectorBar.setVisibility(View.VISIBLE);
             noLinksTV.setVisibility(View.VISIBLE);
             noLinksTV.setText(Html.fromHtml("<i>" + MyApp.getRString(R.string.no_links_filtered) + "</i>"));
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(activity,LinearLayoutManager.VERTICAL,false);
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false);
 
             List<Segment> linkList = null;
 
             linkTextAdapter = new LinkTextAdapter(activity, linkList, noLinksTV);
             linkRecycler.setLayoutManager(linearLayoutManager);
             linkRecycler.setAdapter(linkTextAdapter);
-            linkTextAdapter.setCurrLinkCount(linkCount,null);
+            linkTextAdapter.setCurrLinkCount(linkCount, null);
 
             //remove margins
             FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -232,15 +235,13 @@ public class LinkFragment extends android.support.v4.app.Fragment {
     }
 
 
-
     /**
-     *
      * @param segment - used when main list is scrolled and new segment comes into view.
-     * @param view - usually from getView() except on first load in which case it's passed in manually
+     * @param view    - usually from getView() except on first load in which case it's passed in manually
      */
     public void updateFragment(Segment segment, View view) {
         if (view == null) {
-            Log.d("frag","VIEW NULL ;(");
+            Log.d("frag", "VIEW NULL ;(");
             return;
         }
         if (!dontUpdate || clicked) {
@@ -274,21 +275,33 @@ public class LinkFragment extends android.support.v4.app.Fragment {
         linkSelectorBar.update(activity.getMenuLang());
     }
 
-    public void setDontUpdate(boolean dontUpdate) { this.dontUpdate = dontUpdate; }
+    public void setDontUpdate(boolean dontUpdate) {
+        this.dontUpdate = dontUpdate;
+    }
+
     public void setIsOpen(boolean isOpen) {
-        if(isOpen)
+        if (isOpen)
             GoogleTracker.sendScreen("LinkFragment");
         else
             GoogleTracker.sendScreen("SuperTextActivity");
         this.isOpen = isOpen;
     }
-    public boolean getIsOpen() { return isOpen; }
-    public void setClicked (boolean clicked) { this.clicked = clicked; }
+
+    public boolean getIsOpen() {
+        return isOpen;
+    }
+
+    public void setClicked(boolean clicked) {
+        this.clicked = clicked;
+    }
+
     public void setSegment(Segment segment) {
         this.segment = segment;
     }
 
-    public Segment getSegment() { return segment; }
+    public Segment getSegment() {
+        return segment;
+    }
 
     GridLayoutManager.SpanSizeLookup onSpanSizeLookup = new GridLayoutManager.SpanSizeLookup() {
         @Override
@@ -321,7 +334,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
     View.OnClickListener linkSelectorBackClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            gotoState(State.MAIN,getView(),null);
+            gotoState(State.MAIN, getView(), null);
         }
     };
 
@@ -340,7 +353,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
         @Override
         protected void onPostExecute(LinkFilter linkFilter) {
             if (!linkSelectorBar.getHasBeenInitialized())
-                linkSelectorBar.initialUpdate(linkFilter,activity.getMenuLang());
+                linkSelectorBar.initialUpdate(linkFilter, activity.getMenuLang());
 
             linkMainAdapter.setItemList(LinkFilter.getList(linkFilter));
 
@@ -369,7 +382,7 @@ public class LinkFragment extends android.support.v4.app.Fragment {
                 linkList = Link.getLinkedTexts(segment, this.linkFilter);
             } catch (API.APIException e) {
                 API.makeAPIErrorToast(activity);
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return linkList;

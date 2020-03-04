@@ -32,7 +32,7 @@ public class SearchFilterNode extends BilingualNode implements Comparable<Search
     }
 
     public SearchFilterNode(String enTitle, String heTitle, SearchFilterNode parent) {
-        super(enTitle,heTitle,parent);
+        super(enTitle, heTitle, parent);
         count = 0;
         try {
             bid = Book.getBid(enTitle);
@@ -66,9 +66,17 @@ public class SearchFilterNode extends BilingualNode implements Comparable<Search
         }
     };
 
-    public int getCount() { return count; }
-    public void setCount(int count) { this.count = count; }
-    public void addCount(int count) { this.count += count; }
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public void addCount(int count) {
+        this.count += count;
+    }
 
     public String getFilterString() {
         String filterString = "";
@@ -105,8 +113,8 @@ public class SearchFilterNode extends BilingualNode implements Comparable<Search
         // BFS uses Queue data structure
         Queue queue = new LinkedList();
         queue.add(this);
-        while(!queue.isEmpty()) {
-            BilingualNode node = (BilingualNode)queue.remove();
+        while (!queue.isEmpty()) {
+            BilingualNode node = (BilingualNode) queue.remove();
 
             for (BilingualNode child : node.getChildren()) {
                 if (child.getNumChildren() == 0)
@@ -165,9 +173,9 @@ public class SearchFilterNode extends BilingualNode implements Comparable<Search
         for (BilingualNode childNode : node.getChildren()) {
 
             if (childNode.getNumChildren() > 0) {
-                printTree((SearchFilterNode)childNode, indent + 1, sb);
+                printTree((SearchFilterNode) childNode, indent + 1, sb);
             } else {
-                printNode((SearchFilterNode)childNode, indent + 1, sb);
+                printNode((SearchFilterNode) childNode, indent + 1, sb);
             }
 
         }
@@ -189,20 +197,19 @@ public class SearchFilterNode extends BilingualNode implements Comparable<Search
     }
 
     /**
-     *
-     * @param root - root of current tree. this will be the root of the final tree
+     * @param root       - root of current tree. this will be the root of the final tree
      * @param mergeNodes - list of nodes that you want to merge into root. NOTE, you need to generate all parent of these nodes, assuming they don't already exist
      */
     public static void mergeTrees(SearchFilterNode root, List<BilingualNode> mergeNodes) {
         for (BilingualNode tempNode : mergeNodes) {
             Stack<BilingualNode> path = new Stack<>();
-            while(tempNode.getParent() != null) {
+            while (tempNode.getParent() != null) {
                 path.add(tempNode);
                 tempNode = tempNode.getParent();
             }
 
             SearchFilterNode currNode1 = root;
-            if(!path.isEmpty()) {
+            if (!path.isEmpty()) {
                 SearchFilterNode currNode2 = (SearchFilterNode) path.pop();
 
                 int index = currNode1.getChildren().indexOf(currNode2);
@@ -212,7 +219,7 @@ public class SearchFilterNode extends BilingualNode implements Comparable<Search
                     currNode2.removeChildren();
                     currNode2.setCount(0);
                 } else {
-                    currNode1.replaceChild(currNode1.getChild(index),currNode2);
+                    currNode1.replaceChild(currNode1.getChild(index), currNode2);
                 }
             }
 

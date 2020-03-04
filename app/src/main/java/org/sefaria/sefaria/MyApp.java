@@ -50,27 +50,27 @@ public class MyApp extends Application {
 
     public static final boolean DEBUGGING = false;
 
-    public static final String[] CAT_NAMES = {"Tanakh","Mishnah","Talmud",
-            "Tosefta","Liturgy","Tefillah",
-            "Philosophy","Chasidut","Musar",
-            "Other","Halakhah","Midrash",
-            "Kabbalah","Responsa","Parshanut",
-            "Apocrypha","More", LinkFilter.QUOTING_COMMENTARY,
+    public static final String[] CAT_NAMES = {"Tanakh", "Mishnah", "Talmud",
+            "Tosefta", "Liturgy", "Tefillah",
+            "Philosophy", "Chasidut", "Musar",
+            "Other", "Halakhah", "Midrash",
+            "Kabbalah", "Responsa", "Parshanut",
+            "Apocrypha", "More", LinkFilter.QUOTING_COMMENTARY,
             "Modern Works", LinkFilter.COMMENTARY, LinkFilter.ALL_CONNECTIONS,
             "Targum", "Tanach", "ERROR", "Tanaitic"
-            };
-    public static final int[] CAT_COLORS = {R.color.tanach, R.color.mishnah,R.color.talmud,
-            R.color.tosefta,R.color.liturgy,R.color.liturgy,
-            R.color.philosophy,R.color.chasidut,R.color.musar,
-            R.color.system_color,R.color.halkhah,R.color.midrash,
-            R.color.kabbalah,R.color.responsa,R.color.parshanut,
-            R.color.apocrypha,R.color.system_color,R.color.quoting_commentary,
-            R.color.modern_works,R.color.commentary, R.color.system_color,
-            R.color.commentary,R.color.tanach,R.color.error, R.color.tosefta
-            };
+    };
+    public static final int[] CAT_COLORS = {R.color.tanach, R.color.mishnah, R.color.talmud,
+            R.color.tosefta, R.color.liturgy, R.color.liturgy,
+            R.color.philosophy, R.color.chasidut, R.color.musar,
+            R.color.system_color, R.color.halkhah, R.color.midrash,
+            R.color.kabbalah, R.color.responsa, R.color.parshanut,
+            R.color.apocrypha, R.color.system_color, R.color.quoting_commentary,
+            R.color.modern_works, R.color.commentary, R.color.system_color,
+            R.color.commentary, R.color.tanach, R.color.error, R.color.tosefta
+    };
 
     public enum Font {
-        MONTSERRAT,TAAMEY_FRANK,OPEN_SANS_EN,OPEN_SANS_HE,GARAMOND,NEW_ATHENA,CRIMSON,QUATTROCENTO,CARDO
+        MONTSERRAT, TAAMEY_FRANK, OPEN_SANS_EN, OPEN_SANS_HE, GARAMOND, NEW_ATHENA, CRIMSON, QUATTROCENTO, CARDO
     }
 
     private static Typeface monserrat_tf;
@@ -105,7 +105,7 @@ public class MyApp extends Application {
         GoogleTracker googleTracker = new GoogleTracker();
     }
 
-    public static int getVersionCode(){
+    public static int getVersionCode() {
         try {
             PackageInfo pinfo = context.getPackageManager().getPackageInfo(appPackageName, 0);
             //String versionName = pinfo.versionName;
@@ -125,7 +125,7 @@ public class MyApp extends Application {
         new_athena_tf = Typeface.createFromAsset(context.getAssets(), "fonts/new_athena_unicode.ttf");
         crimson_tf = Typeface.createFromAsset(context.getAssets(), "fonts/CrimsonText-Regular.ttf");
         quattrocento_tf = Typeface.createFromAsset(context.getAssets(), "fonts/Quattrocento-Regular.otf");
-        cardo_tf = Typeface.createFromAsset(context.getAssets(),"fonts/Cardo-Regular.ttf");
+        cardo_tf = Typeface.createFromAsset(context.getAssets(), "fonts/Cardo-Regular.ttf");
     }
 
     public static Typeface getFont(Font font) {
@@ -152,7 +152,7 @@ public class MyApp extends Application {
         return null;
     }
 
-    public static Point getScreenSizePixels(){
+    public static Point getScreenSizePixels() {
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         Point size = new Point();
@@ -162,11 +162,11 @@ public class MyApp extends Application {
         return size;
     }
 
-    public static Point getScreenSize(){
+    public static Point getScreenSize() {
         Configuration configuration;
-        try{
+        try {
             configuration = getContext().getResources().getConfiguration();
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             GoogleTracker.sendException(e, "getScreenSize");
             return new Point(300, 600);
         }
@@ -177,16 +177,15 @@ public class MyApp extends Application {
     }
 
 
-
     /**
      * This method converts dp unit to equivalent pixels, depending on device density.
      *
      * @param dp A value in dp (density independent pixels) unit. Which we need to convert into pixels
      * @return A float value to represent px equivalent to dp depending on device density
      */
-    public static float convertDpToPixel(float dp){
+    public static float convertDpToPixel(float dp) {
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-        float px = dp * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+        float px = dp * ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
         return px;
     }
 
@@ -196,12 +195,11 @@ public class MyApp extends Application {
      * @param px A value in px (pixels) unit. Which we need to convert into db
      * @return A float value to represent dp equivalent to px value
      */
-    public static float convertPixelsToDp(float px){
+    public static float convertPixelsToDp(float px) {
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-        float dp = px / ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+        float dp = px / ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
         return dp;
     }
-
 
 
     public static int getCatColor(String catName) {
@@ -213,30 +211,43 @@ public class MyApp extends Application {
         return color;
     }
 
-    public static boolean validSDKVersion(int requiredVersion){
+    public static boolean validSDKVersion(int requiredVersion) {
         return (Build.VERSION.SDK_INT >= requiredVersion);
     }
 
-    public static String getEmailHeader(){
-        return  "App Version: " + BuildConfig.VERSION_NAME + " ("  + BuildConfig.VERSION_CODE + ")" + "\n"
+    public static String getEmailHeader() {
+        return "App Version: " + BuildConfig.VERSION_NAME + " (" + BuildConfig.VERSION_CODE + ")" + "\n"
                 + "Online Mode Version: " + Util.convertDBnum(Database.getVersionInDB(true)) + "\n"
                 + "Offline Library Version: " + Util.convertDBnum(Database.getVersionInDB(false)) + "\n"
-                + "Using " + (Settings.getUseAPI()? "Online Mode":"Offline Library") + "\n"
+                + "Using " + (Settings.getUseAPI() ? "Online Mode" : "Offline Library") + "\n"
                 + GoogleTracker.randomID + "\n"
                 + Build.VERSION.RELEASE + " (" + Build.VERSION.SDK_INT + ")" + "\n"
-                +"\n\n\n";
+                + "\n\n\n";
     }
 
-    public static String getRString(int R_string){
+    public static String getRString(int R_string) {
         return getContext().getString(R_string);
     }
-    public static float getRDimen(int R_dimen) { return getContext().getResources().getDimension(R_dimen); }
 
-    public static Context getContext() { return context; }
-    public static void setContext(Context newContext) { context = newContext; }
-    public static String getAppPackageName() { return appPackageName; }
+    public static float getRDimen(int R_dimen) {
+        return getContext().getResources().getDimension(R_dimen);
+    }
 
-    public static void killSwitch(){return; }//TODO remove function
+    public static Context getContext() {
+        return context;
+    }
+
+    public static void setContext(Context newContext) {
+        context = newContext;
+    }
+
+    public static String getAppPackageName() {
+        return appPackageName;
+    }
+
+    public static void killSwitch() {
+        return;
+    }//TODO remove function
 
     /*
     public static void homeClick(Activity activity, boolean openNewTab,boolean hideOpening){
@@ -258,7 +269,7 @@ public class MyApp extends Application {
         }
     }*/
 
-    public static Intent startNewTab(Intent intent){
+    public static Intent startNewTab(Intent intent) {
         Toast.makeText(context, context.getString(R.string.opening_new_task), Toast.LENGTH_SHORT).show();
         intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         return intent;
@@ -273,13 +284,11 @@ public class MyApp extends Application {
         i.putExtra(Intent.EXTRA_TEXT, url);
         activity.startActivity(Intent.createChooser(i, "Open in Browser"));
 
-        if(true) return;
+        if (true) return;
 
 
         Intent intent = new Intent();
         intent.setAction(android.content.Intent.ACTION_VIEW);
-
-
 
 
         intent.setData(Uri.parse(url));
@@ -297,64 +306,61 @@ public class MyApp extends Application {
                 targetIntents.add(targetIntent);
             }
         }
-        if(targetIntents.size() > 0) {
+        if (targetIntents.size() > 0) {
             Intent chooserIntent = Intent.createChooser(targetIntents.remove(0), "Open with");
-            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, targetIntents.toArray(new Parcelable[] {}));
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, targetIntents.toArray(new Parcelable[]{}));
             activity.startActivity(chooserIntent);
-        }
-        else {
+        } else {
             Toast.makeText(activity, "No app found", Toast.LENGTH_SHORT).show();
         }
     }
 
-    public static void openURLInBrowser(Activity activity, String url){
-        if (!url.startsWith("https://") && !url.startsWith("http://")){
+    public static void openURLInBrowser(Activity activity, String url) {
+        if (!url.startsWith("https://") && !url.startsWith("http://")) {
             url = "https://" + url;
         }
         openWithInstalledAppExceptCurrentApp(activity, url);
     }
 
-    public static boolean handleIncomingURL(Activity activity, Intent intent){
+    public static boolean handleIncomingURL(Activity activity, Intent intent) {
         try {
-            if (intent != null){
+            if (intent != null) {
                 String url = intent.getStringExtra("url");
-                if(url != null || intent.getAction().equalsIgnoreCase(Intent.ACTION_VIEW)){ //&&  intent.getCategories().contains(Intent.CATEGORY_BROWSABLE
+                if (url != null || intent.getAction().equalsIgnoreCase(Intent.ACTION_VIEW)) { //&&  intent.getCategories().contains(Intent.CATEGORY_BROWSABLE
                     //url to go to  www.sefaria.org
-                    if(url == null) {
+                    if (url == null) {
                         url = intent.getDataString(); //got here from web click
                     }// otherwise got here from shortcut
                     Log.d("HomeActivity", "Sefaria URL:" + url);
                     GoogleTracker.sendEvent(GoogleTracker.CATEGORY_OPENED_URL, url);
                     String place = url.replaceAll("(?i).*sefaria\\.org/?(s2/)?", "");
                     try {
-                        API.PlaceRef placeRef = API.PlaceRef.getPlace(place,null);
-                        SuperTextActivity.startNewTextActivityIntent(activity, placeRef.book, placeRef.segment, placeRef.node, true, null,-1);
-                    }catch (API.APIException e){
-                        openURLInBrowser(activity,url);
-                    }catch (Book.BookNotFoundException  e2){
-                        openURLInBrowser(activity,url);
+                        API.PlaceRef placeRef = API.PlaceRef.getPlace(place, null);
+                        SuperTextActivity.startNewTextActivityIntent(activity, placeRef.book, placeRef.segment, placeRef.node, true, null, -1);
+                    } catch (API.APIException e) {
+                        openURLInBrowser(activity, url);
+                    } catch (Book.BookNotFoundException e2) {
+                        openURLInBrowser(activity, url);
                     }
                     activity.finish();
                     return true;
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             //Toast.makeText(activity, MyApp.getRString(R.string.cannot_parse_link), Toast.LENGTH_SHORT).show();
-            Log.e("HomeActivity","not able to open intent for URL parse " + e.getMessage());
+            Log.e("HomeActivity", "not able to open intent for URL parse " + e.getMessage());
         }
         return false;
     }
 
-    public static void restart(){
+    public static void restart() {
         Intent mStartActivity = new Intent(MyApp.getContext(), SepTextActivity.class);
         int mPendingIntentId = 31415;
-        PendingIntent mPendingIntent = PendingIntent.getActivity(MyApp.getContext(), mPendingIntentId,  mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
-        AlarmManager mgr = (AlarmManager)MyApp.getContext().getSystemService(Context.ALARM_SERVICE);
+        PendingIntent mPendingIntent = PendingIntent.getActivity(MyApp.getContext(), mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+        AlarmManager mgr = (AlarmManager) MyApp.getContext().getSystemService(Context.ALARM_SERVICE);
         mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
         System.exit(0);
     }
-
-
 
 
 }

@@ -46,7 +46,7 @@ public class LinkSelectorBar extends LinearLayout {
         //make sure linkCount is unique. technically should be overriding equals() in LinkFilter, but this actually isn't a strict definition right n
         boolean exists = false;
         ListIterator<LinkFilter> linkIt = linkSelectorQueue.listIterator(0);
-        while(linkIt.hasNext()) {
+        while (linkIt.hasNext()) {
             LinkFilter tempLC = linkIt.next();
             if (LinkFilter.pseudoEquals(tempLC, linkCount)) {
                 exists = true;
@@ -63,12 +63,12 @@ public class LinkSelectorBar extends LinearLayout {
 
     //this function is used to only update the language of the link selector bar
     public void update(Util.Lang lang) {
-        update(currLinkCount,lang);
+        update(currLinkCount, lang);
     }
 
     public void initialUpdate(LinkFilter linkFilterAll, Util.Lang lang) {
         hasBeenInitialized = true;
-        List<LinkFilter> yo = Settings.Link.getLinks(activity.getBook().getTitle(Util.Lang.EN),linkFilterAll);
+        List<LinkFilter> yo = Settings.Link.getLinks(activity.getBook().getTitle(Util.Lang.EN), linkFilterAll);
         linkSelectorQueue = new LinkedList<>(yo);
         currLinkCount = null; //initialize to all grayed
         update(lang);
@@ -76,20 +76,20 @@ public class LinkSelectorBar extends LinearLayout {
 
 
     //if currLinkCount == null, all linkSelectorBarButtons will be gray
-    public void update(LinkFilter currLinkCount,Util.Lang lang ) {
+    public void update(LinkFilter currLinkCount, Util.Lang lang) {
         this.currLinkCount = currLinkCount;
         selectorListLayout.removeAllViews();
         if (linkSelectorQueue == null) return;
         ListIterator<LinkFilter> linkIt = linkSelectorQueue.listIterator(linkSelectorQueue.size());
-        while(linkIt.hasPrevious()) {
+        while (linkIt.hasPrevious()) {
             //add children in reverse order
             LinkFilter tempLC = linkIt.previous();
-            LinkSelectorBarButton lssb = new LinkSelectorBarButton(activity,tempLC,activity.getBook(),lang);
+            LinkSelectorBarButton lssb = new LinkSelectorBarButton(activity, tempLC, activity.getBook(), lang);
             lssb.setOnClickListener(linkSelectorBarButtonClick);
             selectorListLayout.addView(lssb);
 
             if (!LinkFilter.pseudoEquals(tempLC, currLinkCount)) {
-                lssb.setTextColor(Util.getColor(activity,R.attr.text_chapter_header_color));
+                lssb.setTextColor(Util.getColor(activity, R.attr.text_chapter_header_color));
             }
         }
 
@@ -97,5 +97,7 @@ public class LinkSelectorBar extends LinearLayout {
 
     }
 
-    public boolean getHasBeenInitialized() { return hasBeenInitialized; }
+    public boolean getHasBeenInitialized() {
+        return hasBeenInitialized;
+    }
 }

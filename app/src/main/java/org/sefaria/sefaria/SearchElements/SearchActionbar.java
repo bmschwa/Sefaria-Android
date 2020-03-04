@@ -25,40 +25,38 @@ public class SearchActionbar extends LinearLayout {
 
         findViewById(R.id.close_btn).setOnClickListener(closeClick);
 
-        if(searchClick != null) findViewById(R.id.search_btn).setOnClickListener(searchClick);
+        if (searchClick != null) findViewById(R.id.search_btn).setOnClickListener(searchClick);
         else findViewById(R.id.search_btn).setVisibility(GONE);
 
-        if(searchLongClick != null)
+        if (searchLongClick != null)
             findViewById(R.id.search_btn).setOnLongClickListener(searchLongClick);
 
-        if(upClick != null) findViewById(R.id.up_button).setOnClickListener(upClick);
+        if (upClick != null) findViewById(R.id.up_button).setOnClickListener(upClick);
         else findViewById(R.id.up_button).setVisibility(GONE);
 
-        if(downClick != null)findViewById(R.id.down_button).setOnClickListener(downClick);
+        if (downClick != null) findViewById(R.id.down_button).setOnClickListener(downClick);
         else findViewById(R.id.down_button).setVisibility(GONE);
 
         if (catColor == -1) catColor = R.color.system_color; //default color
         int color = getResources().getColor(catColor);
-        int tintColor = Util.tintColor(color,0.3f);
-        Log.d("COLOR",color + " " + tintColor);
+        int tintColor = Util.tintColor(color, 0.3f);
+        Log.d("COLOR", color + " " + tintColor);
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             activity.getWindow().setStatusBarColor(tintColor);
         }
         findViewById(R.id.color_bar).setBackgroundColor(color);
 
         AutoCompleteTextView autoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.auto_complete_text_view);
-        if(hintText != null)
+        if (hintText != null)
             autoCompleteTextView.setHint(Html.fromHtml(hintText));
         autoCompleteTextView.setTypeface(MyApp.getFont(MyApp.Font.CARDO));
         autoCompleteTextView.setDropDownWidth((int) Math.floor(MyApp.getScreenSizePixels().x - MyApp.convertDpToPixel(60)));
     }
 
-    public String getText(){
+    public String getText() {
         AutoCompleteTextView autoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.auto_complete_text_view);
         return autoCompleteTextView.getText().toString();
     }
-
-
 
 
 }

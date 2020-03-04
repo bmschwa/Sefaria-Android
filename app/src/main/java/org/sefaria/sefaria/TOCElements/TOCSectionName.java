@@ -33,7 +33,7 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
     ImageView iconLeft;
     ImageView iconRight;
 
-    public TOCSectionName(Context context, Node node, Util.Lang lang, boolean displayLevel){
+    public TOCSectionName(Context context, Node node, Util.Lang lang, boolean displayLevel) {
         super(context);
         inflate(context, R.layout.toc_sectionname, this);
         this.setOrientation(VERTICAL);
@@ -46,7 +46,7 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
 
     }
 
-    private void init(Util.Lang lang){
+    private void init(Util.Lang lang) {
         sectionNameTitle = (SefariaTextView) findViewById(R.id.toc_section_name_title);
         sectionNameTitle.setFont(lang, true);
 
@@ -70,10 +70,10 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
         }
         int padding = (int) MyApp.convertDpToPixel(4.5f);
         final int sidePadding = (int) MyApp.convertDpToPixel(13f);
-        if(lang == Util.Lang.EN) {
+        if (lang == Util.Lang.EN) {
             this.setPadding(sidePadding, padding, 0, padding);
             this.setGravity(Gravity.LEFT);
-        }else {
+        } else {
             this.setPadding(0, padding, sidePadding, padding);
             this.setGravity(Gravity.RIGHT);
         }
@@ -81,25 +81,24 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
         //Log.d("TOCSection",segment + " " + node);
 
         //http://stackoverflow.com/questions/2701192/character-for-up-down-triangle-arrow-to-display-in-html
-        if(node.isTextSection()) {
+        if (node.isTextSection()) {
             text = text + " >";
-        }else if(node.getChildren().size() == 0){//it has no children but it's not a section, so it should be greyed out
+        } else if (node.getChildren().size() == 0) {//it has no children but it's not a section, so it should be greyed out
             sectionNameTitle.setTextColor(getResources().getColor(R.color.toc_greyed_out_section_name));
-        }else if(text.length() >0){
+        } else if (text.length() > 0) {
             ImageView viewableIcon;
-            if(lang == Util.Lang.EN){
+            if (lang == Util.Lang.EN) {
                 iconLeft.setVisibility(VISIBLE);
                 iconLeft.setImageResource(R.drawable.right_arrow);
                 iconRight.setVisibility(GONE);
                 viewableIcon = iconLeft;
-            }
-            else{//lang == HE
+            } else {//lang == HE
                 iconRight.setVisibility(VISIBLE);
                 iconRight.setImageResource(R.drawable.left_arrow);
                 iconLeft.setVisibility(GONE);
                 viewableIcon = iconRight;
             }
-            if(displayingChildren){
+            if (displayingChildren) {
                 viewableIcon.setImageResource(R.drawable.down_arrow);
             }
         }
@@ -110,7 +109,7 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
         This is for a case of a node that holds just a grid and is a sibling of a sectionName which istextSection()
         Look at Ohr Hashem for an example.
          */
-        if(text.length() == 0 && !node.isTextSection())
+        if (text.length() == 0 && !node.isTextSection())
             sectionNameGroup.setVisibility(View.GONE);
 
     }
@@ -127,18 +126,18 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
         this.setLayoutParams(params);
     }
 
-    public void setSubGravity(int gravity){
+    public void setSubGravity(int gravity) {
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         params.gravity = gravity;
         this.setLayoutParams(params);
     }
 
-    public LinearLayout getChildrenView(){
+    public LinearLayout getChildrenView() {
         return sectionChildren;
     }
 
-    private void setDisplayingChildren(boolean displayingChildren,boolean forceChildren) {
+    private void setDisplayingChildren(boolean displayingChildren, boolean forceChildren) {
         if (sectionNameGroup.getVisibility() != VISIBLE)
             return;
         this.displayingChildren = displayingChildren;
@@ -151,20 +150,20 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
                 child.setVisibility(View.GONE);
             }
             if (forceChildren && child instanceof TOCSectionName) {
-                ((TOCSectionName) child).setDisplayingChildren(displayingChildren,forceChildren);
+                ((TOCSectionName) child).setDisplayingChildren(displayingChildren, forceChildren);
             }
             setLang(lang);
         }
     }
 
-    public void setDisplayingChildren(boolean displayingChildren){
-        setDisplayingChildren(displayingChildren,false);
+    public void setDisplayingChildren(boolean displayingChildren) {
+        setDisplayingChildren(displayingChildren, false);
     }
 
     OnClickListener clickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            if(!node.isTextSection()){
+            if (!node.isTextSection()) {
                 setDisplayingChildren(!displayingChildren);
                 return;
             }
@@ -173,14 +172,14 @@ public class TOCSectionName extends LinearLayout implements TOCElement {
         }
     };
 
-   OnLongClickListener onLongClickListener = new OnLongClickListener() {
-       @Override
-       public boolean onLongClick(View v) {
-           if(!node.isTextSection()) {
-               setDisplayingChildren(!displayingChildren,true);
-               return true;
-           }
-           return false;
-       }
-   };
+    OnLongClickListener onLongClickListener = new OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            if (!node.isTextSection()) {
+                setDisplayingChildren(!displayingChildren, true);
+                return true;
+            }
+            return false;
+        }
+    };
 }

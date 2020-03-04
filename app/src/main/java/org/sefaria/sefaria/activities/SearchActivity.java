@@ -66,6 +66,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
     private SearchingDB searchingDB;
 
     private String numberOfResults = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,22 +74,20 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
         setContentView(R.layout.activity_search);
 
 
-
         LinearLayout actionbarRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         actionbarRoot.addView(new SearchActionbar(this, closeClick, searchClick, null, null, -1, "<i>" + MyApp.getRString(R.string.search) + "</i>", searchLongClick));
 
 
-
         String searchTerm;
-        if(savedInstanceState == null){//it's coming from a saved to ram state
+        if (savedInstanceState == null) {//it's coming from a saved to ram state
             Intent intent = getIntent();
             searchTerm = intent.getStringExtra(INTENT_SEARCH_TERM);
-        }else{
+        } else {
             searchTerm = savedInstanceState.getString(INTENT_SEARCH_TERM);
         }
 
         autoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.auto_complete_text_view);
-        if(searchTerm != null)
+        if (searchTerm != null)
             autoCompleteTextView.setText(searchTerm);
         autoCompleteTextView.addTextChangedListener(new TextWatcher() {
             @Override
@@ -108,7 +107,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
         });
 
         ArrayList<String> allBookNames = Book.getAllBookNames(Util.Lang.BI);
-        ArrayAdapter<String> autoComAdapter = new ArrayAdapter<>(this, android.R.layout.select_dialog_item,allBookNames);
+        ArrayAdapter<String> autoComAdapter = new ArrayAdapter<>(this, android.R.layout.select_dialog_item, allBookNames);
         autoCompleteTextView.setAdapter(autoComAdapter);
         autoCompleteTextView.setOnItemClickListener(autoCompleteItemClick);
         //autoCompleteTextView.setOnFocusChangeListener(autoComFocus);
@@ -122,7 +121,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                Log.d("SearchAct","autoComEnterClick");
+                Log.d("SearchAct", "autoComEnterClick");
                 runNewSearch();
                 return true;
             }
@@ -133,12 +132,12 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
     AdapterView.OnItemClickListener autoCompleteItemClick = new AdapterView.OnItemClickListener() {
         public void onItemClick(android.widget.AdapterView<?> parent, View v, int pos, long id) {
             autoCompleteTextView.setText("");//So that it doesn't fill the bar with the book you just clicked
-            String title = (String) ((TextView)v).getText();
+            String title = (String) ((TextView) v).getText();
             try {
-                Book book = new Book(title,true);
-                SuperTextActivity.startNewTextActivityIntent(SearchActivity.this,book,false);
+                Book book = new Book(title, true);
+                SuperTextActivity.startNewTextActivityIntent(SearchActivity.this, book, false);
             } catch (Book.BookNotFoundException e) {
-                Toast.makeText(SearchActivity.this,MyApp.getRString(R.string.error_getting_book),Toast.LENGTH_SHORT).show();
+                Toast.makeText(SearchActivity.this, MyApp.getRString(R.string.error_getting_book), Toast.LENGTH_SHORT).show();
             }
         }
     };
@@ -146,19 +145,19 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
     View.OnFocusChangeListener autoComFocus = new View.OnFocusChangeListener() {
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
-            Log.d("SearchAct","onFocusChange" + hasFocus);
+            Log.d("SearchAct", "onFocusChange" + hasFocus);
         }
     };
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(INTENT_SEARCH_TERM,autoCompleteTextView.getText().toString());
+        outState.putString(INTENT_SEARCH_TERM, autoCompleteTextView.getText().toString());
     }
 
-    private void restartActivity(){
-        Intent intent = new Intent(this,SearchActivity.class);
-        intent.putExtra(INTENT_SEARCH_TERM,autoCompleteTextView.getText().toString());
+    private void restartActivity() {
+        Intent intent = new Intent(this, SearchActivity.class);
+        intent.putExtra(INTENT_SEARCH_TERM, autoCompleteTextView.getText().toString());
         startActivity(intent);
         finish();
     }
@@ -167,7 +166,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
     protected void onResume() {
         super.onResume();
 
-        if(Settings.getTheme() != oldTheme){
+        if (Settings.getTheme() != oldTheme) {
             restartActivity();
             return;
         }
@@ -176,7 +175,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(autoCompleteTextView, InputMethodManager.SHOW_IMPLICIT);
         if (adapter == null)
-            adapter = new SearchAdapter(this, R.layout.search_item_mono,new ArrayList<Segment>());
+            adapter = new SearchAdapter(this, R.layout.search_item_mono, new ArrayList<Segment>());
 
         if (listView == null) {
             listView = (ListView) findViewById(R.id.listview);
@@ -186,7 +185,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
             listView.setDivider(null);
         }
         numResultsTV = (SefariaTextView) findViewById(R.id.numResults);
-        numResultsTV.setFont(Settings.getSystemLang(),false);
+        numResultsTV.setFont(Settings.getSystemLang(), false);
         isLoadingSearch = false;
 
 
@@ -194,17 +193,17 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
     }
 
     //run a new search
-    private void runNewSearch(){
+    private void runNewSearch() {
         findViewById(R.id.results_box).setVisibility(View.VISIBLE);
         autoCompleteTextView.clearFocus();
         currPageLoaded = 0;
-        AsyncSearch asyncSearch = new AsyncSearch(true,new ArrayList<String>(),currPageLoaded);
+        AsyncSearch asyncSearch = new AsyncSearch(true, new ArrayList<String>(), currPageLoaded);
         //AsyncSearch asyncSearch = new AsyncSearch(true,searchFilterBox.getSelectedFilterStrings(),0);
         asyncSearch.execute();
         // Check if no view has focus:
         View view = SearchActivity.this.getCurrentFocus();
         if (view != null) {
-            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
 
@@ -214,12 +213,12 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
         findViewById(R.id.results_box).setVisibility(View.VISIBLE);
         autoCompleteTextView.clearFocus();
         currPageLoaded = 0;
-        AsyncSearch asyncSearch = new AsyncSearch(false,searchFilterBox.getSelectedFilterStrings(),currPageLoaded);
+        AsyncSearch asyncSearch = new AsyncSearch(false, searchFilterBox.getSelectedFilterStrings(), currPageLoaded);
         asyncSearch.execute();
         // Check if no view has focus:
         View view = SearchActivity.this.getCurrentFocus();
         if (view != null) {
-            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
@@ -242,10 +241,10 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
     View.OnLongClickListener searchLongClick = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
-            if(Settings.getIsDebug() && SearchingDB.hasSearchTable()){
+            if (Settings.getIsDebug() && SearchingDB.hasSearchTable()) {
                 (new SearchingDB.AsyncRunTests(SearchActivity.this)).execute();
                 return true;
-            }else{
+            } else {
                 return false;
             }
 
@@ -270,11 +269,11 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
                     if (lastItem == totalItemCount && preLast != lastItem) {
                         preLast = lastItem;
                         currPageLoaded++;
-                        if(currPageLoaded != 0 && SearchingDB.hasSearchTable() && (!Downloader.getHasInternet()
-                            && searchingDB == null)) {
-                                Toast.makeText(SearchActivity.this, "Lost Connection: Restarting search in offline mode", Toast.LENGTH_LONG).show();
-                                runNewSearch();
-                        }else {
+                        if (currPageLoaded != 0 && SearchingDB.hasSearchTable() && (!Downloader.getHasInternet()
+                                && searchingDB == null)) {
+                            Toast.makeText(SearchActivity.this, "Lost Connection: Restarting search in offline mode", Toast.LENGTH_LONG).show();
+                            runNewSearch();
+                        } else {
                             AsyncSearch asyncSearch = new AsyncSearch(false, searchFilterBox.getSelectedFilterStrings(), currPageLoaded);
                             asyncSearch.execute();
                         }
@@ -283,20 +282,20 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
         }
     }
 
-    private JSONArray getAllFilterJSON(){
+    private JSONArray getAllFilterJSON() {
         JSONArray json = new JSONArray();
         List<Book> books = Book.getAll();
         int index = 0;
-        for(Book book: books){
+        for (Book book : books) {
             StringBuilder key = new StringBuilder();
-            for(String cat: book.categories) {
+            for (String cat : book.categories) {
                 key.append(cat + "/");
             }
             key.append(book.title);
             JSONObject jsonObject = new JSONObject();
             try {
-                jsonObject.put("key",key);
-                jsonObject.put("doc_count",-1);
+                jsonObject.put("key", key);
+                jsonObject.put("doc_count", -1);
                 json.put(index++, jsonObject);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -306,7 +305,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
         return json;
     }
 
-    public class AsyncSearch extends AsyncTask<Void,Void,SearchResultContainer> {
+    public class AsyncSearch extends AsyncTask<Void, Void, SearchResultContainer> {
 
         private String query;
         private boolean getFilters;
@@ -325,7 +324,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
         protected void onPreExecute() {
             super.onPreExecute();
 
-            if(Downloader.getNetworkStatus() == Downloader.ConnectionType.NONE && SearchingDB.hasSearchTable()) {
+            if (Downloader.getNetworkStatus() == Downloader.ConnectionType.NONE && SearchingDB.hasSearchTable()) {
                 if (pageNum != 0 && searchingDB == null) {
                     Toast.makeText(SearchActivity.this, "Restarting search in offline mode", Toast.LENGTH_SHORT).show();
                     pageNum = 0;
@@ -334,13 +333,13 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
             }
 
             isLoadingSearch = true;
-            if(usingOfflineSearch){
+            if (usingOfflineSearch) {
                 numResultsTV.setText("Using offline search." + " " + MyApp.getRString(R.string.loading));
                 //getFilters = false;
-                Log.d("Searching","offline");
-            }else{
+                Log.d("Searching", "offline");
+            } else {
                 numResultsTV.setText(numberOfResults + " " + MyApp.getRString(R.string.loading));
-                Log.d("Searching","online");
+                Log.d("Searching", "online");
             }
             query = autoCompleteTextView.getText().toString();
             adapter.setLangSearchedIn(Util.hasHebrew(query) ? Util.Lang.HE : Util.Lang.EN);
@@ -350,30 +349,29 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
         protected SearchResultContainer doInBackground(Void... params) {
             APIError = false;
             try {
-                if(usingOfflineSearch){
+                if (usingOfflineSearch) {
                     try {
-                        if(searchingDB == null || pageNum == 0) {
-                            searchingDB = new SearchingDB(query,appliedFilters);
+                        if (searchingDB == null || pageNum == 0) {
+                            searchingDB = new SearchingDB(query, appliedFilters);
                         }
                         List<Segment> results = searchingDB.getResults();
-                        Log.d("search","results size:" + results.size());
+                        Log.d("search", "results size:" + results.size());
                         JSONArray jsonRoot = null;
-                        if(getFilters) {
+                        if (getFilters) {
                             jsonRoot = getAllFilterJSON();
                         }
-                        SearchResultContainer searchResultContainer = new SearchResultContainer(results,-1, jsonRoot);
+                        SearchResultContainer searchResultContainer = new SearchResultContainer(results, -1, jsonRoot);
                         return searchResultContainer;
                     } catch (SQLException e) {
                         e.printStackTrace();
                         APIError = true;
                         return null;
                     }
-                }
-                else if (getFilters && (appliedFilters != null && appliedFilters.size() > 0)) {
-                    SearchResultContainer getFilterResults = SearchAPI.search(query, getFilters, null,pageNum, PAGE_SIZE);
-                    SearchResultContainer filteredResults = SearchAPI.search(query, false, appliedFilters,pageNum, PAGE_SIZE);
+                } else if (getFilters && (appliedFilters != null && appliedFilters.size() > 0)) {
+                    SearchResultContainer getFilterResults = SearchAPI.search(query, getFilters, null, pageNum, PAGE_SIZE);
+                    SearchResultContainer filteredResults = SearchAPI.search(query, false, appliedFilters, pageNum, PAGE_SIZE);
                     filteredResults.setAllFilters(getFilterResults.getAllFilters());
-                    return  filteredResults;
+                    return filteredResults;
                 } else {
                     return SearchAPI.search(query, getFilters, appliedFilters, pageNum, PAGE_SIZE);
                 }
@@ -388,7 +386,7 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
         protected void onPostExecute(SearchResultContainer resultContainer) {
             super.onPostExecute(resultContainer);
             isLoadingSearch = false;
-            if(APIError || resultContainer == null) { //these 2 things should really be the same
+            if (APIError || resultContainer == null) { //these 2 things should really be the same
                 API.makeAPIErrorToast(SearchActivity.this, MyApp.getRString(R.string.searching_requires_internet));
                 numResultsTV.setText(MyApp.getRString(R.string.Error) + ": " + MyApp.getRString(R.string.NO_INTERNET_TITLE));
                 return;
@@ -396,18 +394,18 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
 
             //page 0 means you're starting a new search. reset everything
             if (pageNum == 0) {
-                adapter.setResults(resultContainer.getResults(),true);
+                adapter.setResults(resultContainer.getResults(), true);
                 listView.setSelection(0);
             } else {
-                adapter.setResults(resultContainer.getResults(),false);
+                adapter.setResults(resultContainer.getResults(), false);
             }
             numberOfResults = resultContainer.getNumResults() + " " + MyApp.getRString(R.string.results);
             if (getFilters) {
                 searchFilterBox.initFilters(resultContainer.getAllFilters());
             }
-            if(usingOfflineSearch){
+            if (usingOfflineSearch) {
                 numResultsTV.setText("Using offline search");
-            }else {
+            } else {
                 numResultsTV.setText(numberOfResults);
             }
         }
@@ -427,11 +425,11 @@ public class SearchActivity extends Activity implements AbsListView.OnScrollList
             API.PlaceRef placeRef = null;
             try {
                 placeRef = API.PlaceRef.getPlace(place, book);
-                SuperTextActivity.startNewTextActivityIntent(SearchActivity.this,placeRef.book,placeRef.segment,placeRef.node,false,autoCompleteTextView.getText().toString(),-1);
+                SuperTextActivity.startNewTextActivityIntent(SearchActivity.this, placeRef.book, placeRef.segment, placeRef.node, false, autoCompleteTextView.getText().toString(), -1);
             } catch (API.APIException e) {
                 API.makeAPIErrorToast(SearchActivity.this);//MyApp.openURLInBrowser(SearchActivity.this,"https://sefaria.org/" + place);
             } catch (Book.BookNotFoundException e) {
-                MyApp.openURLInBrowser(SearchActivity.this,"https://sefaria.org/" + place);
+                MyApp.openURLInBrowser(SearchActivity.this, "https://sefaria.org/" + place);
             }
 
         }

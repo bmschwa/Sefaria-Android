@@ -30,18 +30,20 @@ public class MenuButtonTab extends MenuElement {
         setActive(false);
     }
 
-    public MenuNode getNode() { return node; }
+    public MenuNode getNode() {
+        return node;
+    }
 
     public void setLang(Util.Lang lang) {
         tv.setText(node.getPrettyTitle(lang));
-        tv.setFont(lang,true,getResources().getDimension(R.dimen.tab_menu_font_size), TypedValue.COMPLEX_UNIT_PX);
+        tv.setFont(lang, true, getResources().getDimension(R.dimen.tab_menu_font_size), TypedValue.COMPLEX_UNIT_PX);
     }
 
     public void setActive(boolean isActive) {
         if (isActive) {
-            tv.setTextColor(Util.getColor(context,R.attr.text_color_main));
+            tv.setTextColor(Util.getColor(context, R.attr.text_color_main));
         } else {
-            tv.setTextColor(Util.getColor(context,R.attr.text_color_faded));
+            tv.setTextColor(Util.getColor(context, R.attr.text_color_faded));
         }
     }
 

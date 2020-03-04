@@ -57,7 +57,7 @@ public class SettingsActivity extends Activity {
         numDebugDBUnlockClicks = 0;
 
         backClick = null;
-        CustomActionbar customActionbar = new CustomActionbar(this, new MenuNode("Settings","הגדרות", null), Settings.getSystemLang(),null,null,closeClick,null,null,null,null,null,R.color.system,false,false);
+        CustomActionbar customActionbar = new CustomActionbar(this, new MenuNode("Settings", "הגדרות", null), Settings.getSystemLang(), null, null, closeClick, null, null, null, null, null, R.color.system, false, false);
         LinearLayout abRoot = (LinearLayout) findViewById(R.id.actionbarRoot);
         abRoot.addView(customActionbar);
         //fontSize   = (EditText)findViewById(R.id.fontSize);
@@ -89,6 +89,7 @@ public class SettingsActivity extends Activity {
 
 
     }
+
     View.OnClickListener backClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -114,16 +115,16 @@ public class SettingsActivity extends Activity {
     View.OnClickListener deleteClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-        DialogManager2.showDialog(SettingsActivity.this, new DialogCallable(MyApp.getRString(R.string.are_you_sure_delete_title),
-                MyApp.getRString(R.string.are_you_sure_delete_message), MyApp.getRString(R.string.delete_library),
-                MyApp.getRString(R.string.CANCEL), null, DialogCallable.DialogType.ALERT) {
-            @Override
-            public void positiveClick() {
-                Database.deleteDatabase();
-                setState(null,null,Settings.getUseAPI());
-                setDatabaseInfo();
-            }
-        });
+            DialogManager2.showDialog(SettingsActivity.this, new DialogCallable(MyApp.getRString(R.string.are_you_sure_delete_title),
+                    MyApp.getRString(R.string.are_you_sure_delete_message), MyApp.getRString(R.string.delete_library),
+                    MyApp.getRString(R.string.CANCEL), null, DialogCallable.DialogType.ALERT) {
+                @Override
+                public void positiveClick() {
+                    Database.deleteDatabase();
+                    setState(null, null, Settings.getUseAPI());
+                    setDatabaseInfo();
+                }
+            });
         }
     };
 
@@ -153,11 +154,11 @@ public class SettingsActivity extends Activity {
         }
     };
 
-    public void updateLibrary(View v){
+    public void updateLibrary(View v) {
         Downloader.updateLibrary(this, false);
     }
 
-    public void done(){
+    public void done() {
         //saveFontSize();
         Database.checkAndSwitchToNeededDB(this);
         finish();
@@ -195,17 +196,17 @@ public class SettingsActivity extends Activity {
                     break;
             }
 
-            setState(currMenuLang,currBookLang,Settings.getUseAPI());
+            setState(currMenuLang, currBookLang, Settings.getUseAPI());
         }
     };
 
     public void setState(Util.Lang menuLang, Util.Lang bookLang, boolean useAPI) {
 
-        if(menuLang != null)
+        if (menuLang != null)
             currMenuLang = menuLang;
         else
             menuLang = currMenuLang;
-        if(bookLang != null)
+        if (bookLang != null)
             currBookLang = bookLang;
         else
             bookLang = currBookLang;
@@ -221,17 +222,17 @@ public class SettingsActivity extends Activity {
             Settings.setDefaultTextLang(Util.Lang.EN);
             bookEnBtn.setBackgroundResource(Util.getDrawable(this, R.attr.text_menu_button_background_left_clicked_drawable));
         } else
-            bookEnBtn.setBackgroundResource(Util.getDrawable(this,R.attr.text_menu_button_background_left_ripple_drawable));
+            bookEnBtn.setBackgroundResource(Util.getDrawable(this, R.attr.text_menu_button_background_left_ripple_drawable));
         if (currBookLangViewId == R.id.book_bi_btn) {
             Settings.setDefaultTextLang(Util.Lang.BI);
             bookBiBtn.setBackgroundResource(Util.getDrawable(this, R.attr.text_menu_button_background_center_clicked_drawable));
         } else
-            bookBiBtn.setBackgroundResource(Util.getDrawable(this,R.attr.text_menu_button_background_center_ripple_drawable));
+            bookBiBtn.setBackgroundResource(Util.getDrawable(this, R.attr.text_menu_button_background_center_ripple_drawable));
         if (currBookLangViewId == R.id.book_he_btn) {
             Settings.setDefaultTextLang(Util.Lang.HE);
             bookHeBtn.setBackgroundResource(Util.getDrawable(this, R.attr.text_menu_button_background_right_clicked_drawable));
         } else
-            bookHeBtn.setBackgroundResource(Util.getDrawable(this,R.attr.text_menu_button_background_right_ripple_drawable));
+            bookHeBtn.setBackgroundResource(Util.getDrawable(this, R.attr.text_menu_button_background_right_ripple_drawable));
 
 
         //MENU LANG
@@ -243,20 +244,20 @@ public class SettingsActivity extends Activity {
             Settings.setMenuLang(Util.Lang.EN);
             menuEnBtn.setBackgroundResource(Util.getDrawable(this, R.attr.text_menu_button_background_left_clicked_drawable));
         } else
-            menuEnBtn.setBackgroundResource(Util.getDrawable(this,R.attr.text_menu_button_background_left_ripple_drawable));
+            menuEnBtn.setBackgroundResource(Util.getDrawable(this, R.attr.text_menu_button_background_left_ripple_drawable));
         if (currMenuLangViewId == R.id.menu_he_btn) {
             Settings.setMenuLang(Util.Lang.HE);
             menuHeBtn.setBackgroundResource(Util.getDrawable(this, R.attr.text_menu_button_background_right_clicked_drawable));
         } else
-            menuHeBtn.setBackgroundResource(Util.getDrawable(this,R.attr.text_menu_button_background_right_ripple_drawable));
+            menuHeBtn.setBackgroundResource(Util.getDrawable(this, R.attr.text_menu_button_background_right_ripple_drawable));
 
         //IS OFFLINE???
 
-        if(useAPI){
+        if (useAPI) {
             downloadBtn.setVisibility(View.VISIBLE);
             deleteBtn.setVisibility(View.GONE);
             updateBtn.setVisibility(View.GONE);
-        }else{
+        } else {
             downloadBtn.setVisibility(View.GONE);
             deleteBtn.setVisibility(View.VISIBLE);
             updateBtn.setVisibility(View.VISIBLE);
@@ -271,11 +272,10 @@ public class SettingsActivity extends Activity {
         boolean useAPI = Settings.getUseAPI();
 
 
-        setState(menuLang,defaultTextLang,useAPI);
+        setState(menuLang, defaultTextLang, useAPI);
 
         //fontSize.setText(""+Settings.getDefaultFontSize());
         //fontSize.clearFocus();
-
 
 
         SefariaTextView appInfo = (SefariaTextView) findViewById(R.id.appInfo);
@@ -288,7 +288,7 @@ public class SettingsActivity extends Activity {
 
     }
 
-    private void setDatabaseInfo(){
+    private void setDatabaseInfo() {
         String debugVer = "";
         if (Settings.getIsDebug()) debugVer = "D ";
         SefariaTextView onlineInfo = (SefariaTextView) findViewById(R.id.onlineInfo);
@@ -296,7 +296,6 @@ public class SettingsActivity extends Activity {
         onlineInfo.setText(MyApp.getRString(R.string.online_library_version) + Util.convertDBnum(Database.getVersionInDB(true)));
         offlineInfo.setText(MyApp.getRString(R.string.offline_library_version) + debugVer + Util.convertDBnum(Database.getVersionInDB(false)));
     }
-
 
 
     @Override
@@ -312,10 +311,7 @@ public class SettingsActivity extends Activity {
     }
 
 
-
-
-
-    public void clearAllBookSettings(View v){
+    public void clearAllBookSettings(View v) {
         Settings.BookSettings.clearAllBookSettings();
     }
 
@@ -325,7 +321,7 @@ public class SettingsActivity extends Activity {
             numDebugDBUnlockClicks = 0;
             Settings.setIsDebug(!Settings.getIsDebug()); //toggle
             setDatabaseInfo();
-            Toast.makeText(this,"DB isDebug == " + Settings.getIsDebug(),Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "DB isDebug == " + Settings.getIsDebug(), Toast.LENGTH_SHORT).show();
 
         } else {
             numDebugDBUnlockClicks++;
@@ -337,15 +333,14 @@ public class SettingsActivity extends Activity {
         if (numDebugAPIClicks >= TOT_NUM_DEBUG_DB_CLICKS) {
             numDebugAPIClicks = 0;
             Settings.setUseAPI(!Settings.getUseAPI()); //toggle
-            Toast.makeText(this,"usingAPI == " + Settings.getUseAPI(),Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "usingAPI == " + Settings.getUseAPI(), Toast.LENGTH_SHORT).show();
             Database.checkAndSwitchToNeededDB(this);
-            setState(currMenuLang,currBookLang,Settings.getUseAPI());
+            setState(currMenuLang, currBookLang, Settings.getUseAPI());
         } else {
             numDebugAPIClicks++;
         }
 
     }
-
 
 
 }

@@ -14,7 +14,7 @@ public class ScrollViewExt extends ScrollView {
 
     private int newCheck = 100;
 
-    public interface OnScrollStoppedListener{
+    public interface OnScrollStoppedListener {
         void onScrollStopped();
     }
 
@@ -40,13 +40,13 @@ public class ScrollViewExt extends ScrollView {
             public void run() {
 
                 int newPosition = getScrollY();
-                if(initialPosition - newPosition == 0){//has stopped
+                if (initialPosition - newPosition == 0) {//has stopped
 
-                    if(onScrollStoppedListener!=null){
+                    if (onScrollStoppedListener != null) {
 
                         onScrollStoppedListener.onScrollStopped();
                     }
-                }else{
+                } else {
                     initialPosition = getScrollY();
                     ScrollViewExt.this.postDelayed(scrollerTask, newCheck);
                 }
@@ -66,11 +66,11 @@ public class ScrollViewExt extends ScrollView {
         }
     }
 
-    public void setOnScrollStoppedListener(ScrollViewExt.OnScrollStoppedListener listener){
+    public void setOnScrollStoppedListener(ScrollViewExt.OnScrollStoppedListener listener) {
         onScrollStoppedListener = listener;
     }
 
-    public void startScrollerTask(){
+    public void startScrollerTask() {
 
         initialPosition = getScrollY();
         ScrollViewExt.this.postDelayed(scrollerTask, newCheck);

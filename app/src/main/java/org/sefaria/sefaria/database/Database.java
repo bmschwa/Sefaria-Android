@@ -1,4 +1,5 @@
 package org.sefaria.sefaria.database;
+
 import org.sefaria.sefaria.GoogleTracker;
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;
@@ -26,7 +27,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 
-public class Database extends SQLiteOpenHelper{
+public class Database extends SQLiteOpenHelper {
 
     private static Database APIInstance;
     private static Database offlineInstance;
@@ -46,10 +47,11 @@ public class Database extends SQLiteOpenHelper{
     /**
      * Constructor
      * Takes and keeps a reference of the passed context in order to access to the application assets and resources.
+     *
      * @param context
      */
-    public Database(Context context){
-        super(context,getDbPath() + DB_NAME + ".db" , null, DB_VERSION);
+    public Database(Context context) {
+        super(context, getDbPath() + DB_NAME + ".db", null, DB_VERSION);
         this.myContext = context;
     }
 
@@ -57,6 +59,7 @@ public class Database extends SQLiteOpenHelper{
     /**
      * Constructor
      * Takes and keeps a reference of the passed context in order to access to the application assets and resources.
+     *
      * @param context
      */
     public Database(Context context, int useAPI) {
@@ -64,101 +67,101 @@ public class Database extends SQLiteOpenHelper{
         this.myContext = context;
     }
 
-    static public String getDbPath(){
+    static public String getDbPath() {
         //The Android's default system path of your application database.
         String DB_PATH = getInternalFolder() + "databases/";
         Log.d("databasepath", DB_PATH + " mkdirs: " + mkDirs(DB_PATH));
         File[] files = new File(DB_PATH).listFiles();
         return DB_PATH;
     }
-    static private boolean mkDirs(String path){
+
+    static private boolean mkDirs(String path) {
         File folder = new File(path);
-        return (folder.mkdirs() ||  folder.isDirectory());
+        return (folder.mkdirs() || folder.isDirectory());
     }
 
-    static public boolean isValidOfflineDB(){
-        return  getVersionInDB(false)>= MIN_DB_VERSION;
+    static public boolean isValidOfflineDB() {
+        return getVersionInDB(false) >= MIN_DB_VERSION;
     }
 
-    public static void dealWithStartupDatabaseStuff(Activity activity){
+    public static void dealWithStartupDatabaseStuff(Activity activity) {
         Log.d("MyApp", "dealWithDatabaseStuff");
         long time = Settings.getDownloadSuccess(true);
-        if(time >0) {
+        if (time > 0) {
             GoogleTracker.sendEvent("Download", "Update Finished", time);
-            if(hasOfflineDB()){
+            if (hasOfflineDB()) {
                 Settings.setUseAPI(false);
             }
         }
 
         Util.deleteNonRecursiveDir(Downloader.FULL_DOWNLOAD_PATH); //remove any old temp downloads
         Cache.clearExpiredCache(); //TODO I suspect this line is taking a lot of time to run. not sure
-        Database.getOfflineDBIfNeeded(activity,false);
-        if(!Settings.getUseAPI() && Settings.getIfShouldDoUpdateCheck() ) {
+        Database.getOfflineDBIfNeeded(activity, false);
+        if (!Settings.getUseAPI() && Settings.getIfShouldDoUpdateCheck()) {
             new UpdateService.silentlyCheckForUpdates().execute(activity);
         }
     }
 
     /**
-     *
      * @param activity
      * @param evenIfUsingAPI
      * @return - true if downloading, false otherwise
      */
-    static public boolean getOfflineDBIfNeeded(Activity activity, boolean evenIfUsingAPI){
-        if(!isDownloadingDatabase && (evenIfUsingAPI || !Settings.getUseAPI()) && (!Database.isValidOfflineDB()|| !Database.hasOfflineDB())) {
+    static public boolean getOfflineDBIfNeeded(Activity activity, boolean evenIfUsingAPI) {
+        if (!isDownloadingDatabase && (evenIfUsingAPI || !Settings.getUseAPI()) && (!Database.isValidOfflineDB() || !Database.hasOfflineDB())) {
             Toast.makeText(activity, MyApp.getRString(R.string.starting_download), Toast.LENGTH_SHORT).show();
-            Downloader.updateLibrary(activity,false);
+            Downloader.updateLibrary(activity, false);
             return true;
         }
         return false;
     }
 
-    public static boolean isNewCommentaryVersion(){
+    public static boolean isNewCommentaryVersion() {
         return Database.getVersionInDB(Settings.getUseAPI()) >= 266;
     }
 
-    public static boolean isNewCommentaryVersionWithConnType(){
+    public static boolean isNewCommentaryVersionWithConnType() {
         return Database.getVersionInDB(Settings.getUseAPI()) >= 274;
     }
 
     private static Boolean hasOfflineDB;
+
     /**
-     *
      * @return false if there's a Segment table in the db. true if not (and should be using API)
      */
-    public static boolean hasOfflineDB(){
-        if(hasOfflineDB != null)
+    public static boolean hasOfflineDB() {
+        if (hasOfflineDB != null)
             return hasOfflineDB;
         //TODO maybe check the settings table instead (api should be 1)
-        try{
+        try {
             Database dbHandler = Database.getInstance(false);
             SQLiteDatabase db = dbHandler.getReadableDatabase();
             Cursor cursor = db.query(Segment.TABLE_TEXTS, null, "_id" + "=?",
                     new String[]{String.valueOf(1)}, null, null, null, null);
             //Log.d("api", "got here without problems" + cursor);
             hasOfflineDB = true;
-        }catch(Exception e){
+        } catch (Exception e) {
             hasOfflineDB = false;
         }
         return hasOfflineDB;
     }
 
-    public static void checkAndSwitchToNeededDB(Activity activity){
+    public static void checkAndSwitchToNeededDB(Activity activity) {
         boolean hasInternet = (Downloader.getNetworkStatus() != Downloader.ConnectionType.NONE);
 
-        if(!Database.hasOfflineDB() && !Settings.getUseAPI()){ //There's no DB
-            Toast.makeText(activity,MyApp.getRString(R.string.switching_to_api),Toast.LENGTH_LONG).show();
+        if (!Database.hasOfflineDB() && !Settings.getUseAPI()) { //There's no DB
+            Toast.makeText(activity, MyApp.getRString(R.string.switching_to_api), Toast.LENGTH_LONG).show();
             //DialogManager2.showDialog(activity, DialogManager2.DialogPreset.SWITCHING_TO_API);
             Settings.setUseAPI(true);
-        } else if(Settings.getUseAPI() && !hasInternet && Database.hasOfflineDB()){
-            Toast.makeText(activity,MyApp.getRString(R.string.NO_INTERNET_TITLE) + " - " + MyApp.getRString(R.string.switching_to_offline),Toast.LENGTH_SHORT).show();
+        } else if (Settings.getUseAPI() && !hasInternet && Database.hasOfflineDB()) {
+            Toast.makeText(activity, MyApp.getRString(R.string.NO_INTERNET_TITLE) + " - " + MyApp.getRString(R.string.switching_to_offline), Toast.LENGTH_SHORT).show();
             Settings.setUseAPI(false);
         }
 
 
     }
 
-    public static void onRequestPermissionsResult(Activity activity,int requestCode, String permissions[], int[] grantResults) {
+    public static void onRequestPermissionsResult(Activity activity, int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case MyApp.REQUEST_WRITE_STORAGE: {
                 // If request is cancelled, the result arrays are empty.
@@ -180,38 +183,38 @@ public class Database extends SQLiteOpenHelper{
     }
 
 
-    static public String getInternalFolder(){
+    static public String getInternalFolder() {
         String path = getStorageDir(true);
         Log.d("databasepath", path + " makdirs:" + mkDirs(path));
         return path;
     }
 
-    static private String getStorageDir(boolean tryExternal){
-        String [] dirs = Util.getStorageDirectories();
+    static private String getStorageDir(boolean tryExternal) {
+        String[] dirs = Util.getStorageDirectories();
         final String androidPath = "/Android/data/" + MyApp.getAppPackageName() + "/files/";
         final String regularPath = "/data/data/" + MyApp.getAppPackageName() + "/"; //this is the old way of doing it which worked fine for non-SD cards
-        if(!tryExternal)
+        if (!tryExternal)
             return regularPath;
 
         //trying to get SD card path
-        for(String dir:dirs){
-            if(dir.contains("ext")) {
+        for (String dir : dirs) {
+            if (dir.contains("ext")) {
                 String tempPath = dir + androidPath;
-                if(mkDirs(tempPath))
+                if (mkDirs(tempPath))
                     return tempPath;
             }
         }
-        for(String dir:dirs){
-            if(!dir.contains("emulated")){
+        for (String dir : dirs) {
+            if (!dir.contains("emulated")) {
                 String tempPath = dir + androidPath;
-                if(mkDirs(tempPath))
+                if (mkDirs(tempPath))
                     return tempPath;
             }
         }
 
-        if(dirs.length > 0){
+        if (dirs.length > 0) {
             String tempPath = dirs[0] + androidPath;
-            if(mkDirs(tempPath))
+            if (mkDirs(tempPath))
                 return tempPath;
         }
         return regularPath;
@@ -219,8 +222,8 @@ public class Database extends SQLiteOpenHelper{
 
     /**
      * Creates a empty database on the system and rewrites it with your own database.
-     * */
-    public void createDatabase() throws IOException{
+     */
+    public void createDatabase() throws IOException {
         //just copy, no one cares what you overwrite
         //copyDatabase(DB_PATH);
         //unzipDatabase(DB_PATH);
@@ -238,7 +241,7 @@ public class Database extends SQLiteOpenHelper{
     public static void deleteDatabase() {
         File oldDB = new File(getDbPath() + DB_NAME + ".db");
         if (oldDB.exists()) {
-            Log.d("db","deleting");
+            Log.d("db", "deleting");
             oldDB.delete();
         }
         hasOfflineDB = null;
@@ -251,20 +254,20 @@ public class Database extends SQLiteOpenHelper{
         // don't accidentally leak an Activity's context.
         // See this article for more information: http://bit.ly/6LRzfx
         Database instance;
-        if(forAPI == null){
+        if (forAPI == null) {
             forAPI = Settings.getUseAPI();
         }
-        if(!forAPI)
+        if (!forAPI)
             instance = offlineInstance;
         else {
             instance = APIInstance;
         }
 
         if (instance == null) {
-            if(!forAPI) {
+            if (!forAPI) {
                 offlineInstance = new Database(context.getApplicationContext());
                 return offlineInstance;
-            }else {
+            } else {
                 Database.createAPIdb();
                 APIInstance = new Database(context.getApplicationContext(), 1);
                 return APIInstance;
@@ -274,24 +277,24 @@ public class Database extends SQLiteOpenHelper{
     }
 
 
-    public static SQLiteDatabase getDB(){
+    public static SQLiteDatabase getDB() {
         return getInstance(null).getReadableDatabase();
     }
 
-    public static boolean checkDataBase(){
+    public static boolean checkDataBase() {
 
         SQLiteDatabase checkDB = null;
 
-        try{
+        try {
             String myPath = getDbPath() + DB_NAME + ".db";
             checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
-        }catch(Exception e){
+        } catch (Exception e) {
             GoogleTracker.sendException(e, "database doesn't exist");
             //database does't exist yet.
 
         }
 
-        if(checkDB != null){
+        if (checkDB != null) {
             checkDB.close();
         }
 
@@ -302,17 +305,17 @@ public class Database extends SQLiteOpenHelper{
      * Copies your database from your local assets-folder to the just created empty database in the
      * system folder, from where it can be accessed and handled.
      * This is done by transfering bytestream.
-     * */
-    private void copyDatabase(String path, String name) throws IOException{
+     */
+    private void copyDatabase(String path, String name) throws IOException {
         //the following ensures all directories and files that we want will exist
         File testFile = new File(path + name);
         if (!testFile.exists()) {
             File testParent = new File(path);
             if (!testParent.exists()) {
-                Log.d("yo","creating pars");
+                Log.d("yo", "creating pars");
                 testParent.mkdirs();
             }
-            Log.d("yo","creating");
+            Log.d("yo", "creating");
             testFile.createNewFile();
         }
 
@@ -328,7 +331,7 @@ public class Database extends SQLiteOpenHelper{
         //transfer bytes from the inputfile to the outputfile
         byte[] buffer = new byte[1024];
         int length;
-        while ((length = myInput.read(buffer))>0){
+        while ((length = myInput.read(buffer)) > 0) {
             myOutput.write(buffer, 0, length);
         }
 
@@ -338,11 +341,11 @@ public class Database extends SQLiteOpenHelper{
         myInput.close();
 
 
-
     }
 
     public final static int BAD_SETTING_GET = -999999991;
-    public static int getDBSetting(String key, Boolean forAPI){
+
+    public static int getDBSetting(String key, Boolean forAPI) {
         int value = BAD_SETTING_GET;
         try {
             Database dbHandler = Database.getInstance(forAPI);
@@ -354,40 +357,38 @@ public class Database extends SQLiteOpenHelper{
                 value = cursor.getInt(1);
             }
             cursor.close();
-        }catch(Exception e){
+        } catch (Exception e) {
             ;
         }
         return value;
     }
 
-    public static void createAPIdb(){
+    public static void createAPIdb() {
         Log.d("api", "trying to create db");
         Database myDbHelper = new Database(MyApp.getContext());
         myDbHelper.getReadableDatabase();
         try {
-            myDbHelper.unzipDatabase("API_UpdateForSefariaMobileDatabase.zip", Database.getDbPath(),true);
+            myDbHelper.unzipDatabase("API_UpdateForSefariaMobileDatabase.zip", Database.getDbPath(), true);
         } catch (IOException e) {
-            Log.e("api",e.toString());
+            Log.e("api", e.toString());
         }
     }
 
-    public  void unzipDatabase(String oldPath, String newPath, boolean fromAssets) throws IOException
-    {
-        Log.d("zip","let's unzip this bad boy...");
+    public void unzipDatabase(String oldPath, String newPath, boolean fromAssets) throws IOException {
+        Log.d("zip", "let's unzip this bad boy...");
         InputStream is;
         ZipInputStream zis;
         String filename;
-        if(fromAssets)
+        if (fromAssets)
             is = myContext.getAssets().open(oldPath);
         else
-            is =  new FileInputStream(new File(oldPath));
+            is = new FileInputStream(new File(oldPath));
         zis = new ZipInputStream(is);
         ZipEntry ze;
         byte[] buffer = new byte[1024];
         int count;
 
-        while ((ze = zis.getNextEntry()) != null)
-        {
+        while ((ze = zis.getNextEntry()) != null) {
             // zapis do souboru - Czech for "write to a file"
             filename = ze.getName();
 
@@ -403,8 +404,7 @@ public class Database extends SQLiteOpenHelper{
             OutputStream fout = new FileOutputStream(newPath + filename);
 
             // cteni zipu a zapis - Czech for "reading and writing zip"
-            while ((count = zis.read(buffer)) != -1)
-            {
+            while ((count = zis.read(buffer)) != -1) {
                 fout.write(buffer, 0, count);
             }
 
@@ -416,33 +416,34 @@ public class Database extends SQLiteOpenHelper{
         zis.close();
     }
 
-    public static void setIsDownloadingDatabase(boolean isDownloading){
+    public static void setIsDownloadingDatabase(boolean isDownloading) {
         isDownloadingDatabase = isDownloading;
         versionNums[0] = null; //only need to change offline version
     }
 
-    public static boolean getIsDownloadingDatabase(){
+    public static boolean getIsDownloadingDatabase() {
         return isDownloadingDatabase;
     }
 
-    private static Integer [] versionNums = new Integer[] {null, null};
-    public static int getVersionInDB(Boolean forAPI){
-        if(forAPI == null){
+    private static Integer[] versionNums = new Integer[]{null, null};
+
+    public static int getVersionInDB(Boolean forAPI) {
+        if (forAPI == null) {
             forAPI = Settings.getUseAPI();
         }
         int index = forAPI ? 1 : 0;
-        if(versionNums[index] != null && !isDownloadingDatabase)
+        if (versionNums[index] != null && !isDownloadingDatabase)
             return versionNums[index];
 
         int versionNum = getDBSetting("version", forAPI);
-        if(versionNum == BAD_SETTING_GET)
+        if (versionNum == BAD_SETTING_GET)
             versionNum = -1;
         versionNums[index] = versionNum;
         return versionNum;
     }
 
 
-    public void openDataBase() throws SQLException{
+    public void openDataBase() throws SQLException {
 
         //Open the database
         String myPath = getDbPath() + DB_NAME + ".db";
@@ -452,7 +453,7 @@ public class Database extends SQLiteOpenHelper{
     @Override
     public synchronized void close() {
 
-        if(myDataBase != null)
+        if (myDataBase != null)
             myDataBase.close();
 
         super.close();

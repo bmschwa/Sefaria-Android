@@ -23,12 +23,12 @@ public class ListViewCheckBox extends IndeterminateCheckBox {
     }
 
     public ListViewCheckBox(Context context, AttributeSet attributeSet) {
-        super(context,attributeSet);
+        super(context, attributeSet);
         init(context);
     }
 
     public ListViewCheckBox(Context context, AttributeSet attributeSet, int defStyle) {
-        super(context,attributeSet,defStyle);
+        super(context, attributeSet, defStyle);
         init(context);
     }
 
@@ -36,10 +36,20 @@ public class ListViewCheckBox extends IndeterminateCheckBox {
         this.context = context;
     }
 
-    public int getPosition() { return position; }
-    public void setPosition(int position) { this.position = position;}
+    public int getPosition() {
+        return position;
+    }
 
-    public ArrayAdapter getAdapter() { return adapter;}
-    public void setAdapter(ArrayAdapter adapter) { this.adapter = adapter;}
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+    public ArrayAdapter getAdapter() {
+        return adapter;
+    }
+
+    public void setAdapter(ArrayAdapter adapter) {
+        this.adapter = adapter;
+    }
 
 }
