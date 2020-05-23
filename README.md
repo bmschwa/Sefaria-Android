@@ -15,7 +15,7 @@ Using Android Studio, the java code can be found in Project -> app -> java -> or
 The activities folder contains the main code for each of the activities. Similarly, database folder contains classes for data types related to the data and the database. Other folders contain helper items. For example, TOCElements contains classes for the different elements that the TOCActivity uses.
 
 ## Downloading APK
-You can download the app on the [play store] (https://play.google.com/store/apps/details?id=org.sefaria.sefaria&hl=en) or you can get the apk directly in [releases] (https://github.com/Sefaria/Sefaria-Android/releases).
+You can download the app on the [play store](https://play.google.com/store/apps/details?id=org.sefaria.sefaria&hl=en) or you can get the apk directly in [releases](https://github.com/Sefaria/Sefaria-Android/releases).
 
 ### Building for F-Droid
 
