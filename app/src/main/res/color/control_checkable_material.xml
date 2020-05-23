@@ -23,5 +23,5 @@
           android:color="?attr/colorControlNormal" />
     <item android:state_checked="true"
           android:color="?attr/colorControlActivated" />
-    <item android:color="?attr/colorControlNormal" />
+    <item android:color="attr/colorControlNormal" />
 </selector>

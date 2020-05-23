@@ -38,7 +38,7 @@
         <service
             android:name=".database.UpdateService"
             android:enabled="true">
-            <action android:name="com.torahsummary.betamidrash.UpdateService" />
+            <!-- <action android:name="com.torahsummary.betamidrash.UpdateService" /> -->
         </service>
 
         <activity

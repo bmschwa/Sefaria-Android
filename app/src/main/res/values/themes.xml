@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="SefariaTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="SefariaTheme" parent="android:ThemeOverlay.Material.ActionBar">
         <item name="android:windowAnimationStyle">@null</item>
         <!-- colorPrimaryDark is used for the status bar -->
        <!-- <item name="colorPrimaryDark">@color/mishnah</item> -->

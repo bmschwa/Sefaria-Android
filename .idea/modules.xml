@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Sefaria-Android.iml" filepath="$PROJECT_DIR$/Sefaria-Android.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Sefaria-Android.iml" filepath="$PROJECT_DIR$/Sefaria-Android.iml" group="Sefaria-Android" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="Sefaria-Android/app" />
     </modules>
   </component>
 </project>
