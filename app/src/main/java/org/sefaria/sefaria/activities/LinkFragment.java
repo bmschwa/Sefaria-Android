@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,7 +34,7 @@ import org.sefaria.sefaria.layouts.SefariaTextView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LinkFragment extends android.support.v4.app.Fragment {
+public class LinkFragment extends Fragment {
 
     public enum State {
         //main shows all linkcounts
