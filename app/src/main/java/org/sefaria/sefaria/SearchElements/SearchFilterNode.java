@@ -2,11 +2,9 @@ package org.sefaria.sefaria.SearchElements;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.Nullable;
-import android.util.Log;
+import androidx.annotation.Nullable;
 
 import org.sefaria.sefaria.BilingualNode;
-import org.sefaria.sefaria.MenuElements.MenuNode;
 import org.sefaria.sefaria.MenuElements.MenuState;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.database.Book;

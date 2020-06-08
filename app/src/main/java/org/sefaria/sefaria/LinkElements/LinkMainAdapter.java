@@ -1,17 +1,12 @@
 package org.sefaria.sefaria.LinkElements;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.Html;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import org.sefaria.sefaria.MyApp;
 import org.sefaria.sefaria.R;

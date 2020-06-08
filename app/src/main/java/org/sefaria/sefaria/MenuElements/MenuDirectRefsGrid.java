@@ -1,31 +1,17 @@
 package org.sefaria.sefaria.MenuElements;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
-import android.util.Log;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.ActivityOptionsCompat;
+
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
-import org.sefaria.sefaria.BilingualNode;
-import org.sefaria.sefaria.MyApp;
-import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
-import org.sefaria.sefaria.activities.MenuActivity;
-import org.sefaria.sefaria.activities.SuperTextActivity;
-import org.sefaria.sefaria.activities.TOCActivity;
-import org.sefaria.sefaria.database.Book;
-import org.sefaria.sefaria.database.Database;
-import org.sefaria.sefaria.database.Recents;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

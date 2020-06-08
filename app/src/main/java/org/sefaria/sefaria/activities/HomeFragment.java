@@ -6,13 +6,14 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.Pair;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.fragment.app.Fragment;
 
 import org.sefaria.sefaria.database.Recents;
 import org.sefaria.sefaria.layouts.HomeActionbar;
@@ -22,14 +23,13 @@ import org.sefaria.sefaria.MenuElements.MenuState;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
-import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.DailyLearning;
 import org.sefaria.sefaria.layouts.SefariaTextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeFragment extends android.support.v4.app.Fragment {
+public class HomeFragment extends Fragment {
 
     private final int NUM_COLUMNS = 1;
     private final boolean LIMIT_GRID_SIZE = true;

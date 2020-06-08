@@ -6,8 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.ActivityOptionsCompat;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -16,8 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
-import com.google.android.gms.analytics.GoogleAnalytics;
 
 import org.sefaria.sefaria.BilingualNode;
 import org.sefaria.sefaria.GoogleTracker;
@@ -28,7 +26,6 @@ import org.sefaria.sefaria.activities.MenuActivity;
 import org.sefaria.sefaria.activities.SuperTextActivity;
 import org.sefaria.sefaria.activities.TOCActivity;
 import org.sefaria.sefaria.Util;
-import org.sefaria.sefaria.database.API;
 import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.Database;
 import org.sefaria.sefaria.layouts.SefariaTextView;

@@ -1,13 +1,12 @@
 package org.sefaria.sefaria.TextElements;
 
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 import android.view.View;
 import android.widget.LinearLayout;
 
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Util;
-import org.sefaria.sefaria.layouts.SefariaTextView;
 
 /**
  * Created by nss on 10/7/15.

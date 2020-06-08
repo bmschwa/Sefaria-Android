@@ -1,13 +1,12 @@
 package org.sefaria.sefaria.SearchElements;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
@@ -20,13 +19,11 @@ import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
 import org.sefaria.sefaria.activities.SearchActivity;
-import org.sefaria.sefaria.database.Book;
 import org.sefaria.sefaria.database.SearchAPI;
 import org.sefaria.sefaria.layouts.IndeterminateCheckBox;
 import org.sefaria.sefaria.layouts.ListViewCheckBox;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;

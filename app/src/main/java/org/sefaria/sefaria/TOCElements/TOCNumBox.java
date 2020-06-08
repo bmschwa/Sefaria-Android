@@ -3,7 +3,7 @@ package org.sefaria.sefaria.TOCElements;
 import android.content.Context;
 import android.content.res.Resources;
 
-import android.support.v7.widget.GridLayout;
+import androidx.gridlayout.widget.GridLayout;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;

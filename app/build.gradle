@@ -2,11 +2,11 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 29
-    buildToolsVersion '28.0.3'
+    buildToolsVersion '29.0.3'
 
     defaultConfig {
         applicationId "org.sefaria.sefaria"
-        minSdkVersion 25
+        minSdkVersion 14
         targetSdkVersion 29
         versionCode 359
         versionName "3.60"
@@ -29,14 +29,14 @@ android {
 }
 
 dependencies {
-    //compile 'com.android.support:multidex:1.0.1'
-    //compile 'androidx.gridlayout:gridlayout:1.0.0'
-    //compile 'com.google.android.material:material:1.0.0'
-    //compile 'androidx.recyclerview:recyclerview:1.1.0'
-    //compile 'com.google.android.gms:play-services-analytics:8.4.0'
-    //compile 'com.github.sevar83:indeterminate-checkbox:1.0.4@aar' for the tri-state checkbox, causes weird layout changes in the app
-    //compile 'net.simonvt.menudrawer:menudrawer:3.0.6'
-    //compile 'com.silverforge.elastic:elasticsearchrawclient:1.1.1'
+    //implementation 'com.android.support:multidex:1.0.1'
+    implementation 'androidx.gridlayout:gridlayout:1.0.0'
+    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'com.google.android.gms:play-services-analytics:17.0.0'
+    //implementation 'com.github.sevar83:indeterminate-checkbox:1.0.4@aar' for the tri-state checkbox, causes weird layout changes in the app
+    //implementation 'net.simonvt.menudrawer:menudrawer:3.0.6'
+    //implementation 'com.silverforge.elastic:elasticsearchrawclient:1.1.1'
 
 }
 

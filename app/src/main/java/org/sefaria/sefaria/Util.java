@@ -1,7 +1,6 @@
 package org.sefaria.sefaria;
 
 import android.app.Activity;
-import android.app.admin.DeviceAdminInfo;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
@@ -11,14 +10,13 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
-import android.support.annotation.AttrRes;
-import android.support.annotation.DrawableRes;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v4.text.BidiFormatter;
+import androidx.annotation.AttrRes;
+import androidx.annotation.DrawableRes;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.core.text.BidiFormatter;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.StateSet;
 import android.util.TypedValue;
 import android.view.View;

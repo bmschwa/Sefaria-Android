@@ -16,6 +16,7 @@
       },
       "api_key": [{ "current_key": "" }],
       "oauth_client": [],
+      "api_key": [{ "current_key": "" }],
       "services": {
         "analytics_service": {
           "status": 2,
