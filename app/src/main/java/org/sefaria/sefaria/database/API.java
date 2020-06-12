@@ -415,7 +415,7 @@ public class API {
         Log.d("api","in API.getDataFromURL: data length: " + data.length() );
 
         if(api.status != API.STATUS_GOOD){
-            Log.e("api","throwing apiexception");
+            Log.e("api","throwing api exception");
             throw api.new APIException();
         }
         return data;

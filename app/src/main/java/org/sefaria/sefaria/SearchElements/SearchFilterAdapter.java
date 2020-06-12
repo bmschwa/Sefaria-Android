@@ -2,27 +2,22 @@ package org.sefaria.sefaria.SearchElements;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 
 import org.sefaria.sefaria.BilingualNode;
 import org.sefaria.sefaria.R;
 import org.sefaria.sefaria.Settings;
 import org.sefaria.sefaria.Util;
-import org.sefaria.sefaria.database.SearchAPI;
 import org.sefaria.sefaria.layouts.IndeterminateCheckBox;
 import org.sefaria.sefaria.layouts.ListViewCheckBox;
 import org.sefaria.sefaria.layouts.SefariaTextView;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
